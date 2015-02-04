@@ -1,25 +1,19 @@
-### GLM on SR ~ abund analyses
+### FUNCTIONS for GLM analyses of SR ~ abund classes
 
-#### functions
+### ANALYSES 
 
 # fitting GLMs
 #  = testing difference in a community metric (e.g. SR) between low abundances
-# and increasing abundance classes
+# and increasing abundance classes using Generalized linear models 
 
-glm.test=function(db=databp, var='SR',domclass='abun',zeros=F, verbose=F, test="w",
-                  env=envplot, min.occur=10,  min.class=3, alpha=0.05) {
-  require(coin)
+glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR',domclass='abun',zeros=F, verbose=F, test="w",
+                  env=envplot, min.occur=4,  min.class=3, alpha=0.05) {
     
-   ## sp spanning the minimum number of abundance classes
-   a <- unique(names(which(rowSums(table(db$SpeciesCode, db$abun)>0)>=min.class)))  
- 
-  ## species with minimum occurrences
-    # calculate species prevalence
-    db$Sp.occurence <- table(as.character(db$SpeciesCode))[match(as.character(db$SpeciesCode),unique(as.character(db$SpeciesCode)))]
-   b <- unique(names(which(db$Sp.occurence>min.occur)))
-  
+   ## sp spanning the minimum number of abundance classes in which they have a minimum occurrence
+    a <- unique(names(which(rowSums(table(db$SpeciesCode, db$abun)>=min.occur)>=min.class)))  
+
   # select only species in a and b groups :
-  db.modif <- db[which( (db$SpeciesCode %in% a) & (db$SpeciesCode %in% b)),] 
+  db.modif <- db[which(db$SpeciesCode %in% a),] 
   
   # list of species name to be included in analysis :
   sp.names <- unique(db.modif$SpeciesCode)
@@ -66,16 +60,21 @@ n.obs[i,]=sapply(2:6, FUN=function(j) length(x[which(x$abun==j),"var"]))
       # detect thresholds
       th=NA
       min.sig=NA
-      sig  <-  which((summary(f)$coef [, 4] <= alpha) & ( summary(f)$coef [, 3] <0)) ## which classes show signif negative diff
-      neg <-   which(summary(f)$coef [, 3]<0)  # which classes show negative diff
-      
+  
+      # which classes show negative diff
+      neg <-   which(summary(f)$coef [, 3]<0) 
+
+      ## which classes show signif negative diff
+      sig  <-  which((summary(f)$coef [, 4] <= alpha) & ( summary(f)$coef [, 3] <0)) 
+
+
       if (length(sig)!=0) {
-        min.sig = min(sig)    # lowest class with signif negative difference
-        test=F
-        j=0
+        min.sig <-  min(sig)    # lowest class with signif negative difference
+        test <-  F
+        j <- 0
         
         while (test==F & j<=5) {   # search for thresholds in case min.sig is not followed by negative differences
-          if (all(((min.sig+j):max(abun)) %in% neg)) { th=min.sig ; test=T }
+          if (all(((min.sig+j):max(abun)) %in% neg)) { th=min.sig +j ; test=T }
           j=j+1                  
         }
       }
@@ -94,9 +93,13 @@ return(list(glms=glms, spearman=spear, n.obs = n.obs,  diff = diff,est= est, z=z
 }
 
 
-# summarizing results
-summary.glmtest = function(M = glmSR,data=species, group="ALIEN", graph=T) {
+# summarizing results on thresholds per group of species
+summary.glmtest = function(M = glmSR,data=species, group="ALIEN") {
+  
+  ### select onlys species in the model
   data=data[rownames(M$diff),]
+  
+  ## divide species according to grouping factor (ie Alien vs Native)
   if (is.null(group)) {
     sub=M
     G=1
@@ -113,7 +116,6 @@ summary.glmtest = function(M = glmSR,data=species, group="ALIEN", graph=T) {
     names=paste(group, ":",sort(unique(data[,group])), sep="")
   }                                 
   
-  par(mfrow=c(G,2), oma=c(4,6,6,2), mar=c(2,2,1,1))
   out=NULL   
   
   for (j in 1:G) {
@@ -134,43 +136,47 @@ summary.glmtest = function(M = glmSR,data=species, group="ALIEN", graph=T) {
       length(which(S$P[,x]<0.05 & S$z[,x]>=0))
     })
     
-    
     # proportion of signifi negative effects per class
     p.impact=n.impact / n.sp
     
     # number of times each class is the threshold
-    
     freq.thr =table(as.factor(S$glms$th))[match(2:6,names(table(as.factor(S$glms$th))))]
     names(freq.thr)=names(n.sp)
     freq.thr[is.na(freq.thr)]=0
     prop.thr = freq.thr / n.sp
     if(sum(freq.thr, na.rm=T)!=0) perc.thr = freq.thr / sum(freq.thr, na.rm=T)
-    if(sum(freq.thr, na.rm=T)==0) perc.thr = freq.thr
-    
-    #graphical representation
-    if (graph) {
-      
-      barplot(p.impact)
-      if (j==1) mtext(side=3, text="% negative\neffects",adj=0.5,line=1, cex=0.8)
-      
-      barplot(prop.thr, col="black" )
-      if (j==1) mtext(side=3, text="% threshold\neffects", adj=0.5,line=1, cex=0.8)
-      
-      out=rbind(out, data.frame(group=names [j],nb.sp=n.sp, freq.impact=n.impact, freq.positives =n.positives,
-                                prop.impact=p.impact,freq.thr=freq.thr, prop.thr=prop.thr, perc.thr=perc.thr))
-    }
-    
-    
-    mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=3, at=c(0.3,0.8),adj=0.5, outer=T, las=1)
-    mtext(text="Abundance class", side=1, outer=T, line=2)
+    if(sum(freq.thr, na.rm=T)==0) perc.thr = freq.thr 
+
+  out=rbind(out, data.frame(group=names [j],nb.sp=n.sp, freq.impact=n.impact, freq.positive =n.positive,
+                            prop.impact=p.impact,freq.thr=freq.thr, prop.thr=prop.thr, perc.thr=perc.thr))
   }
   return(out)
 }
 
 
+### GRAPHS
+
+## plot summary outputs
+plot.effect.summary <- function(  effects = effects.glmSR ) {       
+  
+  n <- length(unique(effects$group)) 
+  par(mfrow=c(n,2), oma=c(4,5,5,2), mar=c(2,2,1,1))
+  
+  for (i in 1:n) {
+ S <- effects[effects$group == unique(effects$group)[i],]
+  barplot(S$prop.impact*100, ylim=c(0,50))
+  if (i==1) mtext(side=3, text="% negative\neffects",adj=0.5,line=1, cex=0.8)
+  
+  barplot(S$prop.thr*100, col="black" , ylim=c(0,50))
+  if (i==1) mtext(side=3, text="% threshold\neffects", adj=0.5,line=1, cex=0.8)
+  
+  }   
+  mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=3, at=c(0.3,0.8),adj=0.5, outer=T, las=1)
+  mtext(text="Abundance class", side=1, outer=T, line=2)
+}
+
 ### plotting individual species
-plot.sp.glm=function(sp="ACHMIL", M=glmSR, var="SR", db=databp)
-{  
+plot.sp.glm=function(sp="ACHMIL", M=glmSR, var="SR", db=databp) {  
   Z= db[db$SpeciesCode==sp,]
   col=rep("white",6)
   col[ as.numeric( M$glms[sp,"th"])]="red"
@@ -182,26 +188,24 @@ plot.sp.glm=function(sp="ACHMIL", M=glmSR, var="SR", db=databp)
   return(M$glms[sp,"th"])
 }
 
-## plotting results
+## plotting all significant species
 plot.glm=function(M=glmSR, var="SR", db=databp, sel.criteria = c("spear")) {
+ 
   par(mfrow=c(4,5), mar=c(2,2,2,2))
-  for (sp in rownames(M$diff)){
-    # only species with significant kruskal walis test :
-    if (sel.criteria == "spear") sel <- M$spearman[sp,"p.val"] <=0.05 &  M$spearman[sp,"rho"] <0
-#     if (sel.criteria == "dev1") sel <- M$glms[sp"dev.ratio"] > 0.05 &  !is.na(M$glms[sp,"th"])
-    if (sel.criteria == "none") sel <- TRUE
-    
-    if (sel==T){
+  
+  # select only species according to seletion criteria :
+  if (sel.criteria == "spear") sel <- rownames(M$spearman) [M$spearman[,"p.val"] <=0.05 &  M$spearman[,"rho"] <0 ]
+  if (sel.criteria == "dev1") sel <-  rownames(M$glms) [M$glms[,"dev.ratio"] > 0.05 &  !is.na(M$glms[,"th"]) ]
+  if (sel.criteria == "none") sel <- TRUE
+  
+  ### Loop on selected species 
+  for (sp in sel)  {
       th=plot.sp.glm(sp= sp, M=M, var=var, db=db)
       print(paste(sp,":",th))
-    }
   }
 }
 
-
-
 ### thredhold barplots
-
 thresh.prop=function(effects=effects.glmSR, data=species, y=T,ylim=c(0,0.35)) {
   #graphical representation
   barplot(effects$prop.thr[effects$group=="ALIEN:0"], names.arg= paste("c",2:6, sep=""), 
@@ -216,9 +220,7 @@ thresh.prop=function(effects=effects.glmSR, data=species, y=T,ylim=c(0,0.35)) {
   
 }
 
-
-### logarithmic scale
-
+### frequency barplots with logarithmic scale
 thresh.freq=function(effects=effects.glmSR, data=species, y=T,ylim=c(0,100), leg=F) {
   tmp=effects
   # Native targets

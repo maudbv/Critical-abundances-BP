@@ -8,7 +8,6 @@ library(vegan)
 
 # import data
 source('script/data/import fede data.R')
-
 source('script/data/import trait data.R')
 
 # save.image(file="saved Rdata/Banks peninsula dataset.Rdata")

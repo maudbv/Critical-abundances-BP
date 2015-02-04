@@ -1,31 +1,12 @@
 # Figure Article thresholds of impact
-
-
+## only results in real grasslands = first rank species is herbaceous + landcover is recorded as "grassland"
 
 # boxplots for significant species
-plot.glm(M=glmSR, var= "SR", db=databp, sel.criteria = "spear")
-plot.glm(glmSRnat, var= "SRnat", sel.criteria = "spear")
-plot.glm(glmSRali, var= "SRali", sel.criteria = "spear")
-plot.glm(glmSR.grass, var= "SR", db = databp[databp$PlotName %in% grasslands,], sel.criteria = "spear")
-
-
+plot.glm(M=glmSR.grass, var= "SR", db=databp, sel.criteria = "dev1")
+plot.glm(glmSRnat.grass, var= "SRnat", sel.criteria = "dev1")
+plot.glm(glmSRali.grass, var= "SRali", sel.criteria = "dev1")
 
 # Fig 1
-
-### all plots
-par(mfcol=c(2,3), oma=c(3,7,4,2), mar=c(2,3,2,1))
-thresh.freq( ylim=c(0,300))
-thresh.freq(effects=effects.glmSRnat, y=F, ylim=c(0,300))
-thresh.freq(effects=effects.glmSRali, y=F, ylim=c(0,300), leg=T)
-
-mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=5, at=c(0.3,0.8),adj=0.5, outer=T, las=1)
-mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),line=0, at=c(0.18,0.52,0.85),adj=0.5, outer=T, las=1)
-mtext(text="Abundance class", side=1, outer=T, line=1)
-
-
-
-##  GRasslands
-
 par(mfcol=c(2,3), oma=c(3,6,4,2), mar=c(2,3,2,1))
 thresh.freq(effects=effects.glmSR.grass, ylim=c(0,200))
 thresh.freq(effects=effects.glmSRnat.grass, y=F, ylim=c(0,200))
@@ -35,84 +16,10 @@ mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=4, at=c(0.3,0.8),
 mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),line=0, at=c(0.18,0.52,0.85),adj=0.5, outer=T, las=1)
 mtext(text="Abundance class", side=1, outer=T, line=1)
 
-# representing proportion of threshold
-par(mfcol=c(2,3), oma=c(3,6,4,2), mar=c(2,3,2,1))
-thresh.prop(effects=effects.glmSR.grass)
-thresh.prop(effects=effects.glmSRnat.grass, y=F)
-thresh.prop(effects=effects.glmSRali.grass, y=F)  
-
-mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=4, at=c(0.3,0.8),adj=0.5, outer=T, las=1)
-mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),line=-1, at=c(0.18,0.52,0.85),adj=0.5, outer=T, las=1)
-mtext(text="Abundance class", side=1, outer=T, line=1)
-
-### compare to LSD
-glmsp = which(rowSums(glmSR.grass$P<=0.05, na.rm=T)>0)
-length(glmsp)
-sum(!is.na(glmSR.grass$glms$th))
-
-lsdsp = which(abs(rowSums(LSDclassSR.grass$leastdiff, na.rm=T))>0)
-length(lsdsp)
-sum(!is.na(LSDclassSR.grass$threshold$threshold))
-
-which(!is.na(LSDclassSR.grass$threshold$threshold))  %in%  which(!is.na(glmSR.grass$glms$th))
-
-plot(unlist(glmSR.grass$z), unlist(LSDclassSR.grass$leastdiff + LSDclassSR.grass$diff), xlab="GLM z-score", ylab = "LSD - diff")
-abline(v=0,h=0)
-
-
-row.names(grass.effect.summary[grass.effect.summary$total.effect>0,]) %in% names(glmsp)
-row.names(grass.effect.summary[grass.effect.summary$total.effect>0,]) %in% rownames(glmSR.grass$glms)[which(!is.na(glmSR.grass$glms$th))]
-
-
-
-##  GRasslands
-
-par(mfcol=c(2,3), oma=c(3,6,4,2), mar=c(2,3,2,1))
-thresh.freq(effects=effects.LSDclassSR.grass, ylim=c(0,200))
-thresh.freq(effects=effects.LSDclassSRnat.grass, y=F, ylim=c(0,200))
-thresh.freq(effects=effects.LSDclassSRali.grass, y=F, ylim=c(0,200), leg=T)  
-
-mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=4, at=c(0.3,0.8),adj=0.5, outer=T, las=1)
-mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),line=-1, at=c(0.18,0.52,0.85),adj=0.5, outer=T, las=1)
-mtext(text="Abundance class", side=1, outer=T, line=1)
-
-# representing proportion of threshold
-par(mfcol=c(2,3), oma=c(3,6,4,2), mar=c(2,3,2,1))
-thresh.prop(effects=effects.LSDclassSR.grass)
-thresh.prop(effects=effects.LSDclassSRnat.grass, y=F)
-thresh.prop(effects=effects.LSDclassSRali.grass, y=F)  
-
-
-# table of all significant species in grasslands
-cols=c("threshold","pplots.impact","max.sig.diff","thr.diff")          
-grassland.thr=data.frame(SR=cbind(LSDclassSR.grass$threshold[, c("prevalence", cols)], round(LSDclassSR.grass$k$diff, 4)),
-                         SRnat=cbind(LSDclassSRnat.grass$threshold[,  cols], round(LSDclassSRnat.grass$k$diff, 4)),
-                         SRali=cbind(LSDclassSRali.grass$threshold[,  cols], round(LSDclassSRali.grass$k$diff, 4)))
-grassland.thr = grassland.thr[which(rowSums(grassland.thr[, c("SR.pplots.impact", "SRnat.pplots.impact","SRali.pplots.impact")]>0, na.rm=T)>0),]
-grassland.thr$ALIEN=species[rownames(grassland.thr), "ALIEN"]
-
-write.csv(as.matrix(grassland.thr), file="table thresholds grassland.csv")
-
-##  Woodlands
-par(mfcol=c(2,3), oma=c(3,6,4,2), mar=c(2,3,2,1))
-thresh.freq(effects=effects.LSDclassSR.wood, ylim=c(0,200))
-thresh.freq(effects=effects.LSDclassSRnat.wood, y=F, ylim=c(0,200))
-thresh.freq(effects=effects.LSDclassSRali.wood, y=F, ylim=c(0,200), leg=T)  
-
-mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=4, at=c(0.3,0.8),adj=0.5, outer=T, las=1)
-mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),line=-1, at=c(0.18,0.52,0.85),adj=0.5, outer=T, las=1)
-mtext(text="Abundance class", side=1, outer=T, line=1)
-
-
-# table of all significant species in woodlands
-
-woodland.thr=data.frame(SR=cbind(LSDclassSR.wood$threshold, LSDclassSR.wood$k),
-                         SRnat=cbind(LSDclassSRnat.wood$threshold, LSDclassSRnat.wood$k),
-                         SRali=cbind(LSDclassSRali.wood$threshold, LSDclassSRali.wood$k))
-woodland.thr = woodland.thr[which(rowSums(woodland.thr[, c("SR.nplots.impact", "SRnat.nplots.impact","SRali.nplots.impact")]>0, na.rm=T)>0),]
-woodland.thr$ALIEN=species[rownames(woodland.thr), "ALIEN"]
-
-write.csv(as.matrix(woodland.thr), file="table thresholds woodland.csv")
+### plot effects summary = proportion of significant negative effects and proportion of thresholds
+plot.effect.summary (effects.glmSR.grass)
+plot.effect.summary (effects.glmSRnat.grass)
+plot.effect.summary (effects.glmSRali.grass)
 
 # Fig 2 
 ### Percent impact per sp vs. prevalence
