@@ -196,9 +196,7 @@ envplot$newY=ceiling(envplot$POINTY/1000)
 landcover <- read.csv(file="data/landcover.csv",na.str=c("","NA"), as.is=T, stringsAsFactor=F)
 envplot$landcover=landcover$LANDCOVER[match(envplot$PLOTID, landcover$PLOTID)]
 
-## realgrasslands
-tmp=databp[databp$DominanceRank==1,]
-realgrasslands=as.character(tmp[which(as.character(tmp$Growth.forms) %in% c('GR','HR')) & which(as.character(tmp$landcover) %in% c('High Producing Exotic Grassland','Low Producing Grassland')),"PlotName"])
+
 
 
 ## REAL FINAL MERGIING
@@ -212,6 +210,12 @@ databp[which(duplicated(databp[, c('PlotName','SpeciesCode')])),]
 databp=databp[which(!duplicated(databp[, c('PlotName','SpeciesCode')])),]
 
 databp$abun=7-as.numeric(as.character(databp$domlevels))
+
+
+## realgrasslands
+tmp  <- databp[databp$DominanceRank==1,]
+realgrasslands <- as.character(tmp[which( (as.character(tmp$Growth.forms) %in% c('GR','HR')) & (as.character(tmp$landcover) %in% c('High Producing Exotic Grassland','Low Producing Grassland'))),
+                                   "PlotName"])
 
 ## Community data matrix
 tmp=databp
@@ -237,7 +241,7 @@ occur2=ceiling(occur2/1000)
 
 
 # list of objects to return
-return(list(databp, comm, envplot, species, grasslands, woodlands,lowlands, highlands, occur=occur2, aliens=aliens, natives=natives, realgrasslands) )
+return(list(databp, comm, envplot, species, grasslands, woodlands,lowlands, highlands, occur=occur2, aliens=aliens, natives=natives, realgrasslands= realgrasslands ) )
 }
 
 d=importBPdata()
