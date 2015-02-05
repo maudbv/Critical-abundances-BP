@@ -64,13 +64,13 @@ traitdata$SLA_NG[is.na(traitdata$SLA_NG)] <- NGross.data_mean[match( traitdata$p
 
 ###  Ordonez 2014 trait data
 source('script/data/ordonez trait data.R')
-traitdata$SLA_ordo=ordonez[match(traitdata$preferredtip, ordonez$tip), "SLA"]
+traitdata$SLA_ordo=ordonez[match(traitdata$tip, ordonez$tip), "SLA"]
 traitdata$SLA_ordo[is.na(traitdata$SLA_ordo)]=ordonez[match(traitdata$tip, ordonez$tip), "SLA"][is.na(traitdata$SLA_ordo)]
 
-traitdata$Hmax_ordo=ordonez[match(traitdata$preferredtip, ordonez$tip), "Hmax"]
+traitdata$Hmax_ordo=ordonez[match(traitdata$tip, ordonez$tip), "Hmax"]
 traitdata$Hmax_ordo[is.na(traitdata$Hmax_ordo)]=ordonez[match(traitdata$tip, ordonez$tip), "Hmax"][is.na(traitdata$Hmax_ordo)]
 
-traitdata$SM_ordo=ordonez[match(traitdata$preferredtip, ordonez$tip), "SM"]
+traitdata$SM_ordo=ordonez[match(traitdata$tip, ordonez$tip), "SM"]
 traitdata$SM_ordo[is.na(traitdata$SM_ordo)]=ordonez[match(traitdata$tip, ordonez$tip), "SM"][is.na(traitdata$SM_ordo)]
 
 
@@ -91,19 +91,19 @@ traitdata$SM_ordo[is.na(traitdata$SM_ordo)]=ordonez[match(traitdata$tip, ordonez
 # #269 sp
 
 
-
-### source TRY trait info
-source('script/data/TRY data.R')
-
-# ADD INFORMATION of TRY IN TRAIT DATA
-traitdata$TRYsla<-NA
-traitdata$TRYsla[match(TRYsp.SLA, traitdata$tip)] <- 1
-
-traitdata$TRYhveg<-NA
-traitdata$TRYhveg[match(TRYsp.Hveg, traitdata$tip)] <- 1
-
-traitdata$TRYsm<-NA
-traitdata$TRYsm[match(TRYsp.SM, traitdata$tip)] <- 1
+# 
+# ### source TRY trait info
+# source('script/data/TRY data.R')
+# 
+# # ADD INFORMATION of TRY IN TRAIT DATA
+# traitdata$TRYsla<-NA
+# traitdata$TRYsla[match(TRYsp.SLA, traitdata$tip)] <- 1
+# 
+# traitdata$TRYhveg<-NA
+# traitdata$TRYhveg[match(TRYsp.Hveg, traitdata$tip)] <- 1
+# 
+# traitdata$TRYsm<-NA
+# traitdata$TRYsm[match(TRYsp.SM, traitdata$tip)] <- 1
 
 
 
@@ -122,17 +122,13 @@ traitdata$SM= apply(!is.na(cbind( traitdata$SM_LEDA,
                                   traitdata$SM_ordo,
                                   traitdata$SM_ecotrait)),1,
                     function(x) as.numeric(sum(x)>0))
-
-traitdata$SLA.try= apply(cbind(traitdata$SLA,traitdata$TRYsla),1,
-                         function(x) as.numeric(sum(x, na.rm=T)>0) )
-traitdata$Hmax.try= apply(cbind(traitdata$Hmax,traitdata$TRYhveg),1,
-                          function(x) as.numeric(sum(x, na.rm=T)>0) )
-traitdata$SM.try= apply(cbind(traitdata$SM,traitdata$TRYsm),1,
-                        function(x) as.numeric(sum(x, na.rm=T)>0) )
-
-
-
-
+# 
+# traitdata$SLA.try= apply(cbind(traitdata$SLA,traitdata$TRYsla),1,
+#                          function(x) as.numeric(sum(x, na.rm=T)>0) )
+# traitdata$Hmax.try= apply(cbind(traitdata$Hmax,traitdata$TRYhveg),1,
+#                           function(x) as.numeric(sum(x, na.rm=T)>0) )
+# traitdata$SM.try= apply(cbind(traitdata$SM,traitdata$TRYsm),1,
+#                         function(x) as.numeric(sum(x, na.rm=T)>0) )
 
 return(traitdata)
 }

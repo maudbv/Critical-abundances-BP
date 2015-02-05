@@ -1,14 +1,17 @@
 ## Threshold master file
 
-# setwd("C:/Users/bernarm2/Dropbox/Work/doc boulot/post doc Lincoln/R/")
-setwd("~/Dropbox/Work/doc boulot/post doc Lincoln/R")
+setwd("C:/Users/bernarm2/Dropbox/Work/doc boulot/post doc Lincoln/R/")
+# setwd("~/Dropbox/Work/doc boulot/post doc Lincoln/R")
 
 library(doBy)
 library(vegan)
 library(coin)
 
 ### import data
-source('script/data/import BP species and environment data.R')
+# load("C:/Users/bernarm2/Dropbox/Work/doc boulot/post doc Lincoln/R/saved Rdata/article 3 - trait and phylo/save article 3.Rdata.RData")
+
+ source('script/data/import BP species and environment data.R', encoding = "native.enc")
+source('script/data/import trait data.R', encoding = "native.enc")
 
 ### taxonomy solving : 
 # extract names, match them to DB, create a reference list of changes, update initial DB
