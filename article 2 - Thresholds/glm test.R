@@ -6,7 +6,7 @@
 #  = testing difference in a community metric (e.g. SR) between low abundances
 # and increasing abundance classes using Generalized linear models 
 
-glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR',
+glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR', covar = NULL,
                      min.occur = 4,  min.class = 3, alpha=0.05, bootstrap = T, R = 999) {
   
   if (bootstrap) require(boot)
@@ -50,8 +50,8 @@ glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR',
     
     print(paste(i, ":", sp, "(",Sys.time(),")"))
     
-    sp.dat <- db.modif[as.character(db.modif$SpeciesCode)==sp,c("abun",var,'PlotName')] # select occurrences of the species
-    names(sp.dat) <- c('abun','var','PlotName')
+    sp.dat <- db.modif[as.character(db.modif$SpeciesCode)==sp,c("abun",var,'PlotName', covar)] # select occurrences of the species
+    names(sp.dat) <- c('abun','var','PlotName', "covar")[1:dim(sp.dat)[2]]
     
     abun <- sort(as.numeric(as.character(na.omit(unique(sp.dat$abun))))) ## list of abundance classes for species i
     n.obs[i,] <- sapply(2:6, FUN=function(j) length(sp.dat[which(sp.dat$abun==j),"var"]))
@@ -66,7 +66,7 @@ glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR',
     
     # GLM test
     f <-  glm(sp.dat$var ~ as.factor(sp.dat$abun), family=poisson(log))
-
+        
     glms[i,] <-  c(df= f$df.resid, resid.dev= f$dev,dev.ratio= (f$null.deviance -f$dev)/f$null.deviance )
     
     n <-  1:(length(abun)-1)
@@ -78,13 +78,22 @@ glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR',
     boot.results <-  (if (bootstrap) {
     (fboot <- function(data = sp.dat) {   
       
-      f.glm <- function(d=sp.dat, w) { 
-      f <-  glm(var ~ as.factor(abun),data = d[w,], family=poisson(log))
+    f.glm <- (if (!is.null(covar)) {
+     function(d=sp.dat, w) { 
+      f <-  glm(var ~ as.factor(abun) + covar ,data = d[w,], family=poisson(log))
       return(coefficients(f))
       }
+    }
+     else{
+       function(d=sp.dat, w) { 
+         f <-  glm(var ~ as.factor(abun),data = d[w,], family=poisson(log))
+         return(coefficients(f))
+       }
+     }
+     )
     
-boot.out <- boot(data, f.glm, R=R, strata =sp.dat$abun)   # stratifying by abundance level so that there is always at least one sample per abundance level
-    bootCI <- as.data.frame(t(sapply(1:length(abun), FUN =function(k) {
+boot.out <- boot(data, f.glm, R = R, strata = data$abun)   # stratifying by abundance level so that there is always at least one sample per abundance level
+    bootCI <- as.data.frame(t(sapply(1:(length(abun)+length(covar)), FUN =function(k) {
       bci <- boot.ci(boot.out, index = k,type=c("bca"), conf = 0.95)
       return(bci$bca)})))[,4:5]
     names(bootCI) = c("2.5%","97.5%")

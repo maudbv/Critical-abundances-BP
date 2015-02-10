@@ -24,30 +24,18 @@ source('script/article 2 - Thresholds/glm test.R')
 
 ### threshold analysis using GLMs
 
-## applying functions
-
-# glmSR=glm.test()
-# glmSRnat=glm.test(var="SRnat")
-# glmSRali=glm.test(var="SRali")
-
 # set bootstrap sample size
 R=999
 db=databp[databp$PlotName %in% realgrasslands,]
 
 # perform analyses
-system.time(glmSR.grass <- glm.test(db = db,bootstrap = T, R=R))
-
-"Error during wrapup: number of items to replace is not a multiple of replacement length"
-
-glmSRnat.grass <- glm.test(db = db,var="SRnat",bootstrap = T, R=R)
-glmSRali.grass <- glm.test(db = db,var="SRali",bootstrap = T, R=R)
+# system.time(glmSR.grass <- glm.test(db = db,bootstrap = T, R=R))
+# glmSRnat.grass <- glm.test(db = db,var="SRnat",bootstrap = T, R=R)
+# glmSRali.grass <- glm.test(db = db,var="SRali",bootstrap = T, R=R)
+# save(glmSR.grass,glmSRnat.grass,glmSRali.grass, file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
+load(file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
 
 ### frequencies of significantly negative effects and thresholds
-
-# effects.glmSR <- summary.glmtest(M=glmSR, group="ALIEN")
-# effects.glmSRnat= summary.glmtest(M=glmSRnat, group="ALIEN") 
-# effects.glmSRali= summary.glmtest(M=glmSRali, group="ALIEN") 
-
 effects.glmSR.grass <-  summary.glmtest(M=glmSR.grass, group="ALIEN")
 effects.glmSRnat.grass <- summary.glmtest(M=glmSRnat.grass, group="ALIEN") 
 effects.glmSRali.grass <- summary.glmtest(M=glmSRali.grass, group="ALIEN") 

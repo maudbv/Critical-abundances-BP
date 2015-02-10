@@ -87,6 +87,8 @@ levels(survey$domlevels) <- c(2,3,1,4,5,6,1,7)  # effectively merges levels 1 an
 survey$domlevels=as.numeric(as.character(survey$domlevels))
 survey$domlevels[survey$domlevels==7]=NaN
 
+survey$domlevels=as.numeric(as.character(survey$domlevels))
+survey$abun=7-as.numeric(as.character(survey$domlevels))
 
 ### Correcting species names
 
@@ -139,6 +141,7 @@ databp=merge(databp, species, by.x='SpeciesCode', by.y='Sp.code')
 databp[which(duplicated(databp[, c('PlotName','SpeciesCode')])),]
 databp=databp[which(!duplicated(databp[, c('PlotName','SpeciesCode')])),]
 
+
 ### UPDATING plot information 
 envplot=orderBy(~PLOTID,envplot)
 rownames(envplot)=envplot$PLOTID
@@ -158,6 +161,17 @@ envplot$SR.hr=tapply(databp$Growth.forms=='HR',as.character(databp$PlotName), FU
 envplot$SR.wood=tapply(databp$Growth.forms%in% c('TR','SH') ,as.character(databp$PlotName), FUN=sum, na.rm=T)[as.character(envplot$PLOTID)]
 envplot$SR.fe=tapply(databp$Growth.forms=='FE',as.character(databp$PlotName), FUN=sum, na.rm=T)[as.character(envplot$PLOTID)]
 envplot$SR.legumes=tapply(databp$Family=='Fabaceae',as.character(databp$PlotName), FUN=sum, na.rm=T)[as.character(envplot$PLOTID)]
+
+
+
+### Calculate an evenness index per plot
+envplot$dominance = 0
+for(i in c(1,2,3)) {
+  abclass <- c(4,5,6)[i]  
+  sel=unique(as.character(databp[which(databp$abun>=abclass),"PlotName"]))
+envplot[sel,"dominance"] = i
+}
+
 
 
 ## Defining Vegetation types
@@ -204,11 +218,13 @@ envplot$landcover=landcover$LANDCOVER[match(envplot$PLOTID, landcover$PLOTID)]
 m=merge(survey, envplot, by.x=c('PlotName'), by.y=c('PLOTID'))
 databp=m
 databp=merge(databp, species, by.x='SpeciesCode', by.y='Sp.code')
-databp$domlevels=as.numeric(as.character(databp$domlevels))
+
+
 ## REMOVE DUPLICATED lines corresponding to a combination of species x plot => where do these duplicate originate from ??
 databp[which(duplicated(databp[, c('PlotName','SpeciesCode')])),]
 databp=databp[which(!duplicated(databp[, c('PlotName','SpeciesCode')])),]
 
+databp$domlevels=as.numeric(as.character(databp$domlevels))
 databp$abun=7-as.numeric(as.character(databp$domlevels))
 
 
@@ -264,4 +280,3 @@ rm(d, importBPdata)
 # species$preferredtip <- names.species[match(species$tipcomplete,as.character(names.species$originalname)),"preferredname"]
 # species$preferredtip <- sapply(species$preferredname,FUN=function(x) paste(strsplit(x, " " )[[1]][c(1,2)],collapse="_" ))
 # species$preferredtip[species$preferredtip %in% c("NA_NA", "")] <- species$tip[species$preferredtip %in% c("NA_NA", "")]
-
