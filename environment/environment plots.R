@@ -214,11 +214,25 @@ landcover.col=c("brown","forestgreen",
                 "black","darkgrey",
                 "slateblue","yellow",
                 "grey", "red")
+
+landcover.col=c("grey","grey",
+                "grey","grey",
+                "red","grey",
+                "goldenrod","grey",
+                "forestgreen","grey",
+                "grey","grey",
+                "grey","grey",
+                "grey","grey",
+                "grey", "grey")
 quartz()
 par(mar=c(1,1,1,1))
  plot(envplot$POINTX,envplot$POINTY,pch=22,xlim=c(min(envplot$POINTX), 2550000),
         col=landcover.col[as.numeric(as.factor(envplot$landcover))], bg=landcover.col[as.numeric(as.factor(envplot$landcover))])
-  legend('topright',legend= levels(as.factor(envplot$landcover)), fill=landcover.col, cex=0.6)
+  
+# legend('topright',legend= levels(as.factor(envplot$landcover)), fill=landcover.col, cex=0.6)
+legend('topright',legend= c("High productivity grassland", 
+                            "Low productivity grassland", "Gorse and Broom","other"),
+       fill=c("goldenrod","forestgreen","red","grey"), cex=0.6)
 
 [1] "Afforestation (imaged, post LCDB 1)" "Broadleaved Indigenous Hardwoods"   
 [3] "Built-up Area"                       "Forest Harvested"                   
