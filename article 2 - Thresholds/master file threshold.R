@@ -41,10 +41,10 @@ db=databp[databp$PlotName %in% realgrasslands,]
 # glmSRali.grass <- glm.test(db = db,var="SRali",bootstrap = F, R=R)
 # save(glmSR.grass,glmSRnat.grass,glmSRali.grass, file = "saved Rdata/article 2 - threshold/non-booststrapped.glms.Rdata")
 
-system.time(glmSR.grass <- glm.test(db = db,bootstrap = T, R=R, covar ="dominance"))
-glmSRnat.grass <- glm.test(db = db,var="SRnat",bootstrap = T, R=R, covar ="dominance")
-glmSRali.grass <- glm.test(db = db,var="SRali",bootstrap = T, R=R, covar ="dominance")
-save(glmSR.grass,glmSRnat.grass,glmSRali.grass, file = "saved Rdata/article 2 - threshold/booststrapped+dominance.glms.Rdata")
+# system.time(glmSR.grass <- glm.test(db = db,bootstrap = T, R=R, covar ="dominance"))
+# glmSRnat.grass <- glm.test(db = db,var="SRnat",bootstrap = T, R=R, covar ="dominance")
+# glmSRali.grass <- glm.test(db = db,var="SRali",bootstrap = T, R=R, covar ="dominance")
+# save(glmSR.grass,glmSRnat.grass,glmSRali.grass, file = "saved Rdata/article 2 - threshold/booststrapped+dominance.glms.Rdata")
 
 ### frequencies of significantly negative effects and thresholds
 effects.glmSR.grass <-  summary.glmtest(M=glmSR.grass, group="ALIEN", type="boot")
