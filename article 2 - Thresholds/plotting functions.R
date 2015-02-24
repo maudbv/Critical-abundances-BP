@@ -1,7 +1,7 @@
 ### Threshold analysis plotting functions
 
 ## plot summary outputs
-plot.effect.summary <- function(  effects =effects.glmSR.grass ) {       
+plot.effect.summary <- function(  effects = effects.glmSR.grass ) {       
   
   n <- length(unique(effects$group)) 
   
@@ -27,17 +27,26 @@ plot.sp.glm=function(sp="ACHMIL", M=glmSR, var="SR", db=databp, type="boot") {
   col=rep("white",6)
   col[ as.numeric( M$thresh[sp,"th"])]="red"
   boxplot(as.formula(paste(var, " ~ abun")), data=Z, xlim=c(0,6), outline=F, varwidth=T, col=col)
-  mtext(side=3, line=-1.1, at=2:6,text=sapply(M$P[sp,], FUN=p2star), cex=0.8)
+  
+  ## adding significantce per class
+  if (type == "boot") Pclass <- M$boot[sp,grep("Pnegative", names(M$boot))]
+  if (type != "boot") Pclass <- M$P[sp,]
+  mtext(side=3, line=-1.1, at=2:6,text=sapply(  Pclass, FUN=p2star)[2:6], cex=0.8)
+  
+  
+ mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
   mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
+  
   title(main=sp, cex.main=0.8, line=1)
   
   return(M$thresh[sp,"th"])
 }
 
 ## plotting all significant species
-plot.glm=function(M=glmSR, var="SR", db=databp, sel.criteria = c("spear")) {
+plot.glm=function(M=glmSR, var="SR", db=databp, sel.criteria = c("spear"), type="boot") {
   
   par(mfrow=c(5,5), mar=c(2,2,2,2))
+  if (type=='boot')  M$thresh <- M$boot.thresh
   
   # select only species according to seletion criteria :
   if (sel.criteria == "spear") sel <- rownames(M$spearman) [M$spearman[,"p.val"] <=0.05 &  M$spearman[,"rho"] <0 ]
@@ -47,7 +56,7 @@ plot.glm=function(M=glmSR, var="SR", db=databp, sel.criteria = c("spear")) {
   
   ### Loop on selected species 
   for (sp in sel)  {
-    th=plot.sp.glm(sp= sp, M=M, var=var, db=db)
+    th=plot.sp.glm(sp= sp, M=M, var=var, db=db, type = type)
     print(paste(sp,":",th))
   }
 }
@@ -101,14 +110,26 @@ plot.impact = function(x="prevalence", y="nb.plot.impact", square = F){
   
   for (i in 1:3) {
     M <- list(glmSR.grass, glmSRnat.grass, glmSRali.grass) [[i]]
-    sp <- which(rownames(M$thresh)%in%aliens)
-    M=lapply(M, FUN=function(x) x=x[sp,])
+#     sp <- which(rownames(M$thresh)%in%aliens)  ## selects only aliens
+#     M=lapply(M, FUN=function(x) x=x[sp,])
     
     if (square==T)  ylim <- xlim <- c(0, max(c(M$thresh[,x],M$thresh[,y]), na.rm=T))
     if (square==F)  ylim <- c(0, max(M$thresh[,y], na.rm=T)) ;  xlim <- c(0, max(M$thresh[,x], na.rm=T))
     
-    plot(M$thresh[,x],M$thresh[,y] , ann=F,pch=20,  cex=1.2, xlim = xlim, ylim= ylim,
-         col=c("forestgreen", "firebrick")[ rownames(M$thresh)%in% aliens +1] ) 
+sp <- which(M$thresh[,y] == 0)
+(if (length(sp)>0 ) {
+    plot(M$thresh[-sp,x],M$thresh[-sp,y] , ann=F,pch=21,  cex=1, xlim = xlim, ylim= ylim,
+         col=c("forestgreen", "firebrick")[ rownames(M$thresh[-sp,])%in% aliens +1],
+         bg=c("forestgreen", "firebrick")[ rownames(M$thresh[-sp,])%in% aliens +1]) 
+    points(M$thresh[sp,x],M$thresh[sp,y] , ann=F,pch=21,  cex=1,
+           col=c("forestgreen", "firebrick")[ rownames(M$thresh[sp,])%in% aliens +1])
+}
+else {
+  plot(M$thresh[,x],M$thresh[,y] , ann=F,pch=21,  cex=1, xlim = xlim, ylim= ylim,
+       col=c("forestgreen", "firebrick")[ rownames(M$thresh[,])%in% aliens +1],
+       bg=c("forestgreen", "firebrick")[ rownames(M$thresh[,])%in% aliens +1]) 
+})
+
     if (square==T) abline(0,1)
     
     title( main= c("Total richness", "Native Richness","Alien Richness")[i])

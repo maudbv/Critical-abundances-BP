@@ -5,20 +5,25 @@ db <- databp[databp$PlotName %in% realgrasslands,]
 
 ### Preliminary figures :
 ### plot effects summary = proportion of significant negative effects and proportion of thresholds
-plot.effect.summary (effects.glmSR.grass)
-plot.effect.summary (effects.glmSRnat.grass)
-plot.effect.summary (effects.glmSRali.grass)
+plot.effect.summary (glmSR.sum$class.summary)
+plot.effect.summary (glmSRnat.sum$class.summary)
+plot.effect.summary (glmSRali.sum$class.summary)
 
 # boxplots for significant species
-plot.glm(M=glmSR.grass, var= "SR", db= db, sel.criteria = "th.exist")
-plot.glm(M = glmSRnat.grass, var= "SRnat",  db= db,sel.criteria = "th.exist")
+x11()
+plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", type="boot")
+mtext(1,text = "total richness", outer=T, line= -2)
+x11()
+plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist")
+mtext(1,text = "Native richness", outer=T, line= -2)
+
 plot.glm(M = glmSRali.grass, var= "SRali",  db= db,sel.criteria = "th.exist")
 
 #### Frequency of impacts per class
 par(mfcol=c(2,3), oma=c(3,6,4,2), mar=c(2,3,2,1))
-thresh.freq(effects=effects.glmSR.grass, ylim=c(0,200))
-thresh.freq(effects=effects.glmSRnat.grass, y=F, ylim=c(0,200))
-thresh.freq(effects=effects.glmSRali.grass, y=F, ylim=c(0,200), leg=T)  
+thresh.freq(effects=glmSR.sum$class.summary, ylim=c(0,200))
+thresh.freq(effects=glmSRnat.sum$class.summary, y=F, ylim=c(0,200))
+thresh.freq(effects=glmSRali.sum$class.summary, y=F, ylim=c(0,200), leg=T)  
 
 mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=4, at=c(0.3,0.8),adj=0.5, outer=T, las=1)
 mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),line=0, at=c(0.18,0.52,0.85),adj=0.5, outer=T, las=1)
@@ -34,13 +39,13 @@ plot.impact(x="prevalence", y="prop.plot.impact", square =F)
 
 ########### Impact size  #########
 ### Impact wtd mean size per sp vs. nb.impact
-plot.impact(x="nb.plot.impact", y="wtd.mean.diff", square =F)
+plot.impact(x="prop.plot.impact", y="wtd.mean.dif", square =F)
 
 ### Impact max size per sp vs. nb.impact
-plot.impact(x="nb.plot.impact", y="max.diff", square =F)
+plot.impact(x="prop.plot.impact", y="mean.dif", square =F)
 
 ### MAX Impact size per sp vs.nb.impact
-plot.impact(x="nb.plot.impact", y="max.diff", square =F)
+plot.impact(x="prop.plot.impact", y="max.dif", square =F)
 
 ### threshold per sp vs. nb.impact
 plot.impact(x="nb.plot.impact", y="th", square =F)
@@ -52,8 +57,8 @@ plot.impact(x="th", y="wtd.mean.diff", square =F)
 
 ### Ranking species by impact size * spread of impact
 rank.impact(x="wtd.mean.diff", y="nb.plot.impact")
-rank.impact(x="wtd.mean.diff", y="prop.plot.impact")
-rank.impact(x="max.diff", y="nb.plot.impact")
+rank.impact(x="wtd.mean.dif", y="prop.plot.impact")
+rank.impact(x="max.dif", y="prop.plot.impact")
 
 
 ##### impact index vs. time since introduciton
