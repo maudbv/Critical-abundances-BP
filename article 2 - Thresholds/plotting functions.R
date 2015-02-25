@@ -21,20 +21,22 @@ plot.effect.summary <- function(  effects = effects.glmSR.grass ) {
 }
 
 ### plotting individual species
-plot.sp.glm=function(sp="ACHMIL", M=glmSR, var="SR", db=databp, type="boot") {  
+plot.sp.glm=function(sp="ACHMIL", M=glmSR, var="SR", db=databp, bst =T ) {  
+  
   Z= db[db$SpeciesCode==sp,]
-  if (type == "boot") M$thresh <-M$boot.thresh
+  
+  if (bst ==T) M$thresh <-M$boot.thresh
+  
   col=rep("white",6)
-  col[ as.numeric( M$thresh[sp,"th"])]="red"
+  col[ as.numeric( M$thresh[sp,"th"])]="red"  # identify the threshold
+
   boxplot(as.formula(paste(var, " ~ abun")), data=Z, xlim=c(0,6), outline=F, varwidth=T, col=col)
   
   ## adding significantce per class
-  if (type == "boot") Pclass <- M$boot[sp,grep("Pnegative", names(M$boot))]
-  if (type != "boot") Pclass <- M$P[sp,]
-  mtext(side=3, line=-1.1, at=2:6,text=sapply(  Pclass, FUN=p2star)[2:6], cex=0.8)
+  if (bst ==T) Pclass <- M$boot[sp,grep("Pnegative", names(M$boot))]
+  if (bst !=T) Pclass <- M$P[sp,]
+  mtext(side=3, line=-1.1, at=2:6,text=sapply( Pclass, FUN=p2star)[2:6], cex=0.8)
   
-  
- mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
   mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
   
   title(main=sp, cex.main=0.8, line=1)
@@ -42,11 +44,57 @@ plot.sp.glm=function(sp="ACHMIL", M=glmSR, var="SR", db=databp, type="boot") {
   return(M$thresh[sp,"th"])
 }
 
-## plotting all significant species
-plot.glm=function(M=glmSR, var="SR", db=databp, sel.criteria = c("spear"), type="boot") {
+
+### plotting Effect sizes for individual species 
+plot.sp.ES=function(sp="ACHMIL", M=glmSR, var="SR", db=databp) {  
   
-  par(mfrow=c(5,5), mar=c(2,2,2,2))
-  if (type=='boot')  M$thresh <- M$boot.thresh
+  Z <- db[db$SpeciesCode==sp,]
+  es <- as.numeric(M$est[sp,])
+  low <- as.numeric(M$boot[sp,grep("q2.5", names(M$boot))])[2:6]
+  hi <- as.numeric(M$boot[sp,grep("q97.5", names(M$boot))])[2:6]
+  
+  n <- as.numeric(M$n.obs[sp,])
+  
+  ## correct for small sample sizes
+  small <- es
+  small[n>=3] <- NA
+  es[n<3] <- NA
+  low[n<3] <- NA
+  hi[n<3] <- NA
+  
+  lims <-  max(c(abs(low),abs(hi)), na.rm=T)
+  
+  col <- rep("black",6)
+  col[ as.numeric( M$boot.thresh[sp,"th"])] <- "red"  # identify the threshold
+
+  plot(1:5, rep(0,5), ylim = c(-lims,+lims),xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F)
+  axis(1,at = 1:5, label = names(M$est), tcl= 0.1,mgp=c(1,0.5,0))
+  axis(2, tcl= 0.1, las=1, mgp=c(1,0.5,0))
+  title(main=sp, cex.main=0.8, line=0.2)
+  
+  segments(1:5,rep(0, 5), 1:5, es, col = col[2:6], lwd=10, lend=1)
+  abline(h=0, col="grey")
+  points(1:5, small, col = col[2:6], pch=20)
+  ## Add bootstrapped CI
+  arrows(1:5,low, 1:5, hi, col = "grey40", lwd=1, code =3, length=0.05, angle=90)
+  mtext(side=3, line=-1.1, at=1:5,text=n, cex=0.8)
+  
+  ## adding significantce per class
+#   Pclass <- M$P[sp,]
+#   mtext(side=3, line=-1.1, at=1:5,text=sapply( Pclass, FUN=p2star), cex=0.8)
+#   
+#   mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
+  
+
+  
+  return(M$boot.thresh[sp,"th"])
+}
+
+## plotting all significant species
+plot.glm=function(M=glmSR, var="SR", db=databp, sel.criteria = c("th.exist"), bst =T, ES = T) {
+  
+  par(mfrow=c(5,5), mar=c(2,2,2,1))
+  if (bst ==T)  M$thresh <- M$boot.thresh
   
   # select only species according to seletion criteria :
   if (sel.criteria == "spear") sel <- rownames(M$spearman) [M$spearman[,"p.val"] <=0.05 &  M$spearman[,"rho"] <0 ]
@@ -56,7 +104,10 @@ plot.glm=function(M=glmSR, var="SR", db=databp, sel.criteria = c("spear"), type=
   
   ### Loop on selected species 
   for (sp in sel)  {
-    th=plot.sp.glm(sp= sp, M=M, var=var, db=db, type = type)
+    
+    if (ES == F) th=plot.sp.glm(sp= sp, M=M, var=var, db=db, bst = bst)
+    if (ES == T) th=plot.sp.ES(sp= sp, M=M, var=var, db=db)
+    
     print(paste(sp,":",th))
   }
 }

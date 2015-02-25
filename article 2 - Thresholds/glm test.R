@@ -5,13 +5,16 @@
 # and increasing abundance classes using Generalized linear models 
 
 glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR', covar = NULL,
-                     min.occur = 4,  min.class = 3, alpha=0.05, bootstrap = T, R = 999) {
+                     min.occur = 3,  min.class = 1, alpha=0.05, bootstrap = T, R = 999, drastic = F) {
   
   if (bootstrap) require(boot)
   
   
-  ## sp spanning the minimum number of abundance classes in which they have a minimum occurrence
-  a <- unique(names(which(rowSums(table(db$SpeciesCode, db$abun)>=min.occur)>=min.class)))  
+  ## sp occurring>=min.occur in the first abundance class
+  ### and at least one abundance class of abundance 
+  a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=min.occur)>=1) 
+           &  table(db$SpeciesCode, db$abun)[,1]>=min.occur))
+  
   
   # select only species in a and b groups :
   db.modif <- db[which(db$SpeciesCode %in% a),] 
@@ -22,7 +25,9 @@ glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR', 
   # initiate results
   init <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= 5,
                              dimnames=list(sp.names,c("c2", "c3", "c4", "c5", "c6"))))
-  dif <-  n.obs <- est<- P <- z <- init
+  dif <-   est<- P <- z <- init
+  n.obs <-data.frame(matrix(NA, nrow=length(sp.names), ncol= 6,
+                            dimnames=list(sp.names,c("c1","c2", "c3", "c4", "c5", "c6"))))
   
   glms <-data.frame(matrix(NA, nrow=length(sp.names), ncol= 3,
                            dimnames=list(sp.names, c( "df", "resid.dev","dev.ratio"))))
@@ -56,7 +61,7 @@ glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR', 
     names(sp.dat) <- c('abun','var','PlotName', "covar")[1:dim(sp.dat)[2]]
     
     abun <- sort(as.numeric(as.character(na.omit(unique(sp.dat$abun))))) ## list of abundance classes for species i
-    n.obs[i,] <- sapply(2:6, FUN=function(j) length(sp.dat[which(sp.dat$abun==j),"var"]))
+    n.obs[i,] <- sapply(1:6, FUN=function(j) length(sp.dat[which(sp.dat$abun==j),"var"]))
     
     
     #calculate diference in class mean SR
@@ -102,29 +107,10 @@ boot.out <- boot(data, f.glm, R = R, strata = data$abun)   # stratifying by abun
     Pnegative <- apply(rbind(boot.out$t,boot.out$t0), 2, FUN= function(k) sum(k > 0)/(R+1))
     bias <-  colMeans(boot.out$t) - boot.out$t0
     boot.se <- sqrt(rowSums(apply(boot.out$t, 1, FUN= function(k) (k - colMeans(boot.out$t))^2)) / (R-1) )
-    boot.results <- cbind(t0 = boot.out$t0,bootCI,  Pnegative= Pnegative, bias = bias, se = boot.se )
+    boot.results <- cbind(t0 = boot.out$t0, bootCI,  Pnegative= Pnegative, bias = bias, se = boot.se )
     
     
-#     ## homemade bootstrapping function using document by John Fox 2002 Bootstrapping Regression Models
-#     ## http://cran.r-project.org/doc/contrib/Fox-Companion/appendix-bootstrapping.pdf
-#     myboot <- function (d =sp.dat, fn = f.glm, R = R, keep.size = TRUE ) {
-#        boot.coeff <- as.data.frame(sapply(1:R,FUN = function (k, keep.size = keep.size) {
-#          if (keep.size) xb <- unlist(tapply(1:length(d$abun), INDEX = d$abun, FUN = sample, replace=TRUE )) ## keeps sample size in each classs of abundance 
-#          if (!keep.size) xb <- sample(1:length(d$abun), replace=TRUE ) ## changes the sample size in each class of abundance
-#           fb <- f.glm(d = sp.dat, w = xb)
-#           return(fb)
-#         }, keep.size=keep.size))
-#        boot.coeff$t0 <- f.glm(sp.dat, rownames(sp.dat))
-#        boot.CI <- cbind(t0 =    boot.coeff$t0,
-#                         as.data.frame(t(apply(boot.coeff, 1,quantile, probs=c(0.025, 0.975)))))
-#        boot.CI$Pnegative <- apply(boot.coeff, 1, FUN= function(k) sum(k > 0)/(R+1))
-#        bias <-  rowMeans(boot.coeff) - boot.coeff$t0 
-#        boot.se <- sqrt(rowSums(apply(boot.coeff,2, FUN= function(k) (k -  rowMeans(boot.coeff) )^2)) / (R) )
-#       boot.out <- data.frame(boot.CI, bias = bias, se = boot.se ) 
-#       return(boot.out)
-#       }
-#     boot.results <- myboot(sp.dat, fn = f.glm, R = R, keep.size = F)
-    
+
     return (boot.results)
       })()
     }
@@ -140,12 +126,23 @@ boot.out <- boot(data, f.glm, R = R, strata = data$abun)   # stratifying by abun
     neg <-   which(summary(f)$coef [, 3]<0) 
     
     ## which classes show signif negative dif
-    sig  <-  which((summary(f)$coef [, 4] <= alpha) & ( summary(f)$coef [, 3] <0)) 
-    if (bootstrap) boot.sig  <-  which((sign(boot.results [1:length(abun),3]) == sign(boot.results [1:length(abun),2])) & ( summary(f)$coef [1:length(abun), 3] <0)) 
+    sig  <-  which((summary(f)$coef [, 4] <= alpha) & ( summary(f)$coef [, 3] <0) & (n.obs[i,] >= min.occur)) 
+    
+    if (bootstrap) boot.sig  <-  which((sign(boot.results [1:length(abun),3]) == sign(boot.results [1:length(abun),2])) 
+                                       & ( summary(f)$coef [1:length(abun), 3] <0)
+                                       & (n.obs[i,] >= min.occur)) 
+
+
+    ## alternative : 
+    if (bootstrap & drastic) boot.sig  <-  which((sign(boot.results [1:length(abun),3]) == sign(boot.results [1:length(abun),2])) 
+                                       & ( summary(f)$coef [1:length(abun), 3] <0
+                                       & (summary(f)$coef [, 4] <= alpha))
+                                       & (n.obs[i,] >= min.occur))
+                                    
 
 
     #### Threshold detection
-    thresh.detect <- function(signif) {
+    thresh.detect <- function(signif, negative) {
     
     min.sig <- th <-  prevalence <- n.plot.impact <- mean.dif <- wtd.mean.dif <- th.dif <- max.dif <- NA
     
@@ -158,7 +155,7 @@ boot.out <- boot(data, f.glm, R = R, strata = data$abun)   # stratifying by abun
       
       # search for thresholds in case min.sig is not followed by negative diferences
       th.sig = sapply(signif, FUN= function(k) {
-        c1 <- all(((k):max(abun)) %in% neg) # all higher classes have negative diferences
+        c1 <- all(((k):max(abun)) %in% negative) # all higher classes have negative diferences
         c2 <- (length(sp.dat[sp.dat$abun == k, "var"]) >= min.occur) # at least min.occur observation in the threshold class
         return(c1 & c2)
       })
@@ -194,8 +191,8 @@ boot.out <- boot(data, f.glm, R = R, strata = data$abun)   # stratifying by abun
   return( c(min.sig, th, prevalence, n.plot.impact, prop.plot.impact, mean.dif,  wtd.mean.dif,th.dif,max.dif))
     }
 
-thresh[i,] <- thresh.detect(signif = sig)
-boot.thresh[i,] <- thresh.detect(signif = boot.sig)
+thresh[i,] <- thresh.detect(signif = sig, negative = neg)
+boot.thresh[i,] <- thresh.detect(signif = boot.sig, negative = neg)
   }
   
 if (bootstrap) return(list(glms=glms, boot= boot.table, thresh = thresh, boot.thresh= boot.thresh, spearman=spear, n.obs = n.obs,  dif = dif,est= est, z=z,P= P))
@@ -277,7 +274,7 @@ summary.glmtest <- function(M = glmSR.grass,data=species, group="ALIEN", type =c
     if(sum(freq.thr, na.rm=T)!=0) perc.thr <- freq.thr / sum(freq.thr, na.rm=T)
     if(sum(freq.thr, na.rm=T)==0) perc.thr <- freq.thr 
     
-    out<-rbind(out, data.frame(group=names[j], nb.sp=n.sp, n.target = n.target, freq.impact=n.impact, freq.negative =n.negative,freq.positive =n.positive,
+    out<-rbind(out, data.frame(group=names[j],class = 2:6, nb.sp=n.sp, n.target = n.target, freq.impact=n.impact, freq.negative =n.negative,freq.positive =n.positive,
                               prop.impact=as.array(p.impact),freq.thr=freq.thr, prop.thr=prop.thr, perc.thr=perc.thr))
     
     #summary table

@@ -11,13 +11,22 @@ plot.effect.summary (glmSRali.sum$class.summary)
 
 # boxplots for significant species
 x11()
-plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", type="boot")
+plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", bst =T, ES = T)
 mtext(1,text = "total richness", outer=T, line= -2)
 x11()
 plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist")
 mtext(1,text = "Native richness", outer=T, line= -2)
+x11()
+plot.glm(M = glmSRali, var= "SRali",  db= db,sel.criteria = "th.exist")
+mtext(1,text = "Native richness", outer=T, line= -2)
 
-plot.glm(M = glmSRali.grass, var= "SRali",  db= db,sel.criteria = "th.exist")
+# boxplots for significant species
+x11()
+plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", bst =T, ES = F)
+mtext(1,text = "total richness", outer=T, line= -2)
+x11()
+plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist", ES = F)
+mtext(1,text = "Native richness", outer=T, line= -2)
 
 #### Frequency of impacts per class
 par(mfcol=c(2,3), oma=c(3,6,4,2), mar=c(2,3,2,1))
