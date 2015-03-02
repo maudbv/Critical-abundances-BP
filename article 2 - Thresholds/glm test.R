@@ -5,7 +5,7 @@
 # and increasing abundance classes using Generalized linear models 
 
 glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR', covar = NULL,
-                     min.occur = 3,  min.class = 1, alpha=0.05, bootstrap = T, R = 999, drastic = F) {
+                     min.occur =5,  min.class = 1, alpha=0.05,CI=0.95, bootstrap = T, R = 999, drastic = F) {
   
   if (bootstrap) require(boot)
   
@@ -101,7 +101,7 @@ glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR', 
     
 boot.out <- boot(data, f.glm, R = R, strata = data$abun)   # stratifying by abundance level so that there is always at least one sample per abundance level
     bootCI <- as.data.frame(t(sapply(1:(length(abun)+length(covar)), FUN =function(k) {
-      bci <- boot.ci(boot.out, index = k,type=c("bca"), conf = 0.95)
+      bci <- boot.ci(boot.out, index = k,type=c("bca"), conf = CI)
       return(bci$bca)})))[,4:5]
     names(bootCI) = c("2.5%","97.5%")
     Pnegative <- apply(rbind(boot.out$t,boot.out$t0), 2, FUN= function(k) sum(k > 0)/(R+1))
@@ -201,6 +201,28 @@ if (!bootstrap) return(list(glms=glms, thresh = thresh,  spearman=spear, n.obs =
 }
 
 
+#########calculating proportional indices
+calc.prop.impact = function(var="SR" , M = glmSR, db = db , index = "mean.dif") {
+  X <-M$boot.thresh
+  # X <-M$boot.thresh[!is.na(M$boot.thresh$th),]
+  Z<- db[db$SpeciesCode %in% rownames(X),]
+  tab <- tapply(Z[,var], list(Z$SpeciesCode , Z$abun), FUN=mean, na.rm=T)
+  prop.index <- X[,index] /tab[,1]
+  return(prop.index)
+}
+
+      # adding prop impact size to the table
+      add.prop <- function(N = glmSR, var ="SR", data=db) { 
+        modif <-N$boot.thresh
+        modif$prop.mean.dif <- calc.prop.impact(var="SR" ,M=N, db = data, index = "mean.dif")
+        modif$prop.wtd.mean.dif <- calc.prop.impact(var="SR" , M =N, db = data, index = "wtd.mean.dif")
+        modif$prop.max.dif <- calc.prop.impact(var="SR" , M =N, db = data, index = "max.dif")
+        
+        modif$index <-sqrt(modif$prop.wtd.mean.dif^2 + modif$prop.plot.impact^2)
+        modif$index <-sqrt(modif$prop.wtd.mean.dif) +sqrt(modif$prop.plot.impact)
+        
+        return(modif)
+      }
 
 # summarizing results on thresholds per group of species
 summary.glmtest <- function(M = glmSR.grass,data=species, group="ALIEN", type =c("glm", "boot")) {

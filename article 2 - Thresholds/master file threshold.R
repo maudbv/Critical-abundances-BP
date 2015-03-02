@@ -30,12 +30,14 @@ source('script/article 2 - Thresholds/plotting functions.R')
 # set bootstrap sample size
 R <- 999
 db <- databp[databp$PlotName %in% realgrasslands,]
-min.occur <- 3
-# perform analyses
- system.time(glmSR <- glm.test(db = db,bootstrap = T, min.occur= min.occur, R=R))
- glmSRnat <- glm.test(db = db,var="SRnat",bootstrap = T,min.occur= min.occur,  R=R)
- glmSRali <- glm.test(db = db,var="SRali",bootstrap = T,min.occur= min.occur,  R=R)
-save(glmSR,glmSRnat,glmSRali, file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
+min.occur <- 5
+# 
+# # perform analyses
+#  system.time(glmSR <- glm.test(db = db,bootstrap = T, min.occur= min.occur, R=R, CI=0.95, drastic =F))
+#  glmSRnat <- glm.test(db = db,var="SRnat",bootstrap = T,min.occur= min.occur,  R=R, CI=0.95, drastic =F)
+#  glmSRali <- glm.test(db = db,var="SRali",bootstrap = T,min.occur= min.occur,  R=R, CI=0.95, drastic =F)
+# 
+# save(glmSR,glmSRnat,glmSRali, file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
 
 load(file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
 
@@ -45,7 +47,14 @@ load(file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
 # glmSRali.dom <- glm.test(db = db,var="SRali",bootstrap = T, R=R,min.occur= min.occur,  covar ="dominance")
 # save(glmSR.dom,glmSRnat.dom,glmSRali.dom, file = "saved Rdata/article 2 - threshold/booststrapped+dominance.glms.Rdata")
 
-### frequencies of significantly negative effects and thresholds
+
+######## calculate proportional impacts (mean % of species lost)
+glmSR$boot.thresh = add.prop(N = glmSR, var ="SR", data=db)
+glmSRnat$boot.thresh = add.prop(N = glmSRnat, var ="SRnat", data=db)
+glmSRali$boot.thresh = add.prop(N = glmSRali, var ="SRali", data=db)
+
+
+### SUMMARY of frequencies of significantly negative effects and thresholds
 glmSR.sum <-  summary.glmtest(M=glmSR, group="ALIEN", type="boot")
 glmSRnat.sum <- summary.glmtest(M=glmSRnat, group="ALIEN", type="boot") 
 glmSRali.sum <- summary.glmtest(M=glmSRali, group="ALIEN", type="boot") 
@@ -71,11 +80,11 @@ glm.table <- lapply(list(Total.richness = glmSR, Native.richness = glmSRnat, Ali
 })
 
 ## compare natives and aliens total threshold/impact occurrence :
-tbl <- glmSR.sum$overall.summary
+tbl <- glmSRali.sum$overall.summary
 tbl$nothr <- tbl$nb.sp - tbl$freq.thr 
 tbl= t(tbl[,3:4])
 
-chisq.test(tbl) ### marginally significant P = 0.05177
+chisq.test(tbl) ### significant for SRnat P = 0.02144
 
 #GLM with binomial
 # (thresh, no thresh) ~ class.abun + alien.status
@@ -97,18 +106,45 @@ summary(alienstatus_SR)
 
 ## compare natives and aliens threshold occurrence per class:
 
+#SR
 tbl <- glmSR.sum $class.summary
 chisq.test(unstack(tbl, form = nb.sp ~ group)) ### no difference in distrib of occurrence per class
-# compare proportion of threshold in each class between alien and native targets : NOTHING SIGNIFICANT
+chisq.test(unstack(tbl, form = n.target ~ group)) ### no difference in distrib of occurrence per class
+t.test(n.target/nb.sp ~ group, data = tbl, paired = T) ### there is a difference in the proportion of target sp per class
+
+chisq.test(unstack(tbl, form = freq.thr ~ group)) ### problem : too many zeros in native group
+chisq.test(unstack(tbl, form = freq.negative ~ group)) ### diff in proportion of negative coeff
+chisq.test(unstack(tbl, form = freq.positive ~ group)[1:4,]) ### no diff in proportion of positive coeff
+
 t.test(freq.impact/nb.sp ~ group, data=tbl, paired = T)
 t.test(freq.thr/nb.sp ~ group, data = tbl, paired =T) 
 
-t.test(n.target/nb.sp ~ group, data = tbl, paired = T) ### there is a difference in the proportion of target sp per class
-tbl [tbl$n.target !=0,] 
-y = tbl$freq.impact/tbl$n.target
 
-t.test(freq.impact/n.target ~ group, data=tbl, paired = T)
-t.test(freq.thr/n.target ~ group, data = tbl, paired =T) 
+#SRnat
+tbl <- glmSRnat.sum $class.summary
+chisq.test(unstack(tbl, form = n.target ~ group)) ### no difference in distrib of occurrence per class
+t.test(n.target/nb.sp ~ group, data = tbl, paired = T) ### there is a difference in the proportion of target sp per class
+
+chisq.test(unstack(tbl, form = freq.thr ~ group)[c(1,3,4),]) ### ns
+chisq.test(unstack(tbl, form = freq.negative ~ group)) ### diff in proportion of negative coeff
+chisq.test(unstack(tbl, form = freq.positive ~ group)[1:4,]) ### no diff in proportion of positive coeff
+
+t.test(freq.impact/nb.sp ~ group, data=tbl, paired = T)  ### signif P= 0.01681, df=4, t=-3.9508
+t.test(freq.thr/nb.sp ~ group, data = tbl, paired =T)   ### signif P = 0.03048, df=4, t=-32808
+
+
+#SRali
+tbl <- glmSRnat.sum $class.summary
+chisq.test(unstack(tbl, form = n.target ~ group)) ### no difference in distrib of occurrence per class
+t.test(n.target/nb.sp ~ group, data = tbl, paired = T) ### there is a difference in the proportion of target sp per class
+
+chisq.test(unstack(tbl, form = freq.thr ~ group)[c(1,3,4),]) ### ns
+chisq.test(unstack(tbl, form = freq.negative ~ group)) ### diff in proportion of negative coeff
+chisq.test(unstack(tbl, form = freq.positive ~ group)[1:4,]) ### no diff in proportion of positive coeff
+
+t.test(freq.impact/nb.sp ~ group, data=tbl, paired = T)  ### signif P= 0.01681, df=4, t=-3.9508
+t.test(freq.thr/nb.sp ~ group, data = tbl, paired =T)   ### signif P = 0.03048, df=4, t=-32808
+
 
 ## other method : Independence tests : NOTHING SIGNIFICANT
 tbl <- as.table(t(rbind(none = as.numeric(table(na=is.na(glmSRnat$boot.thresh$th), alien = rownames(glmSRnat$boot.thresh)%in%aliens)[2,]),
@@ -117,6 +153,3 @@ table(glmSRnat$boot.thresh$th, alien = rownames(glmSRnat$boot.thresh)%in%aliens)
 library(coin)
 cmh_test(tbl)
 chisq_test(as.table( tbl))
-
-cmh_test(as.table(tbl[,-1]))
-chisq_test(as.table(tbl[,-1]))

@@ -1,7 +1,7 @@
 ### Threshold analysis plotting functions
 
 ## plot summary outputs
-plot.effect.summary <- function(  effects = effects.glmSR.grass ) {       
+plot.effect.summary <- function(  effects = effects.glmSR ) {       
   
   n <- length(unique(effects$group)) 
   
@@ -21,25 +21,43 @@ plot.effect.summary <- function(  effects = effects.glmSR.grass ) {
 }
 
 ### plotting individual species
-plot.sp.glm=function(sp="ACHMIL", M=glmSR, var="SR", db=databp, bst =T ) {  
+plot.sp.glm=function(sp="ACHMIL", M=glmSR, var="SR", db=db, bst =T, boxplots =T ) {  
   
   Z= db[db$SpeciesCode==sp,]
   
   if (bst ==T) M$thresh <-M$boot.thresh
   
+  #alt boxplot
+  (if(boxplots) {
   col=rep("white",6)
   col[ as.numeric( M$thresh[sp,"th"])]="red"  # identify the threshold
+  boxplot(as.formula(paste(var, " ~ abun")), data=Z, xlim=c(0.5,6.5), outline=F,
+          varwidth=T, col=col,  xaxt = "n", yaxt="n", ann=F)
+  abline(h = median(Z[Z$abun == 1, var], na.rm=T), lty="dotted")
+  }
+  else {
+     # alt points
+    col = rep("white",length(Z$abun))
+    col[ Z$abun == as.numeric( M$thresh[sp,"th"])]="black"  # identify the threshold
+    Z$abun.jit = jitter(Z$abun, amount = 0.4)
+    plot(as.formula(paste(var, " ~ abun.jit")), data=Z, xlim=c(0.5,6.5),
+         type="n",xaxt = "n", yaxt="n", ann=F)
+    abline(h = mean(Z[Z$abun == 1, var], na.rm=T), lty="dotted")
+    points(as.formula(paste(var, " ~ abun.jit")), data=Z, xlim=c(0.5,6.5),
+       col="black", bg=col,pch=21,  xaxt = "n", yaxt="n", ann=F, cex = 0.8)
+  })
 
-  boxplot(as.formula(paste(var, " ~ abun")), data=Z, xlim=c(0,6), outline=F, varwidth=T, col=col)
-  
+  axis(1,at = 1:6, label = names(M$n.obs), tcl= 0.1,mgp=c(1,0.5,0),las=1)
+  axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1)
+  title(main=sp, cex.main=0.8, line=0.2)
+ 
+
   ## adding significantce per class
   if (bst ==T) Pclass <- M$boot[sp,grep("Pnegative", names(M$boot))]
   if (bst !=T) Pclass <- M$P[sp,]
-  mtext(side=3, line=-1.1, at=2:6,text=sapply( Pclass, FUN=p2star)[2:6], cex=0.8)
+#   mtext(side=3, line=-1.1, at=2:6,text=sapply( Pclass, FUN=p2star)[2:6], cex=0.8)
   
-  mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
-  
-  title(main=sp, cex.main=0.8, line=1)
+#   mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
   
   return(M$thresh[sp,"th"])
 }
@@ -53,47 +71,49 @@ plot.sp.ES=function(sp="ACHMIL", M=glmSR, var="SR", db=databp) {
   low <- as.numeric(M$boot[sp,grep("q2.5", names(M$boot))])[2:6]
   hi <- as.numeric(M$boot[sp,grep("q97.5", names(M$boot))])[2:6]
   
-  n <- as.numeric(M$n.obs[sp,])
-  
-  ## correct for small sample sizes
+  n <- as.numeric(M$n.obs[sp,])[2:6]
+   ## correct for small sample sizes
   small <- es
-  small[n>=3] <- NA
-  es[n<3] <- NA
+  small[which(n>=3)] <- NA
+  es[which(n<3)] <- NA
   low[n<3] <- NA
   hi[n<3] <- NA
   
-  lims <-  max(c(abs(low),abs(hi)), na.rm=T)
+  lims <-  max(c(abs(low),abs(hi)), na.rm=T) +0.02
   
-  col <- rep("black",6)
-  col[ as.numeric( M$boot.thresh[sp,"th"])] <- "red"  # identify the threshold
-
-  plot(1:5, rep(0,5), ylim = c(-lims,+lims),xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F)
-  axis(1,at = 1:5, label = names(M$est), tcl= 0.1,mgp=c(1,0.5,0))
-  axis(2, tcl= 0.1, las=1, mgp=c(1,0.5,0))
+  
+  col <- rep("white",6)
+  col[ as.numeric( M$boot.thresh[sp,"th"])] <- "black"  # identify the threshold
+  
+  ## alternatively:
+  plot(1:5,  rep(0,5),ylim = c(-lims,+lims),xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F)
+  axis(1,at = 1:5, label = names(M$est), tcl= 0.1,mgp=c(1,0.5,0),las=1)
+  axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1)
   title(main=sp, cex.main=0.8, line=0.2)
   
-  segments(1:5,rep(0, 5), 1:5, es, col = col[2:6], lwd=10, lend=1)
-  abline(h=0, col="grey")
-  points(1:5, small, col = col[2:6], pch=20)
+  abline(h=0,lty="dotted")
+
+  # if (!all(is.na(small))) points(1:5, small, pch=".")  
+
   ## Add bootstrapped CI
-  arrows(1:5,low, 1:5, hi, col = "grey40", lwd=1, code =3, length=0.05, angle=90)
-  mtext(side=3, line=-1.1, at=1:5,text=n, cex=0.8)
+  arrows(1:5,low,   1:5,hi, lwd=1, code =3, length=0.05, angle=90)
+  points(1:5,es, bg = col[2:6], pch=21)
   
-  ## adding significantce per class
+  mtext(side=3, line=-1.2, at=1:5,text=n, cex=0.7, las=1, hadj=1)
+  
+    ## adding significantce per class
 #   Pclass <- M$P[sp,]
 #   mtext(side=3, line=-1.1, at=1:5,text=sapply( Pclass, FUN=p2star), cex=0.8)
-#   
 #   mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
-  
-
   
   return(M$boot.thresh[sp,"th"])
 }
 
 ## plotting all significant species
-plot.glm=function(M=glmSR, var="SR", db=databp, sel.criteria = c("th.exist"), bst =T, ES = T) {
+plot.glm=function(M=glmSR, var="SR", db=databp, sel.criteria = c("th.exist"), bst =T, ES = T,
+                  panels = c(4,4), boxplots = T) {
   
-  par(mfrow=c(5,5), mar=c(2,2,2,1))
+  par(mfrow=panels, mar=c(2,2,2,1), oma=c(3,3,1,1))
   if (bst ==T)  M$thresh <- M$boot.thresh
   
   # select only species according to seletion criteria :
@@ -105,7 +125,7 @@ plot.glm=function(M=glmSR, var="SR", db=databp, sel.criteria = c("th.exist"), bs
   ### Loop on selected species 
   for (sp in sel)  {
     
-    if (ES == F) th=plot.sp.glm(sp= sp, M=M, var=var, db=db, bst = bst)
+    if (ES == F) th=plot.sp.glm(sp= sp, M=M, var=var, db=db, bst = bst, boxplots =boxplots )
     if (ES == T) th=plot.sp.ES(sp= sp, M=M, var=var, db=db)
     
     print(paste(sp,":",th))
@@ -113,7 +133,7 @@ plot.glm=function(M=glmSR, var="SR", db=databp, sel.criteria = c("th.exist"), bs
 }
 
 ### thredhold barplots
-thresh.prop=function(effects=effects.glmSR.grass, data=species, y=T,ylim=c(0,0.35)) {
+thresh.prop=function(effects=effects.glmSR, data=species, y=T,ylim=c(0,0.35)) {
   #graphical representation
   barplot(effects$prop.thr[effects$group=="ALIEN:0"], names.arg= paste("c",2:6, sep=""), 
           col="grey", ylim=ylim, las=1 )
@@ -128,7 +148,7 @@ thresh.prop=function(effects=effects.glmSR.grass, data=species, y=T,ylim=c(0,0.3
 }
 
 ### frequency barplots with logarithmic scale
-thresh.freq=function(effects=effects.glmSR.grass, data=species, y=T,ylim=c(0,100), leg = F) 
+thresh.freq=function(effects=effects.glmSR, data=species, y=T,ylim=c(0,100), leg = F) 
 {
   tmp=effects
   
@@ -156,27 +176,60 @@ thresh.freq=function(effects=effects.glmSR.grass, data=species, y=T,ylim=c(0,100
 
 
 #####  Plotting impact size and prevalence
-plot.impact = function(x="prevalence", y="nb.plot.impact", square = F){
+plot.impact = function(x="prevalence", y=c("mean.dif"), square = F, prop ="", bst = T){
   par(mfrow=c(1,3), cex=0.8, oma=c(2,2,2,2))
   
   for (i in 1:3) {
-    M <- list(glmSR.grass, glmSRnat.grass, glmSRali.grass) [[i]]
-#     sp <- which(rownames(M$thresh)%in%aliens)  ## selects only aliens
-#     M=lapply(M, FUN=function(x) x=x[sp,])
-    
-    if (square==T)  ylim <- xlim <- c(0, max(c(M$thresh[,x],M$thresh[,y]), na.rm=T))
-    if (square==F)  ylim <- c(0, max(M$thresh[,y], na.rm=T)) ;  xlim <- c(0, max(M$thresh[,x], na.rm=T))
-    
-sp <- which(M$thresh[,y] == 0)
+    M <- list(glmSR, glmSRnat, glmSRali) [[i]]
+    var <- c("SR", "SRnat", "SRali")[i]
+    #     sp <- which(rownames(M$thresh)%in%aliens)  ## selects only aliens
+    #     M=lapply(M, FUN=function(x) x=x[sp,])
+    if (bst) M$thresh <- M$boot.thresh
+
+  M$thresh$Y <- (if (length(y)==3) {
+  apply(M$thresh, 1, FUN=function(k){
+    p <- parse(text = eval(paste( k[y[1]] , y[2] , k[y[3]]))) 
+    eval(p)
+  })
+}
+else {
+if ("y" %in% prop){
+  calc.prop.index(var="SR" , M = M, index = y)
+}
+else  M$thresh[,y]
+}
+)
+
+
+M$thresh$X <- (if (length(x)==3) {
+  apply(M$thresh, 1, FUN=function(k){
+    p <- parse(text = eval(paste( k[y[1]] , y[2] , k[y[3]]))) 
+    eval(p)
+  })
+}
+else {
+if ("x" %in% prop){
+  calc.prop.index(var="SR" , M = M, index = x)
+}
+else M$thresh[,x]
+}
+)
+
+
+if (square==T)  ylim <- xlim <- c(0, max(c(M$thresh[,"X"],M$thresh[,"Y"]), na.rm=T))
+if (square==F)  ylim <- c(0, max(M$thresh[,"Y"], na.rm=T)) ;  xlim <- c(0, max(M$thresh[,"X"], na.rm=T))
+
+
+sp <- which(M$thresh[,"Y"] == 0)
 (if (length(sp)>0 ) {
-    plot(M$thresh[-sp,x],M$thresh[-sp,y] , ann=F,pch=21,  cex=1, xlim = xlim, ylim= ylim,
+    plot(M$thresh[-sp,"X"],M$thresh[-sp,"Y"] , ann=F,pch=21,  cex=1, xlim = xlim, ylim= ylim,
          col=c("forestgreen", "firebrick")[ rownames(M$thresh[-sp,])%in% aliens +1],
          bg=c("forestgreen", "firebrick")[ rownames(M$thresh[-sp,])%in% aliens +1]) 
-    points(M$thresh[sp,x],M$thresh[sp,y] , ann=F,pch=21,  cex=1,
+    points(M$thresh[sp,"X"],M$thresh[sp,"Y"] , ann=F,pch=21,  cex=1,
            col=c("forestgreen", "firebrick")[ rownames(M$thresh[sp,])%in% aliens +1])
 }
 else {
-  plot(M$thresh[,x],M$thresh[,y] , ann=F,pch=21,  cex=1, xlim = xlim, ylim= ylim,
+  plot(M$thresh[,"X"],M$thresh[,"Y"] , ann=F,pch=21,  cex=1, xlim = xlim, ylim= ylim,
        col=c("forestgreen", "firebrick")[ rownames(M$thresh[,])%in% aliens +1],
        bg=c("forestgreen", "firebrick")[ rownames(M$thresh[,])%in% aliens +1]) 
 })
@@ -185,21 +238,28 @@ else {
     
     title( main= c("Total richness", "Native Richness","Alien Richness")[i])
   }
-  mtext(1, text = x, outer= T, line=1)
-  mtext(2, text = y, outer= T, line=1)
+  mtext(1, text = paste(x, collapse=""), outer= T, line=1)
+  mtext(2, text = paste(y, collapse=""), outer= T, line=1)
 }
 
 
 #####  Plotting impact size and prevalence
-rank.impact = function(x="wtd.mean.diff", y="nb.plot.impact"){
+rank.impact = function(x="index"){
   par(mfrow=c(1,3), cex=0.8, oma=c(2,2,2,2))
   for (i in 1:3) {
-    M <- list(glmSR.grass, glmSRnat.grass, glmSRali.grass) [[i]]
+    M <- list(glmSR, glmSRnat, glmSRali) [[i]]
+     M$thresh <- M$boot.thresh
+    
     sp <- which(rownames(M$thresh)%in%aliens & ( M$thresh$nb.plot.impact>0))
     M=lapply(M, FUN=function(x) x=x[sp,])
+    M$thresh$impact <-  M$thresh[,x]
     
-    M$thresh$impact <- M$thresh[,x] * M$thresh[,y]
-    M$thresh <- M$thresh[order(M$thresh$impact, decreasing=T),]
+    
+    
+    ####### to be finished!!  
+    
+    
+    
     
     plot(1:length(sp), M$thresh$impact,ann=F,type="h",cex=1.2,
          ylim= c(0,max(M$thresh$impact)),
