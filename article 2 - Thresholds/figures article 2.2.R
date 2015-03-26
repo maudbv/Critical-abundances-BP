@@ -8,6 +8,8 @@ db <- databp[databp$PlotName %in% realgrasslands,]
 plot.effect.summary (glmSR.sum$class.summary)
 plot.effect.summary (glmSRnat.sum$class.summary)
 plot.effect.summary (glmSRali.sum$class.summary)
+legend('topright', bty="0", bg="white",legend=c("negative", "critical"),
+       fill=c("lightgrey", "black"), border= c("black", "black"), cex=0.7)
 
 #########  Details per significant species ##############
 # raw observations for significant species
@@ -52,7 +54,7 @@ mtext(2,text = "effect size on total richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 x11()
-plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist")
+plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist",  panels = c(5,4))
 mtext(2,text = "effect size on Native richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
@@ -79,39 +81,81 @@ mtext(text="Abundance class", side=1, outer=T, line=1)
 ########## Impact spread #####
 
 # Number of impacted plots vs. prevalence of species
-plot.impact(x="prevalence", y="nb.plot.impact", square =T)
-plot.impact(x="prevalence", y="prop.plot.impact", square =F)
-
-plot.impact(x="prevalence", y=c("nb.plot.impact","/","prevalence"), square =F)
+plot.impact(x="prevalence", y="prop.plot.impact", square =F, xlab="total occurrences", ylab="proportion of plots > critical abundance")
 
 ########### Impact size  #########
 ### Impact wtd mean size per sp vs. nb.impact
-plot.impact(x="prop.plot.impact", y="wtd.mean.dif", square =F)
-plot.impact(x="prop.plot.impact", y="prop.wt.mean.dif", square =F)
 
-### Impact max size per sp vs. nb.impact
-plot.impact(x="prop.plot.impact", y="mean.dif", square =F)
-plot.impact(x="prop.plot.impact", y="prop.mean.dif", square =F)
-
+plot.impact(x="prop.plot.impact", y="prop.wtd.mean.dif", square =F,xlab="prop. plots > critical abundance", ylab="average decrease in %SR")
 
 ### MAX Impact size per sp vs.nb.impact
-plot.impact(x="prop.plot.impact", y="max.dif", square =F)
-plot.impact(x="prop.plot.impact", y="prop.max.dif", square =F)
+plot.impact(x="prop.plot.impact", y="prop.max.dif", square =F,xlab="prop. plots > critical abundance", ylab="max decrease in %SR")
 
 ### threshold per sp vs. nb.impact
 plot.impact(x="nb.plot.impact", y="th", square =F)
 
-### threshold Impact size per sp vs. threshold
-plot.impact(x="th", y="max.diff", square =F)
-plot.impact(x="th", y="wtd.mean.diff", square =F)
+### representing impact index
+x="index"
+
+  for (i in 1:3) {
+    M <- list(glmSR, glmSRnat, glmSRali) [[i]]
+    M$thresh <- M$boot.thresh
+    
+    sp <- which(rownames(M$thresh)%in%aliens & ( M$thresh$nb.plot.impact>0))
+    M=lapply(M, FUN=function(x) x=x[sp,])
+    M$thresh$impact <-  M$thresh[,x]
+    
+    o  <- order(M$thresh$impact, decreasing=T)
+    M=lapply(M, FUN=function(x) x=x[o,])
+    
+    t = seq(0,1, 0.001)
+    S <- matrix(t, length(t),length(t), byrow=T)
+    P <- matrix(t, length(t),length(t),byrow=F)
+    z2 <- sqrt(S*P)
+    
+    library(lattice)
+    
+    x11() 
+    
+    levelplot(z2~ S * P, col.regions= colorRampPalette(c("beige" , "firebrick", "purple")),
+              main = "impact index", xlim= c(0,1), ylim=c(0,1))
+    trellis.focus("panel", 1, 1, highlight=FALSE)
+    lpoints(M$thresh$prop.wtd.mean.dif,M$thresh$prop.plot.impact  , pch=3,col="black", cex=1)
+    
+    abs <- M$thresh$prop.wtd.mean.dif +0.01
+    ord <- M$thresh$prop.plot.impact + runif(length( M$thresh$prop.plot.impact), 0, +0.01)
+    ltext(abs, ord, label= as.character(rownames(M$thresh)), 
+          col="black", cex=0.8, adj =0 )
+    trellis.unfocus()
+    
+  }
 
 
 ### Ranking species by impact size * spread of impact
-rank.impact(x="prop.wt.mean.dif", y="nb.plot.impact")
-rank.impact(x="prop.wt.mean.dif", y="prop.plot.impact")
-rank.impact(x="max.dif", y="prop.plot.impact")
+x="index"
+x11()
+par(mfrow=c(1,3), cex=0.8, oma=c(2,2,2,2), mar=c(4,2,1,1))
+for (i in 1:3) {
+  M <- list(glmSR, glmSRnat, glmSRali) [[i]]
+  M$thresh <- M$boot.thresh
+  
+  sp <- which(rownames(M$thresh)%in%aliens & ( M$thresh$nb.plot.impact>0))
+  M=lapply(M, FUN=function(x) x=x[sp,])
+  M$thresh$impact <-  M$thresh[,x]
+  
+  o  <- order(M$thresh$impact, decreasing=T)
+  M=lapply(M, FUN=function(x) x=x[o,])
+  
 
-rank.impact(x="index", y=NA)
+  plot(1:length(sp), M$thresh$impact,ann=F,type="h",cex=1.2,
+       ylim= c(0,0.5),
+       col=c("forestgreen", "firebrick")[ rownames(M$thresh)%in% aliens +1], xaxt="n") 
+  axis(side=1, at=1:length(sp), label=rownames(M$thresh), las=3, cex.axis=0.7)
+  title( main= c("Total richness", "Native Richness","Alien Richness")[i])
+}
+mtext(2, text = paste("impact index") , outer= T, line=1)
+
+
 
 ##### impact index vs. time since introduciton
 M <-glmSR
