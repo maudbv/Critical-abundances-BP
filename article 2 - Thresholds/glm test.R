@@ -4,7 +4,7 @@
 #  = testing diference in a community metric (e.g. SR) between low abundances
 # and increasing abundance classes using Generalized linear models 
 
-glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR', covar = NULL,
+glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], variable='SR', covar = NULL,
                      min.occur =5,  min.class = 1, alpha=0.05,CI=0.95, bootstrap = T, R = 999, drastic = F) {
   
   if (bootstrap) require(boot)
@@ -57,7 +57,7 @@ glm.test <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR', 
     
     print(paste(i, ":", sp, "(",Sys.time(),")"))
     
-    sp.dat <- db.modif[as.character(db.modif$SpeciesCode)==sp,c("abun",var,'PlotName', covar)] # select occurrences of the species
+    sp.dat <- db.modif[as.character(db.modif$SpeciesCode)==sp,c("abun",variable,'PlotName', covar)] # select occurrences of the species
     names(sp.dat) <- c('abun','var','PlotName', "covar")[1:dim(sp.dat)[2]]
     
     abun <- sort(as.numeric(as.character(na.omit(unique(sp.dat$abun))))) ## list of abundance classes for species i
@@ -203,7 +203,7 @@ if (!bootstrap) return(list(glms=glms, thresh = thresh,  spearman=spear, n.obs =
 # fitting GLMs
 #  and bootstrapping with no strata : TO BE DONE
 
-glm.test.nostrata <- function(db=databp[databp$PlotName %in% realgrasslands,], var='SR', covar = NULL,
+glm.test.nostrata <- function(db=databp[databp$PlotName %in% realgrasslands,], variable='SR', covar = NULL,
                      min.occur =5,  min.class = 1, alpha=0.05,CI=0.95, bootstrap = T, R = 999, drastic = F) {
   
   if (bootstrap) require(boot)
@@ -256,7 +256,7 @@ glm.test.nostrata <- function(db=databp[databp$PlotName %in% realgrasslands,], v
     
     print(paste(i, ":", sp, "(",Sys.time(),")"))
     
-    sp.dat <- db.modif[as.character(db.modif$SpeciesCode)==sp,c("abun",var,'PlotName', covar)] # select occurrences of the species
+    sp.dat <- db.modif[as.character(db.modif$SpeciesCode)==sp,c("abun",variable,'PlotName', covar)] # select occurrences of the species
     names(sp.dat) <- c('abun','var','PlotName', "covar")[1:dim(sp.dat)[2]]
     
     abun <- sort(as.numeric(as.character(na.omit(unique(sp.dat$abun))))) ## list of abundance classes for species i
@@ -391,21 +391,21 @@ glm.test.nostrata <- function(db=databp[databp$PlotName %in% realgrasslands,], v
 }
 
 #########calculating proportional indices
-calc.prop.impact = function(var="SR" , M = glmSR, db = db , index = "mean.dif") {
+calc.prop.impact = function(variable="SR" , M = glmSR, db = db , index = "mean.dif") {
   X <-M$boot.thresh
   # X <-M$boot.thresh[!is.na(M$boot.thresh$th),]
   Z<- db[db$SpeciesCode %in% rownames(X),]
-  tab <- tapply(Z[,var], list(Z$SpeciesCode , Z$abun), FUN=mean, na.rm=T)
+  tab <- tapply(Z[,variable], list(Z$SpeciesCode , Z$abun), FUN=mean, na.rm=T)
   prop.index <- X[,index] /tab[,1]
   return(prop.index)
 }
 
       # adding prop impact size to the table
-  add.prop <- function(N = glmSR, var ="SR", data=db) { 
+  add.prop <- function(N = glmSR, variable ="SR", data=db) { 
         modif <-N$boot.thresh
-        modif$prop.mean.dif <- calc.prop.impact(var="SR" ,M=N, db = data, index = "mean.dif")
-        modif$prop.wtd.mean.dif <- calc.prop.impact(var="SR" , M =N, db = data, index = "wtd.mean.dif")
-        modif$prop.max.dif <- calc.prop.impact(var="SR" , M =N, db = data, index = "max.dif")
+        modif$prop.mean.dif <- calc.prop.impact(variable="SR" ,M=N, db = data, index = "mean.dif")
+        modif$prop.wtd.mean.dif <- calc.prop.impact(variable="SR" , M =N, db = data, index = "wtd.mean.dif")
+        modif$prop.max.dif <- calc.prop.impact(variable="SR" , M =N, db = data, index = "max.dif")
         
         modif$index <-sqrt(modif$prop.wtd.mean.dif) * sqrt(modif$prop.plot.impact)
         
