@@ -77,6 +77,12 @@ mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=4, at=c(0.3,0.8),
 mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),line=0, at=c(0.18,0.52,0.85),adj=0.5, outer=T, las=1)
 mtext(text="Abundance class", side=1, outer=T, line=1)
 
+### frequency with bootstrap variance
+
+tab <- apply(glmSR.overall$crit.vals, 2, FUN=table)
+sd = apply(tab, 1, FUN= sd, na.rm=T)
+barplot(tab[match(2:6, rownames(tab)),1], ylim= c(0,max(tab) +2))
+segments(1:4, tab[,1] - sd, 1:4, tab[,1] + sd)
 
 ########## Impact spread #####
 
