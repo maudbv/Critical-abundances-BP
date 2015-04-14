@@ -60,6 +60,10 @@ crit.vals <-data.frame(matrix(NA, nrow=length(sp.names), ncol= R +1,
 # coefs.C2 <- coefs.C3 <- coefs.C4 <- coefs.C5 <- coefs.C6 <- crit.vals
 # boot.coefs <- list(coefs.C2,coefs.C3,coefs.C4,coefs.C5,coefs.C6)
 
+
+crit.vals.P <-data.frame(matrix(NA, nrow=length(sp.names), ncol= R +1,
+                              dimnames=list(sp.names,1:(R+1))))
+
 init <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= 5,
                            dimnames=list(sp.names,c("c2", "c3", "c4", "c5", "c6"))))
 dif <-   est<- P <- z <- init
@@ -82,6 +86,8 @@ impact.spread <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= 4,
 
 
 bootCI.low <-bootCI.hi <- boot.mean <- boot.sd <-  init 
+
+
   
 # looping on species
 for (i in 1:length(sp.names) ) {
@@ -115,9 +121,12 @@ for (i in 1:length(sp.names) ) {
   
   coefs <- data.frame(matrix(NA, nrow=R+1, ncol= 5,
                             dimnames=list(1:(R+1) ,c("c2", "c3", "c4", "c5", "c6"))))
+  pvals <- data.frame(matrix(NA, nrow=R+1, ncol= 5,
+                                  dimnames=list(1:(R+1) ,c("c2", "c3", "c4", "c5", "c6"))))
   
   for(j  in abun[-1]) coefs[1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
-
+  for(j  in abun[-1]) pvals[1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 4]
+  
     #store coefs
     #   for(j  in abun[-1]) boot.coefs[[j-1]][1, k] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
     #   
@@ -140,6 +149,10 @@ f <-  glm(dat$var ~ as.factor(dat$abun), family=poisson(log))
 
 # ## store coefficients for each bootstrapped sample k
 for(j  in abun[-1]) coefs[r+1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
+
+# ## store Pvals for each bootstrapped sample k
+for(j  in abun[-1]) pvals[r+1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )),4]
+
 }
 
 }
@@ -164,6 +177,27 @@ if (length(y)>=1) crit <- min( y, na.rm=T)
 return(crit)
 })
 
+
+# detect minimal critical value (simple start of negative trend) using GLM Pvalues
+crit.vals.P[i,] <- sapply(1:(R+1), function(x) {
+  crit <- NA
+  co <-coefs [x,]
+  ps <- pvals [x,]
+  ab = which(!is.na(co))+1
+  neg <-   which(co<0) +1
+  sig <-  which(ps<=0.05) +1
+  sig= sig [sig %in% neg]
+
+  if (length(sig)>=1) {
+    y <- sig [sapply(sig, FUN= function(l) {
+      c1 <- ( if ( l+1 <= max(abun)) all(((l+1):max(ab)) %in% neg) # all higher classes have negative diferences
+              else c1 =F)
+      return(c1)
+    })]
+    if (length(y)>=1) crit <- min( y, na.rm=T)
+  }
+  return(crit)
+})
 # calculate CI for bootstrapped coefs
 boot.mean [i,] <-apply(coefs, 2, mean,na.rm =T) 
 boot.sd [i,] <-apply(coefs, 2, sd,na.rm =T) 
@@ -183,70 +217,9 @@ impact.spread[i,] <- c(th, prevalence, n.plot.impact, prop.plot.impact)
 
 return(list(glms=glms, impact.spread = impact.spread,
             boot.mean = boot.mean, boot.sd=boot.sd, CIlow = bootCI.low, CIhi = bootCI.hi,
-            crit.vals = crit.vals, spearman=spear, n.obs = n.obs,
+            crit.vals = crit.vals,crit.vals.P = crit.vals.P, spearman=spear, n.obs = n.obs,
             mean.values = mean.values,
             dif = dif,est= est, z=z,P= P))
 
 }
-
-
-### Calculate impact size and other indices 
-## impact size for each species
-impact.size <- function(obj = glmSR.overall){
-  
-  out = NULL
-  
-  for (i in 1:dim(obj$glms)[1]) {
-    
-  sp        <- rownames(obj$glms)[i] 
-  th        <- obj$impact.spread$th[i]
-  prevalence <- obj$impact.spread$prevalence[i]
-  prop.plot.impact <- obj$impact.spread$prop.plot.impact[i]
-  n.plot.impact <- obj$impact.spread$nb.plot.impact[i]
-  
-  dif = obj$dif[i,]
-  n.obs = obj$dif[i,]
-  SRo = obj$mean.values[i,"C1"]
-  
-  mean.dif <- wtd.mean.dif<-max.dif<- th.dif <- NA
-  prop.mean.dif<- prop.wtd.mean.dif <-prop.max.dif <- impact.index <- NA
-  
-  #impact size for species with a threshold of impact :
-  if (!is.na(th))  { 
-    
-    # mean impact
-    mean.dif <- -mean(as.numeric(dif[c(th:6)-1]), na.rm=T)
-    
-    # frequency weighted mean impact
-    d <- as.numeric(dif[c(th:6)-1])
-    nb <- as.numeric(n.obs[c(th:6)-1])
-    wtd.mean.dif <- -sum(d*nb, na.rm=T)/sum(nb, na.rm=T)
-    
-    # Max impact
-    #! maximum dif is in fact the minimum because negative values
-    max.dif <- - min(as.numeric(dif[c(th:6)-1]), na.rm=T) 
-    
-    # Threshold diference :
-    th.dif = -as.numeric(dif[th-1])
-    
-    #########calculating proportional indices
-
-    prop.mean.dif <- mean.dif /SRo
-    prop.wtd.mean.dif <- wtd.mean.dif /SRo
-    prop.max.dif <- max.dif /SRo
-    
-    ### overall impact index of the species
-    impact.index <-prop.wtd.mean.dif * prop.plot.impact
-  }
-   out<- rbind(out, c(sp, th, prevalence, n.plot.impact, prop.plot.impact, 
-                      mean.dif,  wtd.mean.dif,th.dif,max.dif,
-                      SRo, prop.mean.dif, prop.wtd.mean.dif, prop.max.dif, impact.index))
-  }
-   out <- as.data.frame(out, as.is = T,stringsAsFactors = F)
-   names(out) <- read.table(text = "sp,th,prevalence,n.plot.impact,prop.plot.impact,mean.dif,wtd.mean.dif,th.dif,max.dif,SRo,prop.mean.dif,prop.wtd.mean,prop.max.dif,impact.index",
-                          stringsAsFactors = F, sep = ",")
-  rownames(out) <- out$sp
-return(out)
-  }
-
 

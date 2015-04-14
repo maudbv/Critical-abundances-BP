@@ -5,43 +5,39 @@ db <- databp[databp$PlotName %in% realgrasslands,]
 
 ### Preliminary figures :
 ### plot effects summary = proportion of significant negative effects and proportion of thresholds
-plot.effect.summary (glmSR.sum$class.summary)
-plot.effect.summary (glmSRnat.sum$class.summary)
-plot.effect.summary (glmSRali.sum$class.summary)
-legend('topright', bty="0", bg="white",legend=c("negative", "critical"),
-       fill=c("lightgrey", "black"), border= c("black", "black"), cex=0.7)
+plot.effect.summary ()
 
 #########  Details per significant species ##############
 # raw observations for significant species
 x11()
-plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", bst =T, ES = F, boxplots =F)
+plot.glm(M=glmSR.overall, var= "SR", db= db, type= "overall.boot", ES = F,  panels = c(5,4),boxplots =F)
 mtext(2,text = "total richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 x11()
-plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist", bst =T, ES = F, boxplots =F)
+plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, boxplots =F)
 mtext(2,text = "Native richness", outer=T, line= 1, ES = F)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 x11()
-plot.glm(M = glmSRali, var= "SRali",  db= db,sel.criteria = "th.exist", bst =T, ES = F, boxplots =F)
+plot.glm(M = glmSRali, var= "SRali",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, boxplots =F)
 mtext(2,text = "Alien richness", outer=T, line= 1, ES = F)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 
 # boxplots for significant species
 x11()
-plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", bst =T, ES = F)
+plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", type= "overall.boot", ES = F)
 mtext(2,text = "total richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 x11()
-plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist", bst =T, ES = F)
+plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F)
 mtext(2,text = "Native richness", outer=T, line= 1, ES = F)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 x11()
-plot.glm(M = glmSRali, var= "SRali",  db= db,sel.criteria = "th.exist", bst =T, ES = F)
+plot.glm(M = glmSRali, var= "SRali",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F)
 mtext(2,text = "Alien richness", outer=T, line= 1, ES = F)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
@@ -49,7 +45,7 @@ mtext(1,text = "abundance class", outer=T, line= 1)
 
 # Effect size for significant species
 x11()
-plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", bst =T, ES = T)
+plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", type= "overall.boot", panel= c(5,4),ES = T)
 mtext(2,text = "effect size on total richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
@@ -78,9 +74,13 @@ mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),li
 mtext(text="Abundance class", side=1, outer=T, line=1)
 
 ### frequency with bootstrap variance
+x11()
+tab <- apply(glmSR.overall$crit.vals, 2, FUN=function(x) {
+  x <- factor(x,levels= c("2","3","4","5","6"))
+  f = table(x)
+})
 
-tab <- apply(glmSR.overall$crit.vals, 2, FUN=table)
-sd = apply(tab, 1, FUN= sd, na.rm=T)
+sd = apply(tab,1,  FUN= sd, na.rm=T)
 barplot(tab[match(2:6, rownames(tab)),1], ylim= c(0,max(tab) +2))
 segments(1:4, tab[,1] - sd, 1:4, tab[,1] + sd)
 

@@ -24,6 +24,9 @@ source('script/functions/p2star.R')
 source('script/article 2 - Thresholds/glm test.R')
 source('script/article 2 - Thresholds/plotting functions.R')
 source('script/article 2 - Thresholds/overall bootstrapped GLM.R')
+source('script/article 2 - Thresholds/impact.size.R')
+source('script/article 2 - Thresholds/summary.glm.R')
+
 
 ### threshold analysis using GLMs
 
@@ -50,14 +53,14 @@ load(file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
 load(file = "saved Rdata/article 2 - threshold/boot.output.Rdata")
 
 ## calculate glms on bootstraps
-system.time(glmSR.overall <- glm.overallboot(db = db,boot.output=boot.output, variable = 'SR', min.occur= min.occur, min.class = min.class, R=R))
+# system.time(glmSR.overall <- glm.overallboot(db = db,boot.output=boot.output, variable = 'SR', min.occur= min.occur, min.class = min.class, R=R))
+# 
+# system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.output=boot.output, variable = 'SRnat', min.occur= min.occur, min.class = min.class, R=R))
+# system.time(glmSRali.overall <- glm.overallboot(db = db,boot.output=boot.output, variable = 'SRali', min.occur= min.occur, min.class = min.class, R=R))
 
-system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.output=boot.output, variable = 'SRnat', min.occur= min.occur, min.class = min.class, R=R))
-system.time(glmSRali.overall <- glm.overallboot(db = db,boot.output=boot.output, variable = 'SRali', min.occur= min.occur, min.class = min.class, R=R))
+# save(glmSR.overall, glmSRnat.overall, glmSRali.overall, file = "saved Rdata/article 2 - threshold/overall.boot.glms2.Rdata")
 
-save(glmSR.overall, glmSRnat.overall, glmSRali.overall, file = "saved Rdata/article 2 - threshold/overall.boot.glms2.Rdata")
-
-load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.Rdata")
+load(file = "saved Rdata/article 2 - threshold/overall.boot.glms2.Rdata")
 
 
 # ## GLMs with dominance index as covariate
