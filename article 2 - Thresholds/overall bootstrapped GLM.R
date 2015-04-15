@@ -6,7 +6,7 @@ bootstrap.dataset<- function(db=databp[databp$PlotName %in% realgrasslands,],
                            min.occur =5,  min.class = 1, R = 999) {
   
   ######### selecting species verifying conditions : 
-  a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=min.occur)>=1) 
+  a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=min.occur)>=min.class) 
                     &  table(db$SpeciesCode, db$abun)[,1]>=min.occur))
   db.modif <- db[which(db$SpeciesCode %in% a),] 
   
@@ -32,7 +32,7 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,], boot
                            variable='SR', min.occur =5,  min.class = 1, R = 999, call.boot=F) {
   
   # create bootstrap samples if necessary
-  if (call.boot)  boot.output <- bootstrap.dataset(db=db, variable=variable, min.occur =min.occur,  min.class = min.class, R = R)
+  if (call.boot)  boot.output <- bootstrap.dataset(db=db, min.occur =min.occur,  min.class = min.class, R = R)
   
   ### Check that boot.output is the right one
   stopifnot(min.occur == boot.output$min.occur,
@@ -55,14 +55,12 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,], boot
  boots<- boot.output$boots
  
 # initiate result dataframes :
-crit.vals <-data.frame(matrix(NA, nrow=length(sp.names), ncol= R +1,
+crit.vals <- crit.vals.P  <- crit.vals.CI <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= R +1,
                              dimnames=list(sp.names,1:(R+1))))
 # coefs.C2 <- coefs.C3 <- coefs.C4 <- coefs.C5 <- coefs.C6 <- crit.vals
 # boot.coefs <- list(coefs.C2,coefs.C3,coefs.C4,coefs.C5,coefs.C6)
 
 
-crit.vals.P <-data.frame(matrix(NA, nrow=length(sp.names), ncol= R +1,
-                              dimnames=list(sp.names,1:(R+1))))
 
 init <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= 5,
                            dimnames=list(sp.names,c("c2", "c3", "c4", "c5", "c6"))))
@@ -77,12 +75,12 @@ glms <-data.frame(matrix(NA, nrow=length(sp.names), ncol= 3,
 spear <-data.frame(matrix(NA, nrow=length(sp.names), ncol= 2,
                           dimnames=list(sp.names, c("rho" ,"p.val"))))
 
-impact.size <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= 8,
-                             dimnames=list(sp.names, c("th","prevalence", "nb.plot.impact","prop.plot.impact",
+impact.size <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= 9,
+                             dimnames=list(sp.names, c("th","th.CI","prevalence", "nb.plot.impact","prop.plot.impact",
                                                        "mean.dif","wtd.mean.dif", "th.dif", "max.dif"))))
 
-impact.spread <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= 4,
-                                  dimnames=list(sp.names, c("th","prevalence", "nb.plot.impact","prop.plot.impact"))))
+impact.spread <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= 5,
+                                  dimnames=list(sp.names, c("th","th.CI","prevalence", "nb.plot.impact","prop.plot.impact"))))
 
 
 bootCI.low <-bootCI.hi <- boot.mean <- boot.sd <-  init 
@@ -119,6 +117,9 @@ for (i in 1:length(sp.names) ) {
   z[i,n] <- summary(f)$coef [-1, 3]
   P[i,n] <- summary(f)$coef [-1, 4]
   
+  ### if species has a negative coefficient :
+  if ( length(which( est[i,]<0 & n.obs[i,2:6] >=5)) > 0 ) {
+       
   coefs <- data.frame(matrix(NA, nrow=R+1, ncol= 5,
                             dimnames=list(1:(R+1) ,c("c2", "c3", "c4", "c5", "c6"))))
   pvals <- data.frame(matrix(NA, nrow=R+1, ncol= 5,
@@ -135,10 +136,10 @@ for (i in 1:length(sp.names) ) {
 for ( r in 1:R) {
   
 ## extract new datasets from original dataset using the bootstrapped line numbers:
-indices <-unlist(sapply(1:length(boots[,r]), function (k)  which(db.modif$PlotName == boots[k,r])))
+indices <-unlist(lapply(1:length(boots[,r]), function (k)  which(db.modif$PlotName == boots[k,r])))
 boot.db <- db.modif [indices, c("SpeciesCode", "abun",variable,'PlotName')]  
 
-print(paste(r, ":","(",Sys.time(),")"))
+# print(paste(r, ":","(",Sys.time(),")"))
 dat <- boot.db[as.character( boot.db$SpeciesCode)==sp, ] # select occurrences of the species
 names(dat) <- c("sp",'abun','var','PlotName')[1:dim(dat)[2]]
 abun <- sort(as.numeric(as.character(na.omit(unique(dat$abun))))) ## list of abundance classes for species i
@@ -154,20 +155,22 @@ for(j  in abun[-1]) coefs[r+1, j-1] = summary(f)$coef [grep(paste(j), rownames(s
 for(j  in abun[-1]) pvals[r+1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )),4]
 
 }
-
 }
 
 #### THIRD: statistics for species i 
 
 # detect minimal critical value (simple start of negative trend)
-crit.vals[i,] <- sapply(1:(R+1), function(x) {
+
+crit.vals[i,] <- sapply(1:(R+1), function(x, n.obs) {
 crit <- NA
 co <-coefs [x,]
 ab = which(!is.na(co))+1
-neg <-   which(co<0) +1
+neg <-   which(co<0 ) +1
 
-if (length(neg)>=1) {
-  y <- neg [sapply(neg, FUN= function(l) {
+candidates <- which(co<0 & n.obs[2:6] >= min.occur ) +1
+
+ if (length(candidates)>=1) {
+  y <- candidates [sapply(candidates, FUN= function(l) {
     c1 <- ( if ( l+1 <= max(abun)) all(((l+1):max(ab)) %in% neg) # all higher classes have negative diferences
             else c1 =F)
     return(c1)
@@ -175,19 +178,52 @@ if (length(neg)>=1) {
 if (length(y)>=1) crit <- min( y, na.rm=T)
 }
 return(crit)
-})
+}, n.obs  = n.obs[i,])
 
 
-# detect minimal critical value (simple start of negative trend) using GLM Pvalues
-crit.vals.P[i,] <- sapply(1:(R+1), function(x) {
+# detect minimal critical value using GLM Pvalues
+# crit.vals.P[i,] <- sapply(1:(R+1), function(x, n.obs) {
+#   crit <- NA
+#   co <-coefs [x,]
+#   ps <- pvals [x,]
+#   ab = which(!is.na(co))+1
+#   neg <-   which(co<0) +1
+#   sig <-  which(ps<=0.05 & n.obs[2:6] >= min.occur) +1
+#   sig= sig [sig %in% neg]
+# 
+#   if (length(sig)>=1) {
+#     y <- sig [sapply(sig, FUN= function(l) {
+#       c1 <- ( if ( l+1 <= max(abun)) all(((l+1):max(ab)) %in% neg) # all higher classes have negative diferences
+#               else c1 =F)
+#       return(c1)
+#     })]
+#     if (length(y)>=1) crit <- min( y, na.rm=T)
+#   }
+#   return(crit)
+# }, n.obs  = n.obs[i,])
+
+# calculate CI for bootstrapped coefs
+boot.mean [i,] <-apply(coefs, 2, mean,na.rm =T) 
+boot.sd [i,] <-apply(coefs, 2, sd,na.rm =T) 
+
+bootCI.low [i,] <-apply(coefs, 2, quantile, probs = 0.025,na.rm =T) 
+bootCI.hi [i,] <-apply(coefs, 2, quantile, probs = 0.975,na.rm =T) 
+
+testCI = sign(as.numeric(bootCI.low [i,])) * sign(as.numeric(bootCI.low [i,]))
+
+# detect minimal critical value using bootstrap CI
+crit.vals.CI[i,] <- sapply(1:(R+1), function(x, n.obs) {
   crit <- NA
   co <-coefs [x,]
   ps <- pvals [x,]
   ab = which(!is.na(co))+1
   neg <-   which(co<0) +1
-  sig <-  which(ps<=0.05) +1
+  
+ # select coefficients whose CI are above or below zero :
+  sig <-  which(testCI ==T & n.obs[2:6] >= min.occur) + 1
+  
   sig= sig [sig %in% neg]
-
+  
   if (length(sig)>=1) {
     y <- sig [sapply(sig, FUN= function(l) {
       c1 <- ( if ( l+1 <= max(abun)) all(((l+1):max(ab)) %in% neg) # all higher classes have negative diferences
@@ -197,22 +233,23 @@ crit.vals.P[i,] <- sapply(1:(R+1), function(x) {
     if (length(y)>=1) crit <- min( y, na.rm=T)
   }
   return(crit)
-})
-# calculate CI for bootstrapped coefs
-boot.mean [i,] <-apply(coefs, 2, mean,na.rm =T) 
-boot.sd [i,] <-apply(coefs, 2, sd,na.rm =T) 
+}, n.obs  = n.obs[i,])
 
-bootCI.low [i,] <-apply(coefs, 2, quantile, probs = 0.025,na.rm =T) 
-bootCI.hi [i,] <-apply(coefs, 2, quantile, probs = 0.975,na.rm =T) 
 
+### critical value
 th <- crit.vals[i,1] 
+# th.P <- crit.vals.P[i,1] 
+th.CI <- crit.vals.CI[i,1] 
 prevalence <- dim(sp.dat)[1]
 n.plot.impact<- sum(sp.dat$abun >=  crit.vals[i,1], na.rm=T)
 prop.plot.impact <- n.plot.impact/prevalence
 SRo <- mean(db[db$SpeciesCode == sp,variable], na.rm=T)
 SRo <- mean(db[db$SpeciesCode == sp,variable], na.rm=T)
 
-impact.spread[i,] <- c(th, prevalence, n.plot.impact, prop.plot.impact)
+impact.spread[i,] <- c(th,  th.CI , prevalence, n.plot.impact, prop.plot.impact)
+
+}
+
 }
 
 return(list(glms=glms, impact.spread = impact.spread,

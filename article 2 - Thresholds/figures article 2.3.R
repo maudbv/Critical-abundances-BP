@@ -8,35 +8,41 @@ db <- databp[databp$PlotName %in% realgrasslands,]
 plot.effect.summary ()
 
 #########  Details per significant species ##############
+threshold = "th.CI"
+
 # raw observations for significant species
-x11()
-plot.glm(M=glmSR.overall, var= "SR", db= db, type= "overall.boot", ES = F,  panels = c(5,4),boxplots =F)
+quartz()
+plot.glm(M=glmSR.overall, var= "SR", db= db, type= "overall.boot", ES = F,  panels = c(6,6),boxplots =F, threshold = threshold)
 mtext(2,text = "total richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-x11()
-plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, boxplots =F)
+quartz()
+plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, boxplots =F, threshold = threshold)
+mtext(2,text = "total richness", outer=T, line= 1)
 mtext(2,text = "Native richness", outer=T, line= 1, ES = F)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-x11()
-plot.glm(M = glmSRali, var= "SRali",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, boxplots =F)
+quartz()
+plot.glm(M = glmSRali, var= "SRali",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, boxplots =F, threshold = threshold)
+mtext(2,text = "total richness", outer=T, line= 1)
 mtext(2,text = "Alien richness", outer=T, line= 1, ES = F)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 
 # boxplots for significant species
-x11()
-plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", type= "overall.boot", ES = F)
+quartz()
+plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", type= "overall.boot", ES = F, threshold = threshold)
+mtext(2,text = "total richness", outer=T, line= 1)
 mtext(2,text = "total richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-x11()
-plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F)
+quartz()
+plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, threshold = threshold)
+mtext(2,text = "total richness", outer=T, line= 1)
 mtext(2,text = "Native richness", outer=T, line= 1, ES = F)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-x11()
+quartz()
 plot.glm(M = glmSRali, var= "SRali",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F)
 mtext(2,text = "Alien richness", outer=T, line= 1, ES = F)
 mtext(1,text = "abundance class", outer=T, line= 1)
@@ -44,25 +50,25 @@ mtext(1,text = "abundance class", outer=T, line= 1)
 
 
 # Effect size for significant species
-x11()
-plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", type= "overall.boot", panel= c(5,4),ES = T)
+quartz()
+plot.glm(M=glmSR.overall, var= "SR", db= db, sel.criteria = "th.exist", type= "overall.boot",ES = T)
 mtext(2,text = "effect size on total richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-x11()
-plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist",  panels = c(5,4))
+quartz()
+plot.glm(M = glmSRnat.overall, var= "SRnat",  db= db,sel.criteria = "th.exist",panel =c(6,7),  ES = T)
 mtext(2,text = "effect size on Native richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-x11()
-plot.glm(M = glmSRali, var= "SRali",  db= db,sel.criteria = "th.exist")
+quartz()
+plot.glm(M = glmSRali.overall, var= "SRali",  db= db,sel.criteria = "th.exist",panel =c(6,7), ES = T)
 mtext(2,text = "effect size on Alien richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 
 
 #### ### Frequency of impacts per class ###############
-x11()
+quartz()
 
 par(mfcol=c(2,3), oma=c(3,6,4,2), mar=c(2,3,2,1))
 thresh.freq(effects=glmSR.sum$class.summary, ylim=c(0,200))
@@ -74,7 +80,7 @@ mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),li
 mtext(text="Abundance class", side=1, outer=T, line=1)
 
 ### frequency with bootstrap variance
-x11()
+quartz()
 tab <- apply(glmSR.overall$crit.vals, 2, FUN=function(x) {
   x <- factor(x,levels= c("2","3","4","5","6"))
   f = table(x)
@@ -121,7 +127,7 @@ x="index"
     
     library(lattice)
     
-    x11() 
+    quartz() 
     
     levelplot(z2~ S * P, col.regions= colorRampPalette(c("beige" , "firebrick", "purple")),
               main = "impact index", xlim= c(0,1), ylim=c(0,1))
@@ -139,7 +145,7 @@ x="index"
 
 ### Ranking species by impact size * spread of impact
 x="index"
-x11()
+quartz()
 par(mfrow=c(1,3), cex=0.8, oma=c(2,2,2,2), mar=c(4,2,1,1))
 for (i in 1:3) {
   M <- list(glmSR, glmSRnat, glmSRali) [[i]]

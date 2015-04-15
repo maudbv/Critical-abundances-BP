@@ -32,7 +32,7 @@ fill=c("lightgrey", "black"), border= c("black", "black"), cex=0.9)
 }
 
 ### plotting individual species
-plot.sp.glm=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=db, type = "overall.boot", boxplots =T ) {  
+plot.sp.glm=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=db, type = "overall.boot", threshold ="th.CI",boxplots =T ) {  
   
   Z= db[db$SpeciesCode==sp,]
   
@@ -42,7 +42,7 @@ plot.sp.glm=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=db, type = 
   #alt boxplot
   (if(boxplots) {
   col=rep("white",6)
-  col[ as.numeric( M$thresh[sp,"th"])]="red"  # identify the threshold
+  col[ as.numeric( M$thresh[sp,threshold])]="red"  # identify the threshold
   boxplot(as.formula(paste(variable, " ~ abun")), data=Z, xlim=c(0.5,6.5), outline=F,
           variablewidth=T, col=col,  xaxt = "n", yaxt="n", ann=F)
   abline(h = median(Z[Z$abun == 1, variable], na.rm=T), lty="dotted")
@@ -50,7 +50,7 @@ plot.sp.glm=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=db, type = 
   else {
      # alt points
     col = rep("white",length(Z$abun))
-    col[ Z$abun == as.numeric( M$thresh[sp,"th"])]="black"  # identify the threshold
+    col[ Z$abun == as.numeric( M$thresh[sp,"th.CI"])]="black"  # identify the threshold
     Z$abun.jit = jitter(Z$abun, amount = 0.4)
     plot(as.formula(paste(variable, " ~ abun.jit")), data=Z, xlim=c(0.5,6.5),
          type="n",xaxt = "n", yaxt="n", ann=F)
@@ -73,12 +73,12 @@ plot.sp.glm=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=db, type = 
   
 #   mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
   
-  return(M$thresh[sp,"th"])
+  return(M$thresh[sp,"th.CI"])
 }
 
 
 ### plotting Effect sizes for individual species 
-plot.sp.ES=function(sp="ACHMIL", M=glmSR, variable="SR", db=databp, type="overall.boot") {  
+plot.sp.ES=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=databp, type="overall.boot", threshold ="th.CI") {  
   
   Z <- db[db$SpeciesCode==sp,]
   es <- as.numeric(M$est[sp,])
@@ -107,7 +107,7 @@ plot.sp.ES=function(sp="ACHMIL", M=glmSR, variable="SR", db=databp, type="overal
   
   
   col <- rep("white",6)
-  col[ as.numeric( M$thresh[sp,"th"])] <- "black"  # identify the threshold
+  col[ as.numeric( M$thresh[sp,threshold])] <- "black"  # identify the threshold
   
   ## alternatively:
   plot(1:5,  rep(0,5),ylim = c(-lims,+lims),xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F)
@@ -130,23 +130,23 @@ plot.sp.ES=function(sp="ACHMIL", M=glmSR, variable="SR", db=databp, type="overal
 #   mtext(side=3, line=-1.1, at=1:5,text=sapply( Pclass, FUN=p2star), cex=0.8)
 #   mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
   
-  return(M$thresh[sp,"th"])
+  return(M$thresh[sp,"th.CI"])
 }
 
 ## plotting all significant species
-plot.glm=function(M=glmSR, variable="SR", db=databp, sel.criteria = c("th.exist"), type="overall.boot", ES = T,
-                  panels = c(4,4), boxplots = T) {
+plot.glm=function(M=glmSR.overall, variable="SR", db=databp, sel.criteria = c("th.exist"), type="overall.boot", ES = T,
+                  panels = c(6,6), threshold ="th.CI", boxplots = T) {
   
-  par(mfrow=panels, mar=c(2,2,2,1), oma=c(3,3,1,1))
+  par(mfrow=panels, mar=c(2,2,1,1), oma=c(3,3,1,1))
   if (type =="simple.boot") M$thresh <-M$boot.thresh
   if (type == "overall.boot") M$thresh <-M$impact.spread
   
   
   # select only species according to seletion criteria :
   if (sel.criteria == "spear") sel <- rownames(M$spearman) [M$spearman[,"p.val"] <=0.05 &  M$spearman[,"rho"] <0 ]
-  if (sel.criteria == "dev1") sel <-  rownames(M$glms) [M$glms[,"dev.ratio"] > 0.05 &  !is.na(M$thresh[,"th"]) ]
+  if (sel.criteria == "dev1") sel <-  rownames(M$glms) [M$glms[,"dev.ratio"] > 0.05 &  !is.na(M$thresh[,"th.CI"]) ]
   if (sel.criteria == "none") sel <- TRUE
-  if (sel.criteria == "th.exist") sel <-  rownames(M$thresh) [ !is.na(M$thresh[,"th"]) ]
+  if (sel.criteria == "th.exist") sel <-  rownames(M$thresh) [ !is.na(M$thresh[,"th.CI"]) ]
   
   ### Loop on selected species 
   for (sp in sel)  {
