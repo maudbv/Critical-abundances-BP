@@ -2,98 +2,140 @@
 ## only results in real grasslands = first rank species is herbaceous + landcover is recorded as "grassland"
 
 db <- databp[databp$PlotName %in% realgrasslands,]
+sp.target <-  rownames(glmSR.overall$impact.spread) [
+  which(  rownames(glmSRnat.overall$impact.spread) %in% aliens &
+         ( !is.na(glmSRnat.overall$impact.spread$th.CI) |
+        !is.na(glmSRali.overall$impact.spread$th.CI)))]
+
+save(sp.target, file = "saved Rdata/article 2 - threshold/sp.target.Rdata")
 
 ### Preliminary figures :
 ### plot effects summary = proportion of significant negative effects and proportion of thresholds
 plot.effect.summary ()
+plot.effect.summary (effects =
+                       list(glmSR.sum.th$class.summary,
+                            glmSRnat.sum.th$class.summary,
+                            glmSRali.sum.th$class.summary ))
 
+plot.effect.summary.freq ()
 #########  Details per significant species ##############
 threshold = "th.CI"
 
 # raw observations for significant species
-quartz()
-plot.glm(M=glmSR.overall, var= "SR", db= db, type= "overall.boot", ES = F,  panels = c(6,6),boxplots =F, threshold = threshold)
+x11()
+plot.glm(M=glmSR.overall, var= "SR", db= db, type= "overall.boot", ES = F,  panels = c(4,6),boxplots =F, threshold = threshold)
 mtext(2,text = "total richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-quartz()
-plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, boxplots =F, threshold = threshold)
+x11()
+plot.glm(M = glmSRnat.overall, var= "SRnat",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, boxplots =F, threshold = threshold)
 mtext(2,text = "total richness", outer=T, line= 1)
 mtext(2,text = "Native richness", outer=T, line= 1, ES = F)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-quartz()
-plot.glm(M = glmSRali, var= "SRali",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, boxplots =F, threshold = threshold)
+x11()
+plot.glm(M = glmSRali.overall, var= "SRali",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, boxplots =F, threshold = threshold)
 mtext(2,text = "total richness", outer=T, line= 1)
 mtext(2,text = "Alien richness", outer=T, line= 1, ES = F)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 
 # boxplots for significant species
-quartz()
-plot.glm(M=glmSR, var= "SR", db= db, sel.criteria = "th.exist", type= "overall.boot", ES = F, threshold = threshold)
+x11()
+plot.glm(M=glmSR.overall, var= "SR", db= db, sel.criteria = "sp.target", type= "overall.boot", 
+         ES = F, threshold = threshold, sp = sp.target)
 mtext(2,text = "total richness", outer=T, line= 1)
 mtext(2,text = "total richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-quartz()
-plot.glm(M = glmSRnat, var= "SRnat",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F, threshold = threshold)
-mtext(2,text = "total richness", outer=T, line= 1)
+x11()
+plot.glm(M = glmSRnat.overall, var= "SRnat",  db= db,sel.criteria = "sp.target", type= "overall.boot",
+         ES = F, threshold = threshold, sp = sp.target)
 mtext(2,text = "Native richness", outer=T, line= 1, ES = F)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-quartz()
-plot.glm(M = glmSRali, var= "SRali",  db= db,sel.criteria = "th.exist", type= "overall.boot", ES = F)
-mtext(2,text = "Alien richness", outer=T, line= 1, ES = F)
+x11()
+plot.glm(M = glmSRali.overall, var= "SRali",  db= db,sel.criteria = "sp.target", type= "overall.boot",
+         ES = F, threshold = threshold, sp = sp.target)
+mtext(2,text = "Alien richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 
 
 # Effect size for significant species
-quartz()
-plot.glm(M=glmSR.overall, var= "SR", db= db, sel.criteria = "th.exist", type= "overall.boot",ES = T)
+x11()
+plot.glm(M=glmSR.overall, var= "SR", db= db,sel.criteria = "sp.target", type= "overall.boot",
+         ES = T, threshold = threshold, sp = sp.target)
 mtext(2,text = "effect size on total richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-quartz()
-plot.glm(M = glmSRnat.overall, var= "SRnat",  db= db,sel.criteria = "th.exist",panel =c(6,7),  ES = T)
+x11()
+plot.glm(M = glmSRnat.overall, var= "SRnat",  db= db,sel.criteria = "sp.target", type= "overall.boot",
+         ES = T, threshold = threshold, sp = sp.target)
 mtext(2,text = "effect size on Native richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
-quartz()
-plot.glm(M = glmSRali.overall, var= "SRali",  db= db,sel.criteria = "th.exist",panel =c(6,7), ES = T)
+x11()
+plot.glm(M = glmSRali.overall, var= "SRnat",  db= db,sel.criteria = "sp.target", type= "overall.boot",
+         ES = T, threshold = threshold, sp = sp.target)
 mtext(2,text = "effect size on Alien richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 
 
-#### ### Frequency of impacts per class ###############
-quartz()
 
-par(mfcol=c(2,3), oma=c(3,6,4,2), mar=c(2,3,2,1))
-thresh.freq(effects=glmSR.sum$class.summary, ylim=c(0,200))
-thresh.freq(effects=glmSRnat.sum$class.summary, y=F, ylim=c(0,200))
-thresh.freq(effects=glmSRali.sum$class.summary, y=F, ylim=c(0,200), leg=T)  
-
-mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=4, at=c(0.3,0.8),adj=0.5, outer=T, las=1)
-mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),line=0, at=c(0.18,0.52,0.85),adj=0.5, outer=T, las=1)
-mtext(text="Abundance class", side=1, outer=T, line=1)
-
-### frequency with bootstrap variance
-quartz()
-tab <- apply(glmSR.overall$crit.vals, 2, FUN=function(x) {
-  x <- factor(x,levels= c("2","3","4","5","6"))
-  f = table(x)
-})
-
-sd = apply(tab,1,  FUN= sd, na.rm=T)
-barplot(tab[match(2:6, rownames(tab)),1], ylim= c(0,max(tab) +2))
-segments(1:4, tab[,1] - sd, 1:4, tab[,1] + sd)
+# 
+# ### frequency with bootstrap variance
+# x11()
+# 
+# tab <- apply(glmSR.overall$crit.valsCI[,], 2, FUN=function(x) {
+#   x <- factor(x,levels= c("2","3","4","5","6"))
+#   f = table(x)
+# })
+# 
+# sd = apply(tab,1,  FUN= sd, na.rm=T)
+# barplot(tab[match(2:6, rownames(tab)),1], ylim= c(0,max(tab) +2))
+# segments(1:4, tab[,1] - sd, 1:4, tab[,1] + sd)
+# mtext(2,text = "Frequency critical value", outer=F, line= 3)
+# mtext(1,text = "abundance class", outer=F, line= 3)
 
 ########## Impact spread #####
 
 # Number of impacted plots vs. prevalence of species
-plot.impact(x="prevalence", y="prop.plot.impact", square =F, xlab="total occurrences", ylab="proportion of plots > critical abundance")
+
+par(mfrow=c(1,1),las = 1, mar=c(2,2,2,2) ,oma=c(2,2,0,0), cex = 0.9)
+for (i in 1:1) {
+    M <- list( glmSRnat.overall,glmSRali.overall) [[i]]
+       sp <- which(rownames(M$impact.spread)%in%aliens & M$impact.spread$prop.plot.impact >0)  ## selects only aliens
+       M=lapply(M, FUN=function(x) x=x[sp,])
+
+    M$impact.spread$prop.plot.impact = M$impact.spread$prop.plot.impact*100
+    
+plot(prop.plot.impact ~ prevalence , data = M$impact.spread, xlim=c(-20, 800),
+     ylim=c(0, 85),ann=F,pch=20, bg = "black", cex.lab = 0.8)
+
+dpt <- as.matrix(dist(M$impact.spread[,c("prop.plot.impact","prevalence")]))<30
+dpt[upper.tri(dpt)] <- NA
+diag(dpt)<- NA
+offsets <- rep(0, length(sp))
+names(offsets) <- sp
+offsets[which(rowSums(dpt, na.rm = T) >= 1)] <- 1
+offsets[which(colSums(dpt, na.rm = T)>=1)] <- -1
+
+
+text(M$impact.spread$prevalence + offsets*60, M$impact.spread$prop.plot.impact +abs(offsets)*2 ,
+     label = rownames(M$impact.spread), cex = 0.7, pos = 3, offset = 0.3)
+
+segments(M$impact.spread$prevalence , M$impact.spread$prop.plot.impact,
+         M$impact.spread$prevalence + offsets*60, M$impact.spread$prop.plot.impact +abs(offsets)*2)
+
+# mtext(3, text = c("Native richness", "Alien richness")[i])
+
+}
+mtext(1, text ="Number of occurrences",outer=T, line=0.5)
+mtext(2, text = "% > critical abundance", outer = T,las = 0, line =1)
+
+
 
 ########### Impact size  #########
 ### Impact wtd mean size per sp vs. nb.impact
@@ -109,7 +151,7 @@ plot.impact(x="nb.plot.impact", y="th", square =F)
 ### representing impact index
 x="index"
 
-  for (i in 1:3) {
+i=2
     M <- list(glmSR, glmSRnat, glmSRali) [[i]]
     M$thresh <- M$boot.thresh
     
@@ -127,9 +169,9 @@ x="index"
     
     library(lattice)
     
-    quartz() 
+    x11() 
     
-    levelplot(z2~ S * P, col.regions= colorRampPalette(c("beige" , "firebrick", "purple")),
+    levelplot(z2~ S * P, col.regions= colorRampPalette(c("beige" , "firebrick")),
               main = "impact index", xlim= c(0,1), ylim=c(0,1))
     trellis.focus("panel", 1, 1, highlight=FALSE)
     lpoints(M$thresh$prop.wtd.mean.dif,M$thresh$prop.plot.impact  , pch=3,col="black", cex=1)
@@ -140,12 +182,12 @@ x="index"
           col="black", cex=0.8, adj =0 )
     trellis.unfocus()
     
-  }
+
 
 
 ### Ranking species by impact size * spread of impact
 x="index"
-quartz()
+x11()
 par(mfrow=c(1,3), cex=0.8, oma=c(2,2,2,2), mar=c(4,2,1,1))
 for (i in 1:3) {
   M <- list(glmSR, glmSRnat, glmSRali) [[i]]

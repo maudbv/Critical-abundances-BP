@@ -2,19 +2,26 @@
 ### Threshold analysis plotting functions
 
 ## plot summary outputs
-plot.effect.summary <- function(  effects = glmSR.sum$class.summary ) {       
+plot.effect.summary <- function(  effects =
+                                    list(glmSR.sum$class.summary,
+                                         glmSRnat.sum$class.summary,
+                                         glmSRali.sum$class.summary ) )  {       
   
-  n <- length(unique(effects$group)) 
+  n <- length(unique(effects[[1]]$group)) 
   
   par(mfcol=c(n,3), oma=c(2,10,4,0), mar=c(2,2,1,1))
   for (j in 1:3) {
-    effects = list(glmSR.sum$class.summary,glmSRnat.sum$class.summary ,glmSRali.sum$class.summary )[[j]] 
+    sum.df = effects[[j]] 
   for (i in 1:n) {
-    S <- as.data.frame(effects[effects$group == unique(effects$group)[i],])
-    barplot(S$prop.impact*100, ylim=c(0,50), col="lightgrey")
+    S <- as.data.frame(sum.df[sum.df$group == unique(sum.df$group)[i],])
+    barplot(S$prop.impact*100, ylim=c(0,max(40, S$prop.impact*100)), col= "grey", border = "grey")
     par(new=T)
-    barplot(S$prop.thr*100, col="black" , ylim=c(0,50))
-     
+    barplot(S$prop.thr*100, col="black" , ylim=c(0,max(40, S$prop.impact*100)))
+    
+    if (j==3 & i==1) {
+      legend('top', inset = 0.2, bty="n", bg="white",legend=c("Critical abundance", "Negative trend"),
+             fill=c("black",  "grey"), border= c("black",  "grey"), cex=0.9)
+    }
   }   
   }
 #    mtext(text="Abundance class", side=1, outer=T, line=0.5)
@@ -25,14 +32,58 @@ plot.effect.summary <- function(  effects = glmSR.sum$class.summary ) {
   mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=4, at=c(0.3,0.8),adj=0.5, outer=T, las=1)
   mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),line=0, at=c(0.18,0.52,0.85),adj=0.5, outer=T, las=1)
   mtext(text="Abundance class", side=1, outer=T, line=1)
-  
-legend('topright', bty="0", bg="white",legend=c("negative", "critical"),
-fill=c("lightgrey", "black"), border= c("black", "black"), cex=0.9)
+#   
+# legend('top', bty="0", bg="white",legend=c("negative", "critical"),
+# fill=c("lightgrey", "black"), border= c("black", "black"), cex=0.9)
 
 }
 
+##### plotting raw frequencies
+plot.effect.summary.freq <- function(  effects =list(glmSR.sum$class.summary,
+                                              glmSRnat.sum$class.summary,
+                                              glmSRali.sum$class.summary ) )  {       
+  
+  n <- length(unique(effects[[1]]$group)) 
+  
+  par(mfcol=c(n,3), oma=c(2,10,4,1), mar=c(2,2,2,1))
+  for (j in 1:3) {
+    sum.df = effects[[j]] 
+    for (i in 1:n) {
+      x=subset(sum.df, group == unique(sum.df$group)[i])
+      ylim = ceiling(max(sum.df$n.negative.target, na.rm=T) +1)
+      
+#       x [, c("freq.thr", "freq.negative", "nb.sp","n.negative.target" )]= log(x[,c("freq.thr", "freq.negative", "nb.sp","n.negative.target" )])
+#       ylim = max(log(ylim + 15))
+      
+#       barplot(x[,"nb.sp"], names= paste("c",2:6, sep=""),las=1, ylim=c(0, ylim),
+#               col=c( "white"), border="grey", yaxt="n")
+      
+      barplot(x[,"n.negative.target"], names= paste("c",2:6, sep=""),las=1, ylim=c(0, ylim),
+               col= "grey", border = "grey", yaxt="n")
+      barplot(x[,"freq.thr"], col=c("black"),  names="",axes=F, add=T)
+      axis(side=2, las=1)
+#       axis(side=2, at=log(c(1,2,5,10,25,50,100, 200))+ 1, label=c(1,2,5,10,25,50,100,200), las=1)
+      box(bty="l")  
+
+if (j==3 & i==1) {
+  legend('top', inset = 0.2, bty="n", bg="white",legend=c("Critical abundance", "Negative trend"),
+         fill=c("black",  "grey"), border= c("black",  "grey"), cex=0.9)
+}
+    }
+  }   
+  
+#   legend('topright', bty="0", bg="white",legend=c("Critical abundance", "Negative trend", "total observed"),
+#          fill=c("black", "lightgrey", "white"), border= c("black", "black", "grey", "grey"), cex=0.9)
+
+  mtext(text="Number of species", side=2, outer=T, line=8)  
+  mtext(side=2, text=c("Alien\ntargets", "Native\ntargets"),line=4, at=c(0.3,0.8),adj=0.5, outer=T, las=1)
+  mtext(side=3, text=c("Total\nrichness","Native\nrichness", "Alien\nrichness"),line=0, at=c(0.18,0.52,0.85),adj=0.5, outer=T, las=1)
+  mtext(text="Abundance class", side=1, outer=T, line=1)
+}
+
 ### plotting individual species
-plot.sp.glm=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=db, type = "overall.boot", threshold ="th.CI",boxplots =T ) {  
+plot.sp.glm=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=db,
+                     type = "overall.boot", threshold ="th.CI",boxplots =T ) {  
   
   Z= db[db$SpeciesCode==sp,]
   
@@ -50,7 +101,7 @@ plot.sp.glm=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=db, type = 
   else {
      # alt points
     col = rep("white",length(Z$abun))
-    col[ Z$abun == as.numeric( M$thresh[sp,"th.CI"])]="black"  # identify the threshold
+    col[ Z$abun == as.numeric( M$thresh[sp,threshold])]="black"  # identify the threshold
     Z$abun.jit = jitter(Z$abun, amount = 0.4)
     plot(as.formula(paste(variable, " ~ abun.jit")), data=Z, xlim=c(0.5,6.5),
          type="n",xaxt = "n", yaxt="n", ann=F)
@@ -73,15 +124,19 @@ plot.sp.glm=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=db, type = 
   
 #   mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
   
-  return(M$thresh[sp,"th.CI"])
+  return(M$thresh[sp,threshold])
 }
 
 
 ### plotting Effect sizes for individual species 
-plot.sp.ES=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=databp, type="overall.boot", threshold ="th.CI") {  
+plot.sp.ES=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=databp,
+                    type="overall.boot", threshold ="th.CI",ylim= c(-5,+5)) {  
   
   Z <- db[db$SpeciesCode==sp,]
-  es <- as.numeric(M$est[sp,])
+   es <- as.numeric(M$est[sp,])
+  
+#   es <- as.numeric(M$dif[sp,])
+  
   n <- as.numeric(M$n.obs[sp,])[2:6]
   
   if (type =="simple.boot") {
@@ -103,14 +158,16 @@ plot.sp.ES=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=databp, type
   low[n<3] <- NA
   hi[n<3] <- NA
   
-  lims <-  max(c(abs(low),abs(hi)), na.rm=T) +0.02
+  if ( !all(is.na(c(hi, low)))) lims <-  max(c(abs(low),abs(hi)), na.rm=T) +0.02
+  if ( all(is.na(c(hi, low)))) lims <-  max(c(abs(es)), na.rm=T) +0.02
   
   
   col <- rep("white",6)
   col[ as.numeric( M$thresh[sp,threshold])] <- "black"  # identify the threshold
   
-  ## alternatively:
-  plot(1:5,  rep(0,5),ylim = c(-lims,+lims),xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F)
+  if (is.null(ylim)) ylim = c(-lims,+lims)
+
+  plot(1:5,  rep(0,5),ylim=ylim, xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F)
   axis(1,at = 1:5, label = names(M$est), tcl= 0.1,mgp=c(1,0.5,0),las=1)
   axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1)
   title(main=sp, cex.main=0.8, line=0.2)
@@ -120,7 +177,9 @@ plot.sp.ES=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=databp, type
   # if (!all(is.na(small))) points(1:5, small, pch=".")  
 
   ## Add bootstrapped CI
+  if ( !all(is.na(c(hi, low)))) {
   arrows(1:5,low,   1:5,hi, lwd=1, code =3, length=0.05, angle=90)
+  }
   points(1:5,es, bg = col[2:6], pch=21)
   
   mtext(side=3, line=-1.2, at=1:5,text=n, cex=0.7, las=1)
@@ -130,12 +189,13 @@ plot.sp.ES=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=databp, type
 #   mtext(side=3, line=-1.1, at=1:5,text=sapply( Pclass, FUN=p2star), cex=0.8)
 #   mtext(side=3, text=paste ("rho" ,round(M$spearman[sp,"rho"],2), p2star(M$spearman[sp,"p.val"])), adj=1, cex=0.7)
   
-  return(M$thresh[sp,"th.CI"])
+  return(M$thresh[sp,threshold])
 }
 
 ## plotting all significant species
-plot.glm=function(M=glmSR.overall, variable="SR", db=databp, sel.criteria = c("th.exist"), type="overall.boot", ES = T,
-                  panels = c(6,6), threshold ="th.CI", boxplots = T) {
+plot.glm=function(M=glmSR.overall, variable="SR", db=databp, sel.criteria = c("sp.target","th.exist"), type="overall.boot", ES = T,
+                  panels = c(3,5), 
+                  threshold ="th.CI", boxplots = T, sp.target = NULL) {
   
   par(mfrow=panels, mar=c(2,2,1,1), oma=c(3,3,1,1))
   if (type =="simple.boot") M$thresh <-M$boot.thresh
@@ -144,9 +204,10 @@ plot.glm=function(M=glmSR.overall, variable="SR", db=databp, sel.criteria = c("t
   
   # select only species according to seletion criteria :
   if (sel.criteria == "spear") sel <- rownames(M$spearman) [M$spearman[,"p.val"] <=0.05 &  M$spearman[,"rho"] <0 ]
-  if (sel.criteria == "dev1") sel <-  rownames(M$glms) [M$glms[,"dev.ratio"] > 0.05 &  !is.na(M$thresh[,"th.CI"]) ]
+  if (sel.criteria == "dev1") sel <-  rownames(M$glms) [M$glms[,"dev.ratio"] > 0.05 &  !is.na(M$thresh[,threshold]) ]
   if (sel.criteria == "none") sel <- TRUE
-  if (sel.criteria == "th.exist") sel <-  rownames(M$thresh) [ !is.na(M$thresh[,"th.CI"]) ]
+  if (sel.criteria == "th.exist") sel <-  rownames(M$thresh) [ !is.na(M$thresh[,threshold]) ]
+  if (sel.criteria == "sp.target") sel <-  sp.target
   
   ### Loop on selected species 
   for (sp in sel)  {
@@ -156,48 +217,6 @@ plot.glm=function(M=glmSR.overall, variable="SR", db=databp, sel.criteria = c("t
     
     print(paste(sp,":",th))
   }
-}
-
-### thredhold barplots
-thresh.prop=function(effects=effects.glmSR, data=species, y=T,ylim=c(0,0.35)) {
-  #graphical representation
-  barplot(effects$prop.thr[effects$group=="ALIEN:0"], names.arg= paste("c",2:6, sep=""), 
-          col="grey", ylim=ylim, las=1 )
-  if (y==T) mtext(side=2, text="Prop. threshold effects",line=3.4, cex=0.8)
-  barplot( effects$prop.thr[effects$group=="ALIEN:1"], names.arg= paste("c",2:6, sep=""),
-           col="black" , ylim=ylim , las=1)
-  if (y==T) mtext(side=2, text="Prop. threshold effects", line=3.4, cex=0.8)
-  
-  print(wilcox.test(effects$prop.thr[effects$group=="ALIEN:1"],effects$prop.thr[effects$group=="ALIEN:0"], paired=T))
-  print(friedman.test(cbind(effects$prop.thr[effects$group=="ALIEN:1"],effects$prop.thr[effects$group=="ALIEN:0"])))
-  
-}
-
-### frequency barplots with logarithmic scale
-thresh.freq=function(effects=effects.glmSR, data=species, y=T,ylim=c(0,100), leg = F) 
-{
-  tmp=effects
-  
-  # loop on the two groups : Native and Alien targets
-  for (i in 1:2) {
-    x=t(as.matrix(tmp[tmp$group==levels(tmp$group)[i],c("freq.thr", "freq.impact", "nb.sp","n.target" )]))
-    x = log(x)
-    barplot(x[3,]+1, names= paste("c",2:6, sep=""),las=1, ylim=c(0, max(log(ylim + 1))),
-            col=c( "white"), border="grey", yaxt="n")
-    barplot(x[4,]+1, col=c( "lightgrey"), border="grey",names="",axes=F,add=T)
-    barplot(x[2,]+1, col=c( "grey"), names="",axes=F,add=T)
-    barplot(x[1,]+1, col=c("black"),  names="",axes=F, add=T)
-    axis(side=2, at=log(c(1,2,5,10,25,50,100, 200))+ 1, label=c(1,2,5,10,25,50,100,200), las=1)
-    box(bty="l")
-    if (y==T) mtext(side=2, text="Number of species", line=3.4, cex=0.8)
-    
-    if (leg == T & i==1) {
-      legend('topright', bty="0", bg="white",legend=c("threshold", "significant", "ns. occurrences", "all species"),
-             fill=c("black", "grey", "lightgrey", "white"), border= c("black", "black", "grey", "grey"), cex=0.9)
-    }
-  }
-  
-  chisq.test(t(cbind(effects$freq.thr[effects$group=="ALIEN:1"],effects$freq.thr[effects$group=="ALIEN:0"])))      
 }
 
 

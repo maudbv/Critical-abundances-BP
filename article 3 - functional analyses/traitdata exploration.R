@@ -1,12 +1,17 @@
 ### Exploring trait data for Banks peninsula
 load("saved Rdata/article 1/effect summary.Rdata")
 
-N=dim(traitdata[which(traitdata$grassland.occur>0),])[1]
+
+db=databp[databp$PlotName %in% realgrasslands,]
+a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=min.occur)>=min.class) 
+                  &  table(db$SpeciesCode, db$abun)[,1]>=min.occur))
+
+
+N=dim(traitdata[which(traitdata$grassland.occur>15 & rownames(traitdata)%in% a ),])[1]
 # 466
 
 dim(traitdata[which(traitdata$grassland.occur>9),])[1]
 # 153
-
 
 chisq.test(table(as.factor(lost$lifeform )),table(as.factor(kept$lifeform )))
 
@@ -101,17 +106,7 @@ table(spok$Growth.forms)  # mostly herbs and some grasses
 sum(rownames(spok) %in% rownames(effect.summary))  # 132 of the targets
 dim(spok)[1]  
 
-###  potentially with TRY
-spok.try=traitdata[which(traitdata$grassland.occur>0 & (traitdata$SLA.try + traitdata$Hmax.try + traitdata$SM.try)==3),]
-## 250 species with all 3 traits if we have TRY
-sum(spok.try$ALIEN==0)  # Only 78 native species have all 3...
-table(spok.try$Growth.forms)  # no ferns
-sum(rownames(spok.try) %in% rownames(effect.summary))  # 161
-dim(spok.try)  
-
-c(dim(spok)[1], dim(spok.try)[1])
-
-### mean and variation per genus
+# mean and variation per genus
 # gentrait= as.data.frame(sapply(c("SLA", "Hmax", "SM"),FUN=function(x) {
 #   y=tapply(traitdata[,x],as.factor(traitdata$Genus), FUN=mean, na.rm=T)
 #   return(y)
@@ -145,7 +140,7 @@ sum(misstry$SM.try==0) # 219 SLA missing
 
 
 ### Only FREQUENT species :
-dim(traitdata[which(traitdata$grassland.occur>9),])
+dim(traitdata[which(traitdata$grassland.occur>15),])
 # 153 sp
 
 sum(rownames(spok) %in% rownames(traitdata[which(traitdata$grassland.occur>9),]))
@@ -155,55 +150,10 @@ sum(rownames(spok.try) %in% rownames(traitdata[which(traitdata$grassland.occur>9
 
 missing.imp=traitdata[which(traitdata$grassland.occur>9 & (traitdata$SLA + traitdata$Hmax + traitdata$SM)<3),]
 ### 44 frequent missing species 
-table(missing.imp$ALIEN) # 38 natives missing
-sum(missing.imp$Hmax==0) # 4 heights missing
-sum(missing.imp$SLA==0) # 11 SLA missing
-sum(missing.imp$SM==0) # 40 SM missing
-
-### Only FREQUENT species + TRY:
-misstry.imp=traitdata[which(traitdata$grassland.occur>9 
-                            & (traitdata$SLA.try + traitdata$Hmax.try + traitdata$SM.try)<3),]
-### 50 frequent missing species 
-
-table(misstry.imp$ALIEN) # 69 natives misstry
-sum(missing.imp$Hmax.try==0) # 24 heights missing
-sum(missing.imp$SLA.try==0) # 44 SLA missing
-sum(missing.imp$SM.try==0) # 46 SLA missing
-
-# ####### Tyler's species
-# tylersp=read.csv("data/Tyler species.csv", stringsAsFactor=F)
-# tylersp$tip=sub("\\.", "_",tylersp$SpecName)
-# tylersp$incommon=NA
-# tylersp$incommon[which(tylersp$tip%in%species$tip )]=1  ### 157
-# write.csv(tylersp, "species in common.csv")
-# 
-# # common species with tyler's data
-# sum(missing$tip%in% tylersp$tip) ## 33 missing species in common with Tyler
-# sum(spok$tip%in% tylersp$tip)  ### 111 species of tyler for which we have all three traits!!
-# sum(spok.try$tip%in% tylersp$tip)  ### 117 species of tyler for which we have all three traits!!
-# 
-# 
-# sum(missing.imp$tip%in% tylersp$tip) ## 29 important missing species in common with Tyler
-# sum(misstry$tip%in% tylersp$tip) ## 29 missing species in common with Tyler
-# sum(misstry.imp$tip%in% tylersp$tip) ## 120 missing species in common with Tyler in best case scenario
-# 
-# 
-# 
-# missing$tyler=NA
-# missing$tyler[which(missing$tip%in% tylersp$tip)]=1
-# 
-# 
-# missing.imp$tyler=NA
-# missing.imp$tyler[which(missing.imp$tip%in% tylersp$tip)]=1
-# 
-# 
-# misstry$tyler=NA
-# misstry$tyler[which(misstry$tip%in% tylersp$tip)]=1
-# 
-# 
-# misstry.imp$tyler=NA
-# misstry.imp$tyler[which(misstry.imp$tip%in% tylersp$tip)]=1
-# 
+table(missing.imp$ALIEN) 
+sum(missing.imp$Hmax==0) 
+sum(missing.imp$SLA==0) 
+sum(missing.imp$SM==0) 
 
 ### TRY additions potentially
 write.csv(missing.imp, "grassland species missing traits.csv")

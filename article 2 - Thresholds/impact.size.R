@@ -1,14 +1,14 @@
 
 ### Calculate impact size and other indices 
 ## impact size for each species
-impact.size <- function(obj = glmSR.overall){
+impact.size <- function(obj = glmSR.overall, threshold = "th.CI"){
   
   out = NULL
   
   for (i in 1:dim(obj$glms)[1]) {
     
     sp        <- rownames(obj$glms)[i] 
-    th        <- obj$impact.spread$th[i]
+    th        <- obj$impact.spread[i, threshold]
     prevalence <- obj$impact.spread$prevalence[i]
     prop.plot.impact <- obj$impact.spread$prop.plot.impact[i]
     n.plot.impact <- obj$impact.spread$nb.plot.impact[i]

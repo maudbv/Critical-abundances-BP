@@ -10,7 +10,7 @@ rownames(envplot) <- envplot$PLOTID
 rownames(species) <- species$Sp.code
 match(rownames(ranks), rownames(envplot))
 
-######  creating a clear discimitating taxon nomenclature 
+######  creating homogeneously formatted species nomenclature
 species$SpeciesName =species$Species
 species$Genus=sapply(as.character(species$SpeciesName), FUN=function(x) {
   g=strsplit(x, split=" ")[[1]][1]
@@ -20,9 +20,16 @@ species$Species=sapply(as.character(species$SpeciesName), FUN=function(x) {
   g=strsplit(x, split=" ")[[1]][2]
  return(g)})
 
-# species names as in the tips of the phylgoeny
+# species$subsp=sapply(as.character(species$SpeciesName), FUN=function(x) {
+#   g="NA"
+#   if (grep("subsp", x)) {
+#   g=strsplit(x, split=" ")[[1]][3]
+#   }
+#   return(g)})
+
 species$tip<-paste(species$Genus,species$Species, sep="_")
-## differentiate tips for phylogeny (genus_species) from unique subspecies
+
+## differentiate tips for phylogeny (genus_species) from unique subspecies :
 species$tipcomplete <-apply(cbind(species$Genus,species$Species,species$subsp), 1 ,
                             function(x)  paste(x,sep="_", collapse="_"))
 
@@ -228,10 +235,7 @@ databp$domlevels=as.numeric(as.character(databp$domlevels))
 databp$abun=7-as.numeric(as.character(databp$domlevels))
 
 
-## realgrasslands
-tmp  <- databp[databp$DominanceRank==1,]
-realgrasslands <- as.character(tmp[which( (as.character(tmp$Growth.forms) %in% c('GR','HR')) & (as.character(tmp$landcover) %in% c('High Producing Exotic Grassland','Low Producing Grassland'))),
-                                   "PlotName"])
+
 
 ## Community data matrix
 tmp=databp
@@ -255,6 +259,13 @@ comm=as.data.frame(comm)
 occur2=comm
 occur2=ceiling(occur2/1000)
 
+## realgrasslands
+tmp  <- databp[databp$DominanceRank==1,]
+realgrasslands <- as.character(tmp[which( (as.character(tmp$Growth.forms) %in% c('GR','HR')) & (as.character(tmp$landcover) %in% c('High Producing Exotic Grassland','Low Producing Grassland'))),
+                                   "PlotName"])
+
+tmp <- colSums(comm[which(rownames(comm) %in% as.character(realgrasslands)),]>0, na.rm=T)
+species$grassland.occur <- tmp[match(rownames(species), names(tmp))]
 
 # list of objects to return
 return(list(databp, comm, envplot, species, grasslands, woodlands,lowlands, highlands, occur=occur2, aliens=aliens, natives=natives, realgrasslands= realgrasslands ) )
