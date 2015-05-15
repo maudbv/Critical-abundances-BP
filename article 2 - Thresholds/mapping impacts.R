@@ -1,129 +1,65 @@
 
 ### Mapping impacts
 
-
-### mapping landcover
-landcover.col=c("grey","grey",
-                "grey","grey",
-                "red","grey",
-                "goldenrod","grey",
-                "forestgreen","grey",
-                "grey","grey",
-                "grey","grey",
-                "grey","grey",
-                "grey", "grey")
-par(mar=c(1,1,1,1))
-plot(envplot$POINTX,envplot$POINTY,pch=22,xlim=c(min(envplot$POINTX), 2550000),
-     col=landcover.col[as.numeric(as.factor(envplot$landcover))], bg=landcover.col[as.numeric(as.factor(envplot$landcover))])
-legend('topright',legend= c("High productivity grassland", 
-                            "Low productivity grassland", "Gorse and Broom","other"),
-       fill=c("goldenrod","forestgreen","red","grey"), cex=0.6)
-
-
-### plot species i am looking for
-db=databp[databp$PlotName %in% realgrasslands,]
-targets <- rownames(glmSRnat$impact.spread)[which(!is.na(glmSRnat$impact.spread$th))]
-
-par(mfrow=c(4,4), mar=c(1,2,3,1))                         
-for( i in targets) {
-   plot.alien=as.character(db[which(db$abun%in%c(1,2,3,4,5,6) & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])  
-  th= glmSRnat$impact.spread[i, "th"]
-  impact=as.character(db[which(db$abun>= th & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])
-  
-  plot(envplot$POINTX,envplot$POINTY,pch=22,main=i,col='lightgrey', bg="lightgrey",  axes=F)
-  points(envplot[plot.alien, c("POINTX", "POINTY")],pch=22, col="goldenrod",bg="goldenrod")
-  points(envplot[impact, c("POINTX", "POINTY")],pch=22,  col="firebrick", bg="firebrick")
-}
-
-=======
-### Mapping impacts
-
-
-### mapping landcover
-landcover.col=c("grey","grey",
-                "grey","grey",
-                "red","grey",
-                "goldenrod","grey",
-                "forestgreen","grey",
-                "grey","grey",
-                "grey","grey",
-                "grey","grey",
-                "grey", "grey")
-par(mar=c(1,1,1,1))
-plot(envplot$POINTX,envplot$POINTY,pch=22,xlim=c(min(envplot$POINTX), 2550000),
-     col=landcover.col[as.numeric(as.factor(envplot$landcover))], bg=landcover.col[as.numeric(as.factor(envplot$landcover))])
-legend('topright',legend= c("High productivity grassland", 
-                            "Low productivity grassland", "Gorse and Broom","other"),
-       fill=c("goldenrod","forestgreen","red","grey"), cex=0.6)
-
-
-### plot species threshold distribution
-db=databp[databp$PlotName %in% realgrasslands,]
-targets <- rownames(glmSRnat.overall$impact.spread)[which(!is.na(glmSRnat.overall$impact.spread$th.CI))]
-
-par(mfrow=c(3,4), mar=c(1,2,3,1))                         
-for( i in targets) {
-   plot.alien=as.character(db[which(db$abun%in%c(1,2,3,4,5,6) & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])  
-  th= glmSRnat.overall$impact.spread[i, "th.CI"]
-  impact=as.character(db[which(db$abun>= th & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])
-  
-  plot(envplot$POINTX,envplot$POINTY,pch=22,main=i,col='lightgrey', bg="lightgrey",  axes=F)
-  points(envplot[plot.alien, c("POINTX", "POINTY")],pch=22, col="goldenrod",bg="goldenrod")
-  points(envplot[impact, c("POINTX", "POINTY")],pch=22,  col="orangered", bg="orangered")
-}
-
-
-### plot species maximum impact distribution
-db=databp[databp$PlotName %in% realgrasslands,]
-targets <- rownames(glmSRnat.overall$impact.spread)[
-  which(!is.na(glmSRnat.overall$impact.spread$th.CI) &
-                 rownames(glmSRnat.overall$impact.spread)%in% aliens)]
-
-par(mfrow=c(3,4), mar=c(1,2,3,1))                         
-for( i in targets) {
-  plot.alien=as.character(db[which(db$abun%in%c(1,2,3,4,5,6) & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])  
-  th= glmSRnat.overall$impact.spread[i, "th.CI"]
-  es <- as.numeric(glmSRnat.overall$est[i,])
-  n <- as.numeric(M$n.obs[i,])[2:6]
-  es[which(n<5)] <- NA
-  es = which(!is.na(es))+1
-  m <- max(es, na.rm=T)
-  max.impact=as.character(db[which(db$abun>= m & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])
-  th.impact=as.character(db[which(db$abun>= th & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])
-  
-  plot(envplot$POINTX,envplot$POINTY,pch=22,main=i,col='lightgrey', bg="lightgrey",  axes=F)
-  points(envplot[plot.alien, c("POINTX", "POINTY")],pch=22, col="tan",bg="tan")
-  points(envplot[th.impact, c("POINTX", "POINTY")],pch=22,  col="sienna2", bg="sienna2")
-  points(envplot[max.impact, c("POINTX", "POINTY")],pch=22,  col="sienna4", bg="sienna4")
-}
-
-plot.new()
- legend("center", legend = c("< critical abundance",">critical abundance", "maximum abundance"),
-        fill=c( "tan", "sienna2","sienna4"), bty="n", border =c( "tan", "sienna2","sienna4"))
-
-
 #############       Using GIS data
 require(rgdal)
 require(raster)
 require(sp)
 require(gstat)
+library(raster)
 
 study_area <- readOGR(dsn = "data/GIS", layer ="Banks_Peninsula_study_area")
 geology <- readOGR(dsn = "data/GIS", layer ="Banks_Peninsula_geology_map")
 population <- readOGR(dsn = "data/GIS", layer ="Banks_Peninsula_population_data")
 plots <- readOGR(dsn = "data/GIS", layer ="Banks_Peninsula_points")
-plot(plots)
 
 coordinates(envplot) <- c("POINTX", "POINTY")
 proj4string(envplot) <- proj4string(study_area)
 
 envplot.grid <- points2grid(envplot, tolerance = 0.63, round=1)
-
 grid <- SpatialGrid(envplot.grid, proj4string = proj4string(study_area))
 
 
-### Impact spread plots :
-x11()
+# as raster ?
+envplot.ras <- raster(envplot)
+
+### represent study area
+### mapping landcover
+landcover.col=c("grey","grey",
+                "grey","grey",
+                "grey","grey",
+                "yellowgreen","grey",
+                "forestgreen","grey",
+                "grey","grey",
+                "grey","grey",
+                "grey","grey",
+                "grey", "grey")
+names(landcover.col) <- levels(as.factor(envplot$landcover))
+landcover.col[c(2,4,8,11,12,13,14)] = "grey30"
+
+plot(study_area, border = "grey", col="grey")
+plot(envplot, add = T, pch=22, col = landcover.col[envplot$landcover],bg = landcover.col[envplot$landcover] )
+
+legend('topright',legend= c("High productivity grassland", 
+                            "Low productivity grassland","forest","other"),
+       fill=c("goldenrod","forestgreen","red","grey"), cex=0.6)
+
+#outliers in the NMDS.complete :
+points(envplot[c("180", "787"),])
+
+
+## proportion of invasion AR/TR
+
+envplot$prop.alien <- envplot$SRali/envplot$SR
+
+x <- cut(envplot$prop.alien , 20)
+cp <- colorRampPalette(c("white" ,"tan","sienna4"))(20)
+plot(study_area, border = "grey", col="grey")
+plot(envplot, add = T, pch=22, col = cp[as.numeric(x)], bg = cp[as.numeric(x)])
+
+
+### Impact spread :
+pdf(file = "map impasct.pdf")
 db=databp[databp$PlotName %in% realgrasslands,]
 targets <- rownames(glmSRnat.overall$impact.spread)[
   which(!is.na(glmSRnat.overall$impact.spread$th.CI) &
@@ -152,6 +88,11 @@ for( i in targets) {
 plot.new()
 legend("center", legend = c("< critical abundance",">critical abundance", "maximum abundance"),
        fill=c( "tan", "sienna2","sienna4"), bty="n", border =c( "tan", "sienna2","sienna4"))
+
+
+dev.off()
+
+
 
 
 

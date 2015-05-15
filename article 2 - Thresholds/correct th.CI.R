@@ -1,17 +1,19 @@
 
 ### Function recalculating the critical values using the bootstrapped CI
 
-correct.th.CI <- function(M = glmSR.overall, variable= "SR") {
+impact.spread <- function(M = glmSR.overall, db=databp[databp$PlotName %in% realgrasslands,], 
+                           variable = "SR") {
 
-
-a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=min.occur)>=min.class) 
-                  &  table(db$SpeciesCode, db$abun)[,1]>=min.occur))
+a <- row.names(M$dif)
 db.modif <- db[which(db$SpeciesCode %in% a),] 
 
 # list of species =to be targeted in analysis :
-sp.names <- unique(db.modif$SpeciesCode)
+sp.names <- a
 
-
+output<- data.frame(matrix(NA, nrow= dim(M$dif), ncol =8))
+names(output)<- c("th",  "th.CI", "pth" , "pth.CI",
+                  "prevalence", "n.plot.impact", "prop.plot.impact", "SRo")
+rownames(output) <- row.names(M$dif)
 for (i in 1:length(sp.names)) {
   
   sp <- sp.names[i]  # select species name
@@ -27,6 +29,16 @@ for (i in 1:length(sp.names)) {
   ab = which(!is.na(co))+1
   neg <-   which(co<0) +1
   
+th<- NA
+if (length(neg)>=1) {
+  y <- neg [sapply(neg, FUN= function(l) {
+    c1 <- ( if ( l <= max(ab)) all(((l):max(ab)) %in% neg) # all higher classes have negative diferences
+            else c1 =F)
+    return(c1)
+  })]
+  if (length(y)>=1) th <- min( y, na.rm=T)
+}
+
   # select coefficients whose CI are above or below zero :
   sig <-  which(testCI ==1 & M$n.obs[i,2:6] >= min.occur) + 1
   sig= sig [sig %in% neg]
@@ -41,10 +53,45 @@ for (i in 1:length(sp.names)) {
     if (length(y)>=1) th.CI <- min( y, na.rm=T)
 }
 
-M$impact.spread$th.CI [i] <- th.CI
-M$impact.spread$nb.plot.impact [i] <- sum(sp.dat$abun >=  th.CI, na.rm=T)
-M$impact.spread$prop.plot.impact [i] <- M$impact.spread$nb.plot.impact [i]/M$impact.spread$prevalence [i]
-M$impact.spread$SRo [i] <- mean(db[db$SpeciesCode == sp,variable], na.rm=T)
+
+### positive effects : detect minimal critical value using bootstrap CI
+pos <- which(co>0) +1
+# select coefficients whose CI are above or below zero :
+sig <-  which(testCI ==1 & M$n.obs[i,2:6] >= min.occur) + 1
+sig= sig [sig %in% pos]
+
+pth<- NA
+if (length(pos)>=1) {
+  y <- pos [sapply(pos, FUN= function(l) {
+    c1 <- ( if ( l <= max(ab)) all(((l):max(ab)) %in% pos) # all higher classes have negative diferences
+            else c1 =F)
+    return(c1)
+  })]
+  if (length(y)>=1) pth <- min( y, na.rm=T)
 }
+
+
+pth.CI<- NA
+if (length(sig)>=1) {
+  y <- sig [sapply(sig, FUN= function(l) {
+    c1 <- ( if ( l <= max(ab)) all(((l):max(ab)) %in% pos) # all higher classes have negative diferences
+            else c1 =F)
+    return(c1)
+  })]
+  if (length(y)>=1) pth.CI <- min( y, na.rm=T)
+}
+
+
+prevalence <- dim(sp.dat)[1]
+nb.plot.impact<- sum(sp.dat$abun >=  th.CI, na.rm=T)
+prop.plot.impact <- nb.plot.impact/prevalence
+SRo <-nb.plot.impact/prevalence
+
+output [i, ] <- c(th, th.CI, pth, pth.CI, prevalence,nb.plot.impact,prop.plot.impact, SRo)
+}
+
+
+M$impact.spread <- output
+
 return(M)
 }

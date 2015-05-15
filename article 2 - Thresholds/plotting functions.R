@@ -14,9 +14,11 @@ plot.effect.summary <- function(  effects =
     sum.df = effects[[j]] 
   for (i in 1:n) {
     S <- as.data.frame(sum.df[sum.df$group == unique(sum.df$group)[i],])
-    barplot(S$prop.impact*100, ylim=c(0,max(40, S$prop.impact*100)), col= "grey", border = "grey")
+    S$prop.negative.target <- S$n.negative.target/S$n.target
+    
+    barplot(S$prop.negative.target*100, ylim=c(0,max(40, S$prop.negative.target*100)), col= "grey", border = "grey")
     par(new=T)
-    barplot(S$prop.thr*100, col="black" , ylim=c(0,max(40, S$prop.impact*100)))
+    barplot(S$prop.thr*100, col="black" , ylim=c(0,max(40, S$prop.negative.target*100)))
     
     if (j==3 & i==1) {
       legend('top', inset = 0.2, bty="n", bg="white",legend=c("Critical abundance", "Negative trend"),
@@ -52,18 +54,10 @@ plot.effect.summary.freq <- function(  effects =list(glmSR.sum$class.summary,
       x=subset(sum.df, group == unique(sum.df$group)[i])
       ylim = ceiling(max(sum.df$n.negative.target, na.rm=T) +1)
       
-#       x [, c("freq.thr", "freq.negative", "nb.sp","n.negative.target" )]= log(x[,c("freq.thr", "freq.negative", "nb.sp","n.negative.target" )])
-#       ylim = max(log(ylim + 15))
-      
-#       barplot(x[,"nb.sp"], names= paste("c",2:6, sep=""),las=1, ylim=c(0, ylim),
-#               col=c( "white"), border="grey", yaxt="n")
-      
-      barplot(x[,"n.negative.target"], names= paste("c",2:6, sep=""),las=1, ylim=c(0, ylim),
-               col= "grey", border = "grey", yaxt="n")
-      barplot(x[,"freq.thr"], col=c("black"),  names="",axes=F, add=T)
-      axis(side=2, las=1)
-#       axis(side=2, at=log(c(1,2,5,10,25,50,100, 200))+ 1, label=c(1,2,5,10,25,50,100,200), las=1)
-      box(bty="l")  
+      S <- as.data.frame(sum.df[sum.df$group == unique(sum.df$group)[i],])
+      barplot(S$n.negative.target, ylim=c(0,max(12,S$n.negative.target)), col= "grey", border = "grey")
+      par(new=T)
+      barplot(S$freq.thr, col="black" , ylim=c(0,max(12,S$n.negative.target)))
 
 if (j==3 & i==1) {
   legend('top', inset = 0.2, bty="n", bg="white",legend=c("Critical abundance", "Negative trend"),
@@ -194,7 +188,7 @@ plot.sp.ES=function(sp="ACHMIL", M=glmSR.overall, variable="SR", db=databp,
 
 ## plotting all significant species
 plot.glm=function(M=glmSR.overall, variable="SR", db=databp, sel.criteria = c("sp.target","th.exist"), type="overall.boot", ES = T,
-                  panels = c(3,5), 
+                  panels = c(4,4), ylim=c(-5,5),
                   threshold ="th.CI", boxplots = T, sp.target = NULL) {
   
   par(mfrow=panels, mar=c(2,2,1,1), oma=c(3,3,1,1))
@@ -213,7 +207,7 @@ plot.glm=function(M=glmSR.overall, variable="SR", db=databp, sel.criteria = c("s
   for (sp in sel)  {
     
     if (ES == F) th=plot.sp.glm(sp= sp, M=M, variable=variable, db=db, type=type, boxplots = boxplots )
-    if (ES == T) th=plot.sp.ES(sp= sp, M=M, variable=variable, db=db, type=type)
+    if (ES == T) th=plot.sp.ES(sp= sp, M=M, variable=variable, db=db, type=type, ylim=ylim)
     
     print(paste(sp,":",th))
   }

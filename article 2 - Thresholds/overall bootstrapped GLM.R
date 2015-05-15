@@ -3,7 +3,7 @@
 
 ###-----------Creating bootstrap samples of the dataset :
 bootstrap.dataset<- function(db=databp[databp$PlotName %in% realgrasslands,], 
-                             min.occur =5,  min.class = 2, R = 999) {
+                             min.occur =5,  min.class = 2, nreps = 999) {
   
   ######### selecting species verifying conditions : 
   a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=min.occur)>=min.class) 
@@ -19,10 +19,10 @@ bootstrap.dataset<- function(db=databp[databp$PlotName %in% realgrasslands,],
   # Unique set of plots to be resampled 
   d = as.character(unique( db.modif$PlotName))
   
-  # resampling the list of plot names with replacement *R* times
-  boots <- sapply(1:R,FUN = function (k) sample(d, replace=TRUE))
+  # resampling the list of plot names with replacement *nreps* times
+  boots <- sapply(1:nreps,FUN = function (k) sample(d, replace=TRUE))
   
-  return(list(boots =boots,db.size=dim(db)[1],min.occur =min.occur,  min.class = min.class, R = R))
+  return(list(boots =boots,db.size=dim(db)[1],min.occur =min.occur,  min.class = min.class, nreps = nreps))
 }
 
 extract.indices <- function(boot.output, db = db) {
@@ -33,7 +33,7 @@ extract.indices <- function(boot.output, db = db) {
   
   indices.table=NULL
   
-  for (r in 1:boot.output$R){
+  for (r in 1:boot.output$nreps){
     ## extract new datasets from original dataset using the bootstrapped line numbers:
     ind <-unlist(lapply(1:length(boot.output$boots[,r]), function (k)  which(db.modif$PlotName == boot.output$boots[k,r])))
     nrep = rep(r, length(ind))
@@ -41,7 +41,7 @@ extract.indices <- function(boot.output, db = db) {
     print(paste(r, ":","(",Sys.time(),")"))
   }
   
-  return(list(index = as.data.frame(indices.table), R = boot.output$R, min.class = boot.output$min.class, min.occur = boot.output$min.occur, db.size = boot.output$db.size))
+  return(list(index = as.data.frame(indices.table), nreps = boot.output$nreps, min.class = boot.output$min.class, min.occur = boot.output$min.occur, db.size = boot.output$db.size))
 }
 
 
@@ -49,8 +49,11 @@ extract.indices <- function(boot.output, db = db) {
 
 glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,], 
                            boot.indices  = boot.indices , sp.target = NA,
-                           variable='SR', min.occur =5,  min.class = 1, R = 999) {
+                           variable='SR', min.occur =5,  min.class = 1, nreps = 999) {
   
+  library(doParallel)
+  cl<-makeCluster(6)
+  registerDoParallel(cl)
   
   ### Check that boot.output is the right one
   stopifnot(min.occur == boot.indices$min.occur,
@@ -70,8 +73,8 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
   #### Calculating GLM for observed and bootstrap datasets for each species
   
   # initiate result dataframes :
-  crit.vals <- crit.vals.P  <- crit.vals.CI <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= R +1,
-                                                                  dimnames=list(sp.names,1:(R+1))))
+  crit.vals <- crit.vals.P  <- crit.vals.CI <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= nreps +1,
+                                                                  dimnames=list(sp.names,1:(nreps+1))))
   # coefs.C2 <- coefs.C3 <- coefs.C4 <- coefs.C5 <- coefs.C6 <- crit.vals
   # boot.coefs <- list(coefs.C2,coefs.C3,coefs.C4,coefs.C5,coefs.C6)
   
@@ -136,30 +139,28 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
     ### if species has a negative coefficient :
     # sp.sig <-  which(!apply( !(est<0 & n.obs[,2:6] >=5), 1, all, na.rm=T))
     ### or is in a list of targeted species :sp.target
-    if (    !all(!( est[i,]<0 & n.obs[i,2:6] >=5), na.rm=T) | sp %in% sp.target  ) {
+#     if (    !all(!( est[i,]<0 & n.obs[i,2:6] >=5), na.rm=T) | sp %in% sp.target  ) {
       
-      coefs <- data.frame(matrix(NA, nrow=R+1, ncol= 5,
-                                 dimnames=list(1:(R+1) ,c("c2", "c3", "c4", "c5", "c6"))))
-      pvals <- data.frame(matrix(NA, nrow=R+1, ncol= 5,
-                                 dimnames=list(1:(R+1) ,c("c2", "c3", "c4", "c5", "c6"))))
-      
-      for(j  in abun[-1]) coefs[1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
-      for(j  in abun[-1]) pvals[1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 4]
+#       coefs <- data.frame(matrix(NA, nrow=nreps+1, ncol= 5,
+#                                  dimnames=list(1:(nreps+1) ,c("c2", "c3", "c4", "c5", "c6"))))
+#       pvals <- data.frame(matrix(NA, nrow=nreps+1, ncol= 5,
+#                                  dimnames=list(1:(nreps+1) ,c("c2", "c3", "c4", "c5", "c6"))))
+#       
+#       for(j  in abun[-1]) coefs[1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
+#       for(j  in abun[-1]) pvals[1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 4]
       
       #store coefs
       #   for(j  in abun[-1]) boot.coefs[[j-1]][1, k] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
       #   
-      
-      ## SECOND : recalculate for each of the *R* bootstrapped datasets:
-      for ( r in 1:R) 
-      {
+
+obs.coef <- rep(NA,5)
+for(j  in abun[-1]) coefs[1, j-1] <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
+names(obs.coef) <- c("c2", "c3", "c4", "c5", "c6")
+## SECOND : recalculate for each of the *nreps* bootstrapped datasets:
+boot.coef <-  output= foreach(i=1:nreps, .combine='rbind') %dopar%  {
         
-        ## extract new datasets from original dataset using the bootstrapped line numbers:
-        # indices <-unlist(lapply(1:length(boots[,r]), function (k)  which(db.modif$PlotName == boots[k,r])))
-        # boot.db <- db.modif [indices, c("SpeciesCode", "abun",variable,'PlotName')]  
-        # rm(indices)
-        # ind <- boot.indices$index[boot.indices$index$nrep == r, "ind" ]
-        boot.db <- db.modif [boot.indices$index[boot.indices$index$nrep == r, "ind" ], c("SpeciesCode", "abun",variable,'PlotName')]
+  ## extract new datasets from original dataset using the bootstrapped line numbers:
+              boot.db <- db.modif [boot.indices$index[boot.indices$index$nrep == r, "ind" ], c("SpeciesCode", "abun",variable,'PlotName')]
         
         # print(paste(r, ":","(",Sys.time(),")"))
         dat <- boot.db[as.character( boot.db$SpeciesCode)==sp, ] # select occurrences of the species
@@ -173,19 +174,17 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
           f <-  glm(dat$var ~ as.factor(dat$abun), family=poisson(log))
           
           # ## store coefficients for each bootstrapped sample k
-          for(j  in abun[-1]) coefs[r+1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
-          
-          # ## store Pvals for each bootstrapped sample k
-          for(j  in abun[-1]) pvals[r+1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )),4]
-        }
-        print(paste(i, ":",r, ":", "(",Sys.time(),")"))
+          coef.string <- rep(NA,5)
+          for(j  in abun[-1]) coefs[j-1] <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
+          print(paste(i, ":",r, ":", "(",Sys.time(),")"))
       }
       
+
       #### THIRD: statistics for species i 
       
       # detect minimal critical value (simple start of negative trend)
       
-      crit.vals[i,] <- sapply(1:(R+1), function(x, n.obs) {
+      crit.vals[i,] <- sapply(1:(nreps+1), function(x, n.obs) {
         crit <- NA
         co <-coefs [x,]
         ab = which(!is.na(co))+1
@@ -206,7 +205,7 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
       
       
       # detect minimal critical value using GLM Pvalues
-      # crit.vals.P[i,] <- sapply(1:(R+1), function(x, n.obs) {
+      # crit.vals.P[i,] <- sapply(1:(nreps+1), function(x, n.obs) {
       #   crit <- NA
       #   co <-coefs [x,]
       #   ps <- pvals [x,]
@@ -236,7 +235,7 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
       testCI = sign(as.numeric(bootCI.low [i,])) * sign(as.numeric(bootCI.hi [i,]))
       
       # detect minimal critical value using bootstrap CI
-      crit.vals.CI[i,] <- sapply(1:(R+1), function(x, n.obs) {
+      crit.vals.CI[i,] <- sapply(1:(nreps+1), function(x, n.obs) {
         crit <- NA
         co <-coefs [x,]
         ps <- pvals [x,]
@@ -261,22 +260,13 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
       }, n.obs  = n.obs[i,])
       
       
-      ### critical value
-      th <- crit.vals[i,1] 
-      # th.P <- crit.vals.P[i,1] 
-      th.CI <- crit.vals.CI[i,1] 
-      prevalence <- dim(sp.dat)[1]
-      n.plot.impact<- sum(sp.dat$abun >=  crit.vals[i,1], na.rm=T)
-      prop.plot.impact <- n.plot.impact/prevalence
-      SRo <- mean(db[db$SpeciesCode == sp,variable], na.rm=T)
-      SRo <- mean(db[db$SpeciesCode == sp,variable], na.rm=T)
-      
-      impact.spread[i,] <- c(th,  th.CI , prevalence, n.plot.impact, prop.plot.impact)
       
     }
     
-  }
+#   }
   
+stopCluster(cl)
+
   return(list(glms=glms, impact.spread = impact.spread,
               boot.mean = boot.mean, boot.sd=boot.sd, CIlow = bootCI.low, CIhi = bootCI.hi,
               crit.vals = crit.vals,crit.vals.P = crit.vals.P, spearman=spear, n.obs = n.obs,

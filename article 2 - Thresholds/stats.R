@@ -4,7 +4,9 @@
 # summarize thresholds
 
 
-thresh.summary <- data.frame(SR = glmSR.overall$impact.spread[,c("th", "th.CI")], SRnat = glmSRnat.overall$impact.spread[,c("th", "th.CI")], SRali = glmSRali.overall$impact.spread[,c("th", "th.CI")], 
+thresh.summary <- data.frame(SR = glmSR.overall$impact.spread[,c("th", "th.CI", "pth", "pth.CI")],
+                             SRnat = glmSRnat.overall$impact.spread[,c("th", "th.CI", "pth", "pth.CI")],
+                             SRali = glmSRali.overall$impact.spread[,c("th", "th.CI", "pth", "pth.CI")], 
                              status = c( "NATIVE","ALIEN")[rownames(glmSR.overall$impact.spread) %in% aliens +1])
 
 write.csv(thresh.summary, file = "threshold.summary.csv")
@@ -16,6 +18,72 @@ glm.table <- lapply(list(Total.richness = glmSR.overall, Native.richness = glmSR
                           table(M$impact.spread[, threshold], alien = rownames(M$impact.spread)%in%aliens))))
   return(tbl)
 })
+
+threshold = "pth.CI"
+glm.table.positives <- lapply(list(Total.richness = glmSR.overall, Native.richness = glmSRnat.overall, Alien.richness =glmSRali.overall), FUN= function (M) {
+  tbl <- as.table(t(rbind(none = as.numeric(table(na=is.na(M$impact.spread[, threshold]), alien = rownames(M$impact.spread)%in%aliens)[2,]),
+                          table(M$impact.spread[, threshold], alien = rownames(M$impact.spread)%in%aliens))))
+  return(tbl)
+})
+
+### MEdians 
+alien.ind <- which(rownames(glmSRnat.overall$impact.spread) %in% aliens)
+median( glmSRnat.overall$impact.spread$th.CI[alien.ind], na.rm=T)
+
+median( glmSRali.overall$impact.spread$th.CI[alien.ind], na.rm=T)
+
+# wilcox test between AR and NR
+
+wilcox.test(glmSRnat.sum$class.summary$freq.th[6:10], 
+            glmSRali.sum$class.summary$freq.th[6:10],
+            alternative ="two.sided", paired=T)
+
+t.test((glmSRnat.sum$class.summary$freq.th/glmSRnat.sum$class.summary$freq.negative)[6:10], 
+       (glmSRali.sum$class.summary$freq.th/glmSRali.sum$class.summary$freq.negative)[6:10],
+       alternative ="two.sided", paired=T)
+
+
+t.test((glmSRnat.sum$class.summary$freq.th/glmSRnat.sum$class.summary$n.negative.target)[6:10], 
+       (glmSRali.sum$class.summary$freq.th/glmSRali.sum$class.summary$n.negative.target)[6:10],
+       alternative ="two.sided", paired=T)
+
+
+t.test(glmSRnat.sum$class.summary$freq.th[6:10]/sum(glmSRnat.sum$class.summary$freq.th[6:10]), 
+       glmSRali.sum$class.summary$freq.th[6:10]/sum(glmSRali.sum$class.summary$freq.th[6:10]), 
+       alternative ="two.sided", paired=T)
+
+wilcox.test(glmSRnat.sum$class.summary$freq.th[6:10]/sum(glmSRnat.sum$class.summary$freq.th[6:10]), 
+       glmSRali.sum$class.summary$freq.th[6:10]/sum(glmSRali.sum$class.summary$freq.th[6:10]), 
+       alternative ="two.sided", paired=T)
+
+
+### better table for AR and NR
+ali.tab <- data.frame(
+  type = c(rep("NR",5), rep("AR",5)),
+  class = c(2:6, 2:6),
+  total.obs = c(glmSRnat.sum$class.summary$nb.sp[6:10],glmSRnat.sum$class.summary$nb.sp[6:10]),
+  th = c(glmSRnat.sum$class.summary$freq.th[6:10],glmSRali.sum$class.summary$freq.th[6:10])
+  )
+
+ali.tab$noth <- ali.tab$total.obs - ali.tab$th
+
+
+### binomial GLM
+fm1 <- glm(cbind(th,noth) ~ class, data = ali.tab, family = binomial())
+summary(fm1)
+
+fm2 <- glm(cbind(th,noth) ~ class*type, data = ali.tab, family = binomial())
+summary(fm2)
+
+
+
+# VGLM using VGAM package
+library(VGAM)
+# (thresh, no thresh) ~ class.abun + alien.status
+
+vglm.SR<- vglm(cbind(th, noth) ~ class + type, data = ali.tab, family = binomialff,trace = TRUE)
+summary(vglm.SR)
+
 
 
 
@@ -33,10 +101,13 @@ tbl= t(tbl[,3:4])
 chisq.test(tbl) 
 
 
-
 tbl <- glmSRali.sum$overall.summary
 tbl$nothr <- tbl$nb.sp - tbl$freq.thr 
-tbl= t(tbl[,3:4])
+tbl=
+fm1 <- cbind(freq.thr, nothr) ~ as.factor(class)
+alienstatus_SR <- glm(fm1, data = tbl, family = binomial())
+summary(alienstatus_SR)
+ t(tbl[,3:4])
 
 chisq.test(tbl)
 
@@ -74,10 +145,6 @@ fm1 <- cbind(freq.thr, nothr) ~ group
 alienstatus_SR <- glm(fm1, data = tbl, family = binomial())
 summary(alienstatus_SR)
 
-fm1 <- cbind(freq.thr, nothr) ~ as.factor(class)
-alienstatus_SR <- glm(fm1, data = tbl, family = binomial())
-summary(alienstatus_SR)
-
 fm2 <- cbind(freq.thr, nothr) ~ group + as.factor(class)
 alienstatus_SR <- glm(fm2, data = tbl, family = binomial())
 summary(alienstatus_SR)
@@ -89,8 +156,8 @@ wilcox.test(tbl$freq.th[tbl$group =="ALIEN:0"], tbl$freq.th[tbl$group =="ALIEN:1
             alternative ="two.sided", paired=T)
 
 tbl <- glmSRnat.sum $class.summary
-wilcox.test(tbl$freq.th[tbl$group =="ALIEN:0"], tbl$freq.th[tbl$group =="ALIEN:1"],
-            alternative ="two.sided", paired=T)
+print(wilcox.test(tbl$freq.th[tbl$group =="ALIEN:0"], tbl$freq.th[tbl$group =="ALIEN:1"],
+            alternative ="two.sided", paired=T))
 
 tbl <- glmSRali.sum $class.summary
 wilcox.test(tbl$freq.th[tbl$group =="ALIEN:0"], tbl$freq.th[tbl$group =="ALIEN:1"],
@@ -155,13 +222,4 @@ round(tbl$freq.thr/tbl$nb.sp, 4)
 # 
 # t.test(freq.impact/nb.sp ~ group, data=tbl, paired = T)  ### signif P= 0.01681, df=4, t=-3.9508
 # t.test(freq.thr/nb.sp ~ group, data = tbl, paired =T)   ### signif P = 0.03048, df=4, t=-32808
-
-
-## other method : Independence tests : NOTHING SIGNIFICANT
-tbl <- as.table(t(rbind(none = as.numeric(table(na=is.na(glmSRnat$boot.thresh$th), alien = rownames(glmSRnat$boot.thresh)%in%aliens)[2,]),
-                        table(glmSRnat$boot.thresh$th, alien = rownames(glmSRnat$boot.thresh)%in%aliens))
-))
-library(coin)
-cmh_test(tbl)
-chisq_test(as.table( tbl))
 

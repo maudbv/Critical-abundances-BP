@@ -1,13 +1,13 @@
 ## Threshold master file
 
  setwd("C:/Users/bernarm2/Dropbox/Work/doc boulot/post doc Lincoln/R/")
-# setwd("~/Dropbox/Work/doc boulot/post doc Lincoln/R")
+#setwd("~/Dropbox/Work/doc boulot/post doc Lincoln/R")
 
 library(doBy)
 library(vegan)
 
 
- load("saved Rdata/article 2 - threshold/article threshold 1.1.Rdata")
+# load("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")
 
 ### import data
 # load("C:/Users/bernarm2/Dropbox/Work/doc boulot/post doc Lincoln/R/saved Rdata/article 3 - trait and phylo/save article 3.Rdata.RData")
@@ -49,20 +49,22 @@ load(file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
 #####  Overall bootstrapping :
 
 ## create bootstrapped samples
-system.time(boot.output <- bootstrap.dataset(db=db, min.occur =min.occur,  min.class = min.class, R = R))
-system.time(boot.indices <- extract.indices(boot.output, db = db))
-
-save( boot.output, boot.indices , file = "saved Rdata/article 2 - threshold/boot.output.2.0.Rdata")
-#   load(file = "saved Rdata/article 2 - threshold/boot.output.2classes.Rdata")
-
+# system.time(boot.output <- bootstrap.dataset(db=db, min.occur =min.occur,  min.class = min.class, R = R))
+# system.time(boot.indices <- extract.indices(boot.output, db = db))
+# 
+# save( boot.output, boot.indices , 
+#  file = "saved Rdata/article 2 - threshold/boot.output.2.0.Rdata")
+   load(file = "saved Rdata/article 2 - threshold/boot.output.2.0.Rdata")
+# 
 # calculate glms on bootstraps
-system.time(glmSR.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SR', min.occur= min.occur, min.class = min.class, R=R))
-system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRnat', min.occur= min.occur, min.class = min.class, R=R))
-system.time(glmSRali.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRali', min.occur= min.occur, min.class = min.class, R=R))
-
-save(glmSR.overall, glmSRnat.overall, glmSRali.overall, file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
-
-# load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2classes.Rdata")
+# system.time(glmSR.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SR', min.occur= min.occur, min.class = min.class, R=R))
+# system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRnat', min.occur= min.occur, min.class = min.class, R=R))
+# system.time(glmSRali.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRali', min.occur= min.occur, min.class = min.class, R=R))
+# 
+# save(glmSR.overall, glmSRnat.overall, glmSRali.overall, 
+#  file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
+# 
+ load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
 
 
 # ## GLMs with dominance index as covariate
@@ -85,9 +87,9 @@ save(glmSR.overall, glmSRnat.overall, glmSRali.overall, file = "saved Rdata/arti
 # 
 # 
 ### correct th.CI when miscalculated
-glmSR.overall <- correct.th.CI(M = glmSR.overall, variable= "SR")
-glmSRnat.overall <- correct.th.CI(M = glmSRnat.overall, variable= "SRnat")
-glmSRali.overall <- correct.th.CI(M = glmSRali.overall, variable= "SRali")
+glmSR.overall <- impact.spread(M = glmSR.overall, variable= "SR")
+glmSRnat.overall <- impact.spread(M = glmSRnat.overall, variable= "SRnat")
+glmSRali.overall <- impact.spread(M = glmSRali.overall, variable= "SRali")
 
 ### SUMMARY of frequencies of significantly negative effects and thresholds
 glmSR.sum <-  summary.glmtest(M=glmSR.overall, group="ALIEN", type="overall.boot")
@@ -111,5 +113,5 @@ glmSRnat$boot.thresh = add.prop(N = glmSRnat, var ="SRnat", data=db)
 glmSRali$boot.thresh = add.prop(N = glmSRali, var ="SRali", data=db)
 
 # save results
- save.image("saved Rdata/article 2 - threshold/article threshold 1.1.Rdata")
+ save.image("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")
 

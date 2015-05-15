@@ -15,7 +15,7 @@ plot.effect.summary ()
 plot.effect.summary (effects =
                        list(glmSR.sum.th$class.summary,
                             glmSRnat.sum.th$class.summary,
-                            glmSRali.sum.th$class.summary ))
+                            glmSRali.sum.th$class.summary )))
 
 plot.effect.summary.freq ()
 #########  Details per significant species ##############
@@ -65,19 +65,19 @@ mtext(1,text = "abundance class", outer=T, line= 1)
 # Effect size for significant species
 x11()
 plot.glm(M=glmSR.overall, var= "SR", db= db,sel.criteria = "sp.target", type= "overall.boot",
-         ES = T, threshold = threshold, sp = sp.target)
+         ES = T, threshold = threshold, sp = sp.target, panel = c(3,5))
 mtext(2,text = "effect size on total richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 x11()
 plot.glm(M = glmSRnat.overall, var= "SRnat",  db= db,sel.criteria = "sp.target", type= "overall.boot",
-         ES = T, threshold = threshold, sp = sp.target)
+         ES = T, threshold = threshold, sp = sp.target, panel = c(5,3),ylim = c(-3,3))
 mtext(2,text = "effect size on Native richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
 x11()
-plot.glm(M = glmSRali.overall, var= "SRnat",  db= db,sel.criteria = "sp.target", type= "overall.boot",
-         ES = T, threshold = threshold, sp = sp.target)
+plot.glm(M = glmSRali.overall, var= "SRali",  db= db,sel.criteria = "sp.target", type= "overall.boot",
+         ES = T, threshold = threshold, sp = sp.target, ylim = c(-0.5,0.5), panel = c(5,3))
 mtext(2,text = "effect size on Alien richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
@@ -102,7 +102,7 @@ mtext(1,text = "abundance class", outer=T, line= 1)
 ########## Impact spread #####
 
 # Number of impacted plots vs. prevalence of species
-
+x11()
 par(mfrow=c(1,1),las = 1, mar=c(2,2,2,2) ,oma=c(2,2,0,0), cex = 0.9)
 for (i in 1:1) {
     M <- list( glmSRnat.overall,glmSRali.overall) [[i]]
@@ -123,11 +123,11 @@ offsets[which(rowSums(dpt, na.rm = T) >= 1)] <- 1
 offsets[which(colSums(dpt, na.rm = T)>=1)] <- -1
 
 
-text(M$impact.spread$prevalence + offsets*60, M$impact.spread$prop.plot.impact +abs(offsets)*2 ,
+text(M$impact.spread$prevalence + offsets*50, M$impact.spread$prop.plot.impact +abs(offsets)*2 ,
      label = rownames(M$impact.spread), cex = 0.7, pos = 3, offset = 0.3)
 
 segments(M$impact.spread$prevalence , M$impact.spread$prop.plot.impact,
-         M$impact.spread$prevalence + offsets*60, M$impact.spread$prop.plot.impact +abs(offsets)*2)
+         M$impact.spread$prevalence + offsets*30, M$impact.spread$prop.plot.impact +abs(offsets)*2)
 
 # mtext(3, text = c("Native richness", "Alien richness")[i])
 
