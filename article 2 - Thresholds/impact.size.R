@@ -11,10 +11,10 @@ impact.size <- function(obj = glmSR.overall, threshold = "th.CI"){
     th        <- obj$impact.spread[i, threshold]
     prevalence <- obj$impact.spread$prevalence[i]
     prop.plot.impact <- obj$impact.spread$prop.plot.impact[i]
-    n.plot.impact <- obj$impact.spread$nb.plot.impact[i]
+    n.plot.impact <- obj$impact.spread$n.plot.impact[i]
     
     dif = obj$dif[i,]
-    n.obs = obj$dif[i,]
+    n.obs = obj$n.obs[i,]
     SRo = obj$mean.values[i,"C1"]
     
     mean.dif <- wtd.mean.dif<-max.dif<- th.dif <- NA
@@ -28,7 +28,7 @@ impact.size <- function(obj = glmSR.overall, threshold = "th.CI"){
       
       # frequency weighted mean impact
       d <- as.numeric(dif[c(th:6)-1])
-      nb <- as.numeric(n.obs[c(th:6)-1])
+      nb <- as.numeric(n.obs[c(th:6)])
       wtd.mean.dif <- -sum(d*nb, na.rm=T)/sum(nb, na.rm=T)
       
       # Max impact

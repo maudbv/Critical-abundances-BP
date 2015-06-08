@@ -7,7 +7,7 @@ library(doBy)
 library(vegan)
 
 
-# load("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")
+load("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")
 
 ### import data
 # load("C:/Users/bernarm2/Dropbox/Work/doc boulot/post doc Lincoln/R/saved Rdata/article 3 - trait and phylo/save article 3.Rdata.RData")
@@ -27,8 +27,12 @@ source('script/article 2 - Thresholds/overall bootstrapped GLM.R')
 source('script/article 2 - Thresholds/impact.size.R')
 source('script/article 2 - Thresholds/summary.glm.R')
 source('script/article 2 - Thresholds/correct th.CI.R')
-
-
+ source('script/article 2 - Thresholds/myraupcrick.R')
+ source('script/article 2 - Thresholds/dissim.nm.R')
+ source('script/functions/SMsim.R')
+ 
+ 
+ 
 ### threshold analysis using GLMs
 
 # set bootstrap sample size
@@ -112,6 +116,13 @@ glmSR$boot.thresh = add.prop(N = glmSR, var ="SR", data=db)
 glmSRnat$boot.thresh = add.prop(N = glmSRnat, var ="SRnat", data=db)
 glmSRali$boot.thresh = add.prop(N = glmSRali, var ="SRali", data=db)
 
+ 
+ 
+ # Select pecies which show a threshold for Native richness
+ impsp <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$th.CI) 
+                                                        & (rownames(glmSRnat.overall$impact.spread) %in% aliens)),])
+ 
+ 
 # save results
  save.image("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")
 

@@ -26,6 +26,33 @@ glm.table.positives <- lapply(list(Total.richness = glmSR.overall, Native.richne
   return(tbl)
 })
 
+## compare natives and aliens total threshold/impact occurrence :
+
+
+
+
+
+tbl<- glmSR.sum$overall.summary
+tbl$nothr <- tbl$nb.sp - tbl$freq.thr 
+tbl= t(tbl[,3:4])
+fisher.test(tbl)
+chisq.test(tbl)
+
+tbl <- glmSRnat.sum$overall.summary
+tbl$nothr <- tbl$nb.sp - tbl$freq.thr 
+tbl= t(tbl[,3:4])
+fisher.test(tbl)
+chisq.test(tbl) 
+
+
+tbl <- glmSRali.sum$overall.summary
+tbl$nothr <- tbl$nb.sp - tbl$freq.thr 
+tbl <- t(tbl[,3:4])
+fisher.test(tbl)
+chisq.test(tbl)
+
+
+
 ### MEdians 
 alien.ind <- which(rownames(glmSRnat.overall$impact.spread) %in% aliens)
 median( glmSRnat.overall$impact.spread$th.CI[alien.ind], na.rm=T)
@@ -87,29 +114,7 @@ summary(vglm.SR)
 
 
 
-## compare natives and aliens total threshold/impact occurrence :
-tbl<- glmSR.sum$overall.summary
-tbl$nothr <- tbl$nb.sp - tbl$freq.thr 
-tbl= t(tbl[,3:4])
 
-chisq.test(tbl)
-
-tbl <- glmSRnat.sum$overall.summary
-tbl$nothr <- tbl$nb.sp - tbl$freq.thr 
-tbl= t(tbl[,3:4])
-
-chisq.test(tbl) 
-
-
-tbl <- glmSRali.sum$overall.summary
-tbl$nothr <- tbl$nb.sp - tbl$freq.thr 
-tbl=
-fm1 <- cbind(freq.thr, nothr) ~ as.factor(class)
-alienstatus_SR <- glm(fm1, data = tbl, family = binomial())
-summary(alienstatus_SR)
- t(tbl[,3:4])
-
-chisq.test(tbl)
 
 ### counting number of species in common for three components of richness :
 rownames(glmSRnat.overall$impact.spread)[which(!is.na(glmSRnat.overall$impact.spread$th) & !is.na(glmSR.overall$impact.spread$th))]

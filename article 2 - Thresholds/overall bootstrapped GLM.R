@@ -156,8 +156,9 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
 obs.coef <- rep(NA,5)
 for(j  in abun[-1]) coefs[1, j-1] <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
 names(obs.coef) <- c("c2", "c3", "c4", "c5", "c6")
+
 ## SECOND : recalculate for each of the *nreps* bootstrapped datasets:
-boot.coef <-  output= foreach(i=1:nreps, .combine='rbind') %dopar%  {
+boot.coef <-  foreach(i=1:nreps, .combine='rbind') %dopar%  {
         
   ## extract new datasets from original dataset using the bootstrapped line numbers:
               boot.db <- db.modif [boot.indices$index[boot.indices$index$nrep == r, "ind" ], c("SpeciesCode", "abun",variable,'PlotName')]
@@ -272,6 +273,5 @@ stopCluster(cl)
               crit.vals = crit.vals,crit.vals.P = crit.vals.P, spearman=spear, n.obs = n.obs,
               mean.values = mean.values,
               dif = dif,est= est, z=z,P= P))
-  
+  }
 }
-

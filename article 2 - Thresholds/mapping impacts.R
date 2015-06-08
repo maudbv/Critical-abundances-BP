@@ -45,7 +45,7 @@ legend('topright',legend= c("High productivity grassland",
        fill=c("goldenrod","forestgreen","red","grey"), cex=0.6)
 
 #outliers in the NMDS.complete :
-points(envplot[c("180", "787"),])
+
 
 
 ## proportion of invasion AR/TR
@@ -77,11 +77,11 @@ for( i in targets) {
   max.impact=as.character(db[which(db$abun>= m & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])
   th.impact=as.character(db[which(db$abun>= th & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])
 
-  plot(study_area, col="lightgrey", border = "lightgrey")
+  plot(study_area, col="white", border = "grey60")
   plot(envplot[plot.alien, ],pch=22, cex = 0.5, col="tan",bg="tan", add=T)
   plot(envplot[th.impact, ],pch=22, cex = 0.5, col="sienna2", bg="sienna2", add=T)
   plot(envplot[max.impact, ],pch=22,  cex = 0.5, col="sienna4", bg="sienna4", add=T)
-  plot(study_area, add =T, border= "grey60")
+
   mtext(3, text =sub("_", " ",species[i, "tip"]), line= -1, font=3, cex = 0.7)
 }
 
