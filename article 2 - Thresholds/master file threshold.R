@@ -108,8 +108,10 @@ glmSRali.sum.th <- summary.glmtest(M=glmSRali.overall, group="ALIEN", type="over
 ## overall bootstrap impact size 
 impact.SR <- impact.size (glmSR.overall)
 impact.SRnat <- impact.size (glmSRnat.overall)
-impact.SRali <- impact.size (glmSR.overall)
+impact.SRali <- impact.size (glmSRali.overall)
 
+ write.csv(impact.SRnat, "impact.SRnat.csv" )
+ write.csv(impact.SRali, "impact.SRali.csv" )
 
 ######## calculate proportional impacts (mean % of species lost)
 glmSR$boot.thresh = add.prop(N = glmSR, var ="SR", data=db)

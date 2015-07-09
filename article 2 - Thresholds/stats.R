@@ -3,14 +3,6 @@
 
 # summarize thresholds
 
-
-thresh.summary <- data.frame(SR = glmSR.overall$impact.spread[,c("th", "th.CI", "pth", "pth.CI")],
-                             SRnat = glmSRnat.overall$impact.spread[,c("th", "th.CI", "pth", "pth.CI")],
-                             SRali = glmSRali.overall$impact.spread[,c("th", "th.CI", "pth", "pth.CI")], 
-                             status = c( "NATIVE","ALIEN")[rownames(glmSR.overall$impact.spread) %in% aliens +1])
-
-write.csv(thresh.summary, file = "threshold.summary.csv")
-
 # create overall contingency tables
 threshold = "th.CI"
 glm.table <- lapply(list(Total.richness = glmSR.overall, Native.richness = glmSRnat.overall, Alien.richness =glmSRali.overall), FUN= function (M) {
@@ -27,10 +19,6 @@ glm.table.positives <- lapply(list(Total.richness = glmSR.overall, Native.richne
 })
 
 ## compare natives and aliens total threshold/impact occurrence :
-
-
-
-
 
 tbl<- glmSR.sum$overall.summary
 tbl$nothr <- tbl$nb.sp - tbl$freq.thr 

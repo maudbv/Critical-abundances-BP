@@ -71,7 +71,7 @@ mtext(1,text = "abundance class", outer=T, line= 1)
 
 x11()
 plot.glm(M = glmSRnat.overall, var= "SRnat",  db= db,sel.criteria = "sp.target", type= "overall.boot",
-         ES = T, threshold = threshold, sp = sp.target, panel = c(5,3),ylim = c(-3,3))
+         ES = T, threshold = threshold, sp = sp.target, panel = c(4,3),ylim = c(-3,3))
 mtext(2,text = "effect size on Native richness", outer=T, line= 1)
 mtext(1,text = "abundance class", outer=T, line= 1)
 
@@ -99,126 +99,44 @@ mtext(1,text = "abundance class", outer=T, line= 1)
 # mtext(2,text = "Frequency critical value", outer=F, line= 3)
 # mtext(1,text = "abundance class", outer=F, line= 3)
 
-########## Impact spread #####
+### Graphs of delta gamma vs delta alpha 
+#community change plots
+## species order
+cm <- comm[(rownames(comm) %in% realgrasslands),]
+cm <- cm[,colnames(cm)%in%natives]
+cm <- ceiling(cm>0)
+cm <- cm[,colSums(cm)>0]
+ord <- colnames(cm)[order(colSums(cm))]
+ord <- ord[ord %in% natives]
 
-# Number of impacted plots vs. prevalence of species
 x11()
-par(mfrow=c(1,1),las = 1, mar=c(2,2,2,2) ,oma=c(2,2,0,0), cex = 0.9)
-for (i in 1:1) {
-    M <- list( glmSRnat.overall,glmSRali.overall) [[i]]
-       sp <- which(rownames(M$impact.spread)%in%aliens & M$impact.spread$prop.plot.impact >0)  ## selects only aliens
-       M=lapply(M, FUN=function(x) x=x[sp,])
+par( mar=c(1,3,1,0))
 
-    M$impact.spread$prop.plot.impact = M$impact.spread$prop.plot.impact*100
-    
-plot(prop.plot.impact ~ prevalence , data = M$impact.spread, xlim=c(-20, 800),
-     ylim=c(0, 85),ann=F,pch=20, bg = "black", cex.lab = 0.8)
+gams <-  rowSums(divpart.nat.perm$obs[,c("shared","lost", "gained")])
+alphas <- as.numeric(impact.SRnat[rownames(divpart.nat.perm$obs),]$SRo)
 
-dpt <- as.matrix(dist(M$impact.spread[,c("prop.plot.impact","prevalence")]))<30
-dpt[upper.tri(dpt)] <- NA
-diag(dpt)<- NA
-offsets <- rep(0, length(sp))
-names(offsets) <- sp
-offsets[which(rowSums(dpt, na.rm = T) >= 1)] <- 1
-offsets[which(colSums(dpt, na.rm = T)>=1)] <- -1
+dg<- (divpart.nat.perm$obs$above.gamm - divpart.nat.perm$obs$below.gamm)/gams
+da<- (divpart.nat.perm$obs$above.alpha - divpart.nat.perm$obs$below.alpha) / alphas
 
+gams <-  rowSums(divpart.ali.perm$obs[,c("shared","lost", "gained")])
+alphas <- as.numeric(impact.SRali[rownames(divpart.nat.perm$obs),]$SRo)
 
-text(M$impact.spread$prevalence + offsets*50, M$impact.spread$prop.plot.impact +abs(offsets)*2 ,
-     label = rownames(M$impact.spread), cex = 0.7, pos = 3, offset = 0.3)
+dga<- (divpart.ali.perm$obs$above.gamm - divpart.ali.perm$obs$below.gamm)/gams
+daa<- (divpart.ali.perm$obs$above.alpha - divpart.ali.perm$obs$below.alpha) / alphas
 
-segments(M$impact.spread$prevalence , M$impact.spread$prop.plot.impact,
-         M$impact.spread$prevalence + offsets*30, M$impact.spread$prop.plot.impact +abs(offsets)*2)
-
-# mtext(3, text = c("Native richness", "Alien richness")[i])
-
-}
-mtext(1, text ="Number of occurrences",outer=T, line=0.5)
-mtext(2, text = "% > critical abundance", outer = T,las = 0, line =1)
+dg<- (divpart.nat.perm$P$above.gamm -0.5)*2
+da<- (divpart.nat.perm$P$above.alpha - 0.5)*2
+dga<- (divpart.ali.perm$P$above.gamm -0.5)*2
+daa<- (divpart.ali.perm$P$above.alpha - 0.5)*2
 
 
+cgam <- c("darkgrey", "black")[ (divpart.nat.perm$P$above.gamm<=0.05 | divpart.nat.perm$P$above.gamm>=0.95) + 1]
 
-########### Impact size  #########
-### Impact wtd mean size per sp vs. nb.impact
+plot(da, dg, xlim =c(-1,1),ylim =c(-1,1) , pch = 20, col=cgam )
+points(daa, dga, xlim =c(-1,1),ylim =c(-1,1) , pch = "+", col=cgam )
+segments (da, dg, daa, dga,col=cgam)
+text(x = daa + c(0.07, 0.07, 0.15,+0.15,0.15, 0.07, 0.07,0.07, 0.07, 0.07, 0.07),
+     y = dga +c(0.05, 0.05, 0.05,+0.1,0.05, 0.05, 0.05,0.05, 0.05, 0.05, 0.05),
+     label = rownames(divpart.nat.perm$P) , col=cgam, cex =0.7 )
 
-plot.impact(x="prop.plot.impact", y="prop.wtd.mean.dif", square =F,xlab="prop. plots > critical abundance", ylab="average decrease in %SR")
-
-### MAX Impact size per sp vs.nb.impact
-plot.impact(x="prop.plot.impact", y="prop.max.dif", square =F,xlab="prop. plots > critical abundance", ylab="max decrease in %SR")
-
-### threshold per sp vs. nb.impact
-plot.impact(x="nb.plot.impact", y="th", square =F)
-
-### representing impact index
-x="index"
-
-i=2
-    M <- list(glmSR, glmSRnat, glmSRali) [[i]]
-    M$thresh <- M$boot.thresh
-    
-    sp <- which(rownames(M$thresh)%in%aliens & ( M$thresh$nb.plot.impact>0))
-    M=lapply(M, FUN=function(x) x=x[sp,])
-    M$thresh$impact <-  M$thresh[,x]
-    
-    o  <- order(M$thresh$impact, decreasing=T)
-    M=lapply(M, FUN=function(x) x=x[o,])
-    
-    t = seq(0,1, 0.001)
-    S <- matrix(t, length(t),length(t), byrow=T)
-    P <- matrix(t, length(t),length(t),byrow=F)
-    z2 <- sqrt(S*P)
-    
-    library(lattice)
-    
-    x11() 
-    
-    levelplot(z2~ S * P, col.regions= colorRampPalette(c("beige" , "firebrick")),
-              main = "impact index", xlim= c(0,1), ylim=c(0,1))
-    trellis.focus("panel", 1, 1, highlight=FALSE)
-    lpoints(M$thresh$prop.wtd.mean.dif,M$thresh$prop.plot.impact  , pch=3,col="black", cex=1)
-    
-    abs <- M$thresh$prop.wtd.mean.dif +0.01
-    ord <- M$thresh$prop.plot.impact + runif(length( M$thresh$prop.plot.impact), 0, +0.01)
-    ltext(abs, ord, label= as.character(rownames(M$thresh)), 
-          col="black", cex=0.8, adj =0 )
-    trellis.unfocus()
-    
-
-
-
-### Ranking species by impact size * spread of impact
-x="index"
-x11()
-par(mfrow=c(1,3), cex=0.8, oma=c(2,2,2,2), mar=c(4,2,1,1))
-for (i in 1:3) {
-  M <- list(glmSR, glmSRnat, glmSRali) [[i]]
-  M$thresh <- M$boot.thresh
-  
-  sp <- which(rownames(M$thresh)%in%aliens & ( M$thresh$nb.plot.impact>0))
-  M=lapply(M, FUN=function(x) x=x[sp,])
-  M$thresh$impact <-  M$thresh[,x]
-  
-  o  <- order(M$thresh$impact, decreasing=T)
-  M=lapply(M, FUN=function(x) x=x[o,])
-  
-
-  plot(1:length(sp), M$thresh$impact,ann=F,type="h",cex=1.2,
-       ylim= c(0,0.5),
-       col=c("forestgreen", "firebrick")[ rownames(M$thresh)%in% aliens +1], xaxt="n") 
-  axis(side=1, at=1:length(sp), label=rownames(M$thresh), las=3, cex.axis=0.7)
-  title( main= c("Total richness", "Native Richness","Alien Richness")[i])
-}
-mtext(2, text = paste("impact index") , outer= T, line=1)
-
-
-
-##### impact index vs. time since introduciton
-M <-glmSR
-y= (M$boot.thresh$prop.wt.mean.diff * M$boot.thresh$nb.plot.impact)
-x=traitdata[rownames(M$thresh), "Nat_start"]
-plot(x,y)
-summary(lm(y~x)) # not signif
-
-y=species$Sp.occurence
-x=traitdata[rownames(species), "Nat_start"] #prevalence signif related to time since intro
-plot(x,y)
-summary(lm(y~x))
+abline(h=0, v=0, col="grey")

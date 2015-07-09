@@ -1,7 +1,7 @@
 
 ### Calculate impact size and other indices 
 ## impact size for each species
-impact.size <- function(obj = glmSR.overall, threshold = "th.CI"){
+impact.size <- function(obj = glmSRali.overall, threshold = "th.CI"){
   
   out = NULL
   
