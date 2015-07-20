@@ -29,7 +29,7 @@ chisq.test(tbl)
 tbl <- glmSRnat.sum$overall.summary
 tbl$nothr <- tbl$nb.sp - tbl$freq.thr 
 tbl= t(tbl[,3:4])
-fisher.test(tbl)
+fisher.test(tbl)  #### the only interesting one -> not signif if more stringent on robustness...
 chisq.test(tbl) 
 
 

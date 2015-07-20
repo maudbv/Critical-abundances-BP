@@ -49,7 +49,7 @@ extract.indices <- function(boot.output, db = db) {
 
 glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,], 
                            boot.indices  = boot.indices , sp.target = NA,
-                           variable='SR', min.occur =5,  min.class = 1, nreps = 999) {
+                           variable='SR', min.occur =5,  min.class = 2, nreps = 999) {
   
   library(doParallel)
   cl<-makeCluster(6)
@@ -131,147 +131,110 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
     glms[i,] <-  c(df= f$df.resid, resid.dev= f$dev,dev.ratio= (f$null.deviance -f$dev)/f$null.deviance )
     n <-  1:(length(abun)-1)
     est[i,n] <- summary(f)$coef [-1, 1]
-    
     z[i,n] <- summary(f)$coef [-1, 3]
     P[i,n] <- summary(f)$coef [-1, 4]
     
     
-    ### if species has a negative coefficient :
-    # sp.sig <-  which(!apply( !(est<0 & n.obs[,2:6] >=5), 1, all, na.rm=T))
-    ### or is in a list of targeted species :sp.target
-#     if (    !all(!( est[i,]<0 & n.obs[i,2:6] >=5), na.rm=T) | sp %in% sp.target  ) {
-      
-#       coefs <- data.frame(matrix(NA, nrow=nreps+1, ncol= 5,
-#                                  dimnames=list(1:(nreps+1) ,c("c2", "c3", "c4", "c5", "c6"))))
-#       pvals <- data.frame(matrix(NA, nrow=nreps+1, ncol= 5,
-#                                  dimnames=list(1:(nreps+1) ,c("c2", "c3", "c4", "c5", "c6"))))
-#       
-#       for(j  in abun[-1]) coefs[1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
-#       for(j  in abun[-1]) pvals[1, j-1] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 4]
-      
-      #store coefs
-      #   for(j  in abun[-1]) boot.coefs[[j-1]][1, k] = summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
-      #   
+    ## SECOND : recalculate coefs for each of the *nreps* bootstrapped datasets:
+    
+    #extract the observed coefs for species i
+    obs.coef <- rep(NA,5)
+    for(j  in abun[-1])  obs.coef[j-1]  <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
+    names(obs.coef) <- c("c2", "c3", "c4", "c5", "c6")
+    
+    # bootstrapping of coefficients nreps times
+    boot.coef <-  foreach(r=1:nreps, .combine='rbind') %dopar%  {
 
-obs.coef <- rep(NA,5)
-for(j  in abun[-1]) coefs[1, j-1] <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
-names(obs.coef) <- c("c2", "c3", "c4", "c5", "c6")
-
-## SECOND : recalculate for each of the *nreps* bootstrapped datasets:
-boot.coef <-  foreach(i=1:nreps, .combine='rbind') %dopar%  {
+      ## extract new datasets from original dataset using the bootstrapped line numbers:
+      boot.db <- db.modif [boot.indices$index[boot.indices$index$nrep == r, "ind" ], c("SpeciesCode", "abun",variable,'PlotName')]
+      
+      # print(paste(r, ":","(",Sys.time(),")"))
+      dat <- boot.db[as.character( boot.db$SpeciesCode)==sp, ] # select occurrences of the species
+      names(dat) <- c("sp",'abun','var','PlotName')[1:dim(dat)[2]]
+      rm(boot.db)
+      abun <- sort(as.numeric(as.character(na.omit(unique(dat$abun))))) ## list of abundance classes for species i
+ 
+      ### Calculate GLM model if possible (sufficient abundance classes)
+      if ("1" %in% abun & length(abun) >1 ) 
+      {
+        f <-  glm(dat$var ~ as.factor(dat$abun), family=poisson(log))
         
-  ## extract new datasets from original dataset using the bootstrapped line numbers:
-              boot.db <- db.modif [boot.indices$index[boot.indices$index$nrep == r, "ind" ], c("SpeciesCode", "abun",variable,'PlotName')]
+        # ## store coefficients for each bootstrapped sample k
+        coef.string <- rep(NA,5)
+        for(j  in abun[-1]) coef.string[j-1] <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
         
-        # print(paste(r, ":","(",Sys.time(),")"))
-        dat <- boot.db[as.character( boot.db$SpeciesCode)==sp, ] # select occurrences of the species
-        names(dat) <- c("sp",'abun','var','PlotName')[1:dim(dat)[2]]
-        rm(boot.db)
-        abun <- sort(as.numeric(as.character(na.omit(unique(dat$abun))))) ## list of abundance classes for species i
-        
-        ### Calculate GLM model if possible (sufficient abundance classes)
-        if ("1" %in% abun & length(abun) >1 ) 
-        {
-          f <-  glm(dat$var ~ as.factor(dat$abun), family=poisson(log))
-          
-          # ## store coefficients for each bootstrapped sample k
-          coef.string <- rep(NA,5)
-          for(j  in abun[-1]) coefs[j-1] <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
-          print(paste(i, ":",r, ":", "(",Sys.time(),")"))
-      }
-      
-
-      #### THIRD: statistics for species i 
-      
-      # detect minimal critical value (simple start of negative trend)
-      
-      crit.vals[i,] <- sapply(1:(nreps+1), function(x, n.obs) {
-        crit <- NA
-        co <-coefs [x,]
-        ab = which(!is.na(co))+1
-        neg <-   which(co<0 ) +1
-        
-        candidates <- which(co<0 & n.obs[2:6] >= min.occur ) +1
-      
-        if (length(candidates)>=1) {
-          y <- candidates [sapply(candidates, FUN= function(l) {
-            c1 <- ( if ( l+1 <= max(abun)) all(((l+1):max(ab)) %in% neg) # all higher classes have negative diferences
-                    else c1 =F)
-            return(c1)
-          })]
-          if (length(y)>=1) crit <- min( y, na.rm=T)
-        }
-        return(crit)
-      }, n.obs  = n.obs[i,])
-      
-      
-      # detect minimal critical value using GLM Pvalues
-      # crit.vals.P[i,] <- sapply(1:(nreps+1), function(x, n.obs) {
-      #   crit <- NA
-      #   co <-coefs [x,]
-      #   ps <- pvals [x,]
-      #   ab = which(!is.na(co))+1
-      #   neg <-   which(co<0) +1
-      #   sig <-  which(ps<=0.05 & n.obs[2:6] >= min.occur) +1
-      #   sig= sig [sig %in% neg]
-      # 
-      #   if (length(sig)>=1) {
-      #     y <- sig [sapply(sig, FUN= function(l) {
-      #       c1 <- ( if ( l+1 <= max(abun)) all(((l+1):max(ab)) %in% neg) # all higher classes have negative diferences
-      #               else c1 =F)
-      #       return(c1)
-      #     })]
-      #     if (length(y)>=1) crit <- min( y, na.rm=T)
-      #   }
-      #   return(crit)
-      # }, n.obs  = n.obs[i,])
-      
-      # calculate CI for bootstrapped coefs
-      boot.mean [i,] <-apply(coefs, 2, mean,na.rm =T) 
-      boot.sd [i,] <-apply(coefs, 2, sd,na.rm =T) 
-      
-      bootCI.low [i,] <-apply(coefs, 2, quantile, probs = 0.025,na.rm =T) 
-      bootCI.hi [i,] <-apply(coefs, 2, quantile, probs = 0.975,na.rm =T) 
-      
-      testCI = sign(as.numeric(bootCI.low [i,])) * sign(as.numeric(bootCI.hi [i,]))
-      
-      # detect minimal critical value using bootstrap CI
-      crit.vals.CI[i,] <- sapply(1:(nreps+1), function(x, n.obs) {
-        crit <- NA
-        co <-coefs [x,]
-        ps <- pvals [x,]
-        ab = which(!is.na(co))+1
-        neg <-   which(co<0) +1
-        
-        # select coefficients whose CI are above or below zero :
-        sig <-  which(testCI ==T & n.obs[,2:6] >= min.occur) + 1
-        
-        sig= sig [sig %in% neg]
-        
-        if (length(sig)>=1) {
-          y <- sig [sapply(sig, FUN= function(l) {
-            test <- F
-            if (l == max(abun, na.rm=T)) test <- T
-            if (l < max(abun, na.rm=T)) test<- all(((l+1):max(ab)) %in% neg) # all higher classes have negative diferences
-            return(test)
-          })]
-          if (length(y)>=1) crit <- min( y, na.rm=T)
-        }
-        return(crit)
-      }, n.obs  = n.obs[i,])
-      
-      
-      
+        if (!all(na.omit(coef.string) > -10)) coef.string <- rep(NA,5)
+        print(paste(i, ":",r, ":", "(",Sys.time(),")"))
+      }    
+       return(coef.string)
     }
     
-#   }
+    # assemble observed and bootstrapped coefs
+    coefs <- rbind(obs.coef, boot.coef)
+    
+    
+    #### THIRD: statistics for species i 
+    
+    
+    # detect minimal critical value (simple start of negative trend)
+    
+    crit.vals[i,] <- sapply(1:(nreps+1), function(x, n.obs) {
+      crit <- NA
+      co <-coefs [x,]
+      
+      if (!all (is.na(co))) {
+      ab = which(!is.na(co))+1
+      neg <-   which(co<0 ) +1
+      
+      candidates <- which(co<0 & n.obs[2:6] >= min.occur ) +1
+      
+      if (length(candidates)>=1) {
+        y <- candidates [sapply(candidates, FUN= function(l) {
+          c1 <- ( if ( l+1 <= max(abun)) all(((l+1):max(ab)) %in% neg) # all higher classes have negative diferences
+                  else c1 =F)
+          return(c1)
+        })]
+        if (length(y)>=1) crit <- min( y, na.rm=T)
+      }
+      }
+      return(crit)
+    }, n.obs  = n.obs[i,])
+    
+    
+    # detect minimal critical value using GLM Pvalues
+    # crit.vals.P[i,] <- sapply(1:(nreps+1), function(x, n.obs) {
+    #   crit <- NA
+    #   co <-coefs [x,]
+    #   ps <- pvals [x,]
+    #   ab = which(!is.na(co))+1
+    #   neg <-   which(co<0) +1
+    #   sig <-  which(ps<=0.05 & n.obs[2:6] >= min.occur) +1
+    #   sig= sig [sig %in% neg]
+    # 
+    #   if (length(sig)>=1) {
+    #     y <- sig [sapply(sig, FUN= function(l) {
+    #       c1 <- ( if ( l+1 <= max(abun)) all(((l+1):max(ab)) %in% neg) # all higher classes have negative diferences
+    #               else c1 =F)
+    #       return(c1)
+    #     })]
+    #     if (length(y)>=1) crit <- min( y, na.rm=T)
+    #   }
+    #   return(crit)
+    # }, n.obs  = n.obs[i,])
+    
+    # calculate CI for bootstrapped coefs
+    boot.mean [i,] <-apply(coefs, 2, mean,na.rm =T) 
+    boot.sd [i,] <-apply(coefs, 2, sd,na.rm =T) 
+    
+    bootCI.low [i,] <-apply(coefs, 2, quantile, probs = 0.025,na.rm =T) 
+    bootCI.hi [i,] <-apply(coefs, 2, quantile, probs = 0.975,na.rm =T) 
+  }
   
-stopCluster(cl)
-
-  return(list(glms=glms, impact.spread = impact.spread,
-              boot.mean = boot.mean, boot.sd=boot.sd, CIlow = bootCI.low, CIhi = bootCI.hi,
-              crit.vals = crit.vals,crit.vals.P = crit.vals.P, spearman=spear, n.obs = n.obs,
+  stopCluster(cl)
+  
+  return(list(glms=glms,boot.mean = boot.mean, boot.sd=boot.sd, CIlow = bootCI.low, CIhi = bootCI.hi,
+              crit.vals = crit.vals, spearman=spear, n.obs = n.obs,
               mean.values = mean.values,
               dif = dif,est= est, z=z,P= P))
-  }
+  
 }

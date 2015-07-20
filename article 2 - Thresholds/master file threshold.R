@@ -1,13 +1,13 @@
 ## Threshold master file
 
- setwd("C:/Users/bernarm2/Dropbox/Work/doc boulot/post doc Lincoln/R/")
-#setwd("~/Dropbox/Work/doc boulot/post doc Lincoln/R")
+setwd("C:/Users/bernarm2/Dropbox/Work/doc boulot/post doc Lincoln/R/")
+# setwd("~/Dropbox/Work/doc boulot/post doc Lincoln/R")
 
 library(doBy)
 library(vegan)
 
 
-load("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")
+# load("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")
 
 ### import data
 # load("C:/Users/bernarm2/Dropbox/Work/doc boulot/post doc Lincoln/R/saved Rdata/article 3 - trait and phylo/save article 3.Rdata.RData")
@@ -36,45 +36,47 @@ source('script/article 2 - Thresholds/correct th.CI.R')
 ### threshold analysis using GLMs
 
 # set bootstrap sample size
-R <- 999
+nreps <- 999
 db <- databp[databp$PlotName %in% realgrasslands,]
 min.occur <- 5
 min.class <- 2
 
 #####  Bootstrpping within each class :
 
-#  system.time(glmSR <- glm.test(db = db,bootstrap = T, min.occur= min.occur, R=R, CI=0.95, drastic =F,min.occur =min.occur,  min.class = min.occur))
-#  glmSRnat <- glm.test(db = db,var="SRnat",bootstrap = T,min.occur= min.occur,  R=R, CI=0.95, drastic =F, min.occur =min.occur,  min.class = min.occur)
-#  glmSRali <- glm.test(db = db,var="SRali",bootstrap = T,min.occur= min.occur,  R=R, CI=0.95, drastic =F,min.occur =min.occur,  min.class = min.occur)
+#  system.time(glmSR <- glm.test(db = db,bootstrap = T, min.occur= min.occur, nreps=nreps, CI=0.95, drastic =F,min.occur =min.occur,  min.class = min.occur))
+#  glmSRnat <- glm.test(db = db,var="SRnat",bootstrap = T,min.occur= min.occur,  nreps=nreps, CI=0.95, drastic =F, min.occur =min.occur,  min.class = min.occur)
+#  glmSRali <- glm.test(db = db,var="SRali",bootstrap = T,min.occur= min.occur,  nreps=nreps, CI=0.95, drastic =F,min.occur =min.occur,  min.class = min.occur)
 
 # save(glmSR,glmSRnat,glmSRali, file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
-load(file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
+#load(file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
 
 #####  Overall bootstrapping :
 
 ## create bootstrapped samples
-# system.time(boot.output <- bootstrap.dataset(db=db, min.occur =min.occur,  min.class = min.class, R = R))
+# system.time(boot.output <- bootstrap.dataset(db=db, min.occur =min.occur,  min.class = min.class, nreps = nreps))
 # system.time(boot.indices <- extract.indices(boot.output, db = db))
 # 
 # save( boot.output, boot.indices , 
 #  file = "saved Rdata/article 2 - threshold/boot.output.2.0.Rdata")
    load(file = "saved Rdata/article 2 - threshold/boot.output.2.0.Rdata")
-# 
+
+save( boot.output, boot.indices , 
+        file = "saved Rdata/article 2 - threshold/boot.output.99reps.Rdata")
+
 # calculate glms on bootstraps
-# system.time(glmSR.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SR', min.occur= min.occur, min.class = min.class, R=R))
-# system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRnat', min.occur= min.occur, min.class = min.class, R=R))
-# system.time(glmSRali.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRali', min.occur= min.occur, min.class = min.class, R=R))
-# 
-# save(glmSR.overall, glmSRnat.overall, glmSRali.overall, 
-#  file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
-# 
- load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
+system.time(glmSR.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SR', min.occur= min.occur, min.class = min.class, nreps=nreps))
+# system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRnat', min.occur= min.occur, min.class = min.class, nreps=nreps))
+ system.time(glmSRali.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRali', min.occur= min.occur, min.class = min.class, nreps=nreps))
+ 
+save(glmSR.overall, glmSRnat.overall, glmSRali.overall,file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
+ 
+#  load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
 
 
 # ## GLMs with dominance index as covariate
-# system.time(glmSR.dom <- glm.test(db = db,bootstrap = T, R=R,min.occur= min.occur,  covar ="dominance"))
-# glmSRnat.dom <- glm.test(db = db,var="SRnat",bootstrap = T, R=R, min.occur= min.occur, covar ="dominance")
-# glmSRali.dom <- glm.test(db = db,var="SRali",bootstrap = T, R=R,min.occur= min.occur,  covar ="dominance")
+# system.time(glmSR.dom <- glm.test(db = db,bootstrap = T, nreps=nreps,min.occur= min.occur,  covar ="dominance"))
+# glmSRnat.dom <- glm.test(db = db,var="SRnat",bootstrap = T, nreps=nreps, min.occur= min.occur, covar ="dominance")
+# glmSRali.dom <- glm.test(db = db,var="SRali",bootstrap = T, nreps=nreps,min.occur= min.occur,  covar ="dominance")
 # save(glmSR.dom,glmSRnat.dom,glmSRali.dom, file = "saved Rdata/article 2 - threshold/booststrapped+dominance.glms.Rdata")
 
 
@@ -86,7 +88,7 @@ load(file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
 #                   &  table(db$SpeciesCode, db$abun)[,1]>=min.occur))
 # 
 # glmSR.overall   <- lapply (glmSR.overall , FUN = function(X) X[a,])
-# glmSRnat.overall  <- lapply (glmSRnat.overall, FUN = function(X) X[a,])
+#  
 # glmSRali.overall <- lapply (glmSRali.overall, FUN = function(X) X[a,])
 # 
 # 

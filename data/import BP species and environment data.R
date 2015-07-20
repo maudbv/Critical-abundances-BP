@@ -46,6 +46,9 @@ species$subspecies='NA'
 species[match(duplic$Sp.code,species$Sp.code),"subspecies"]=duplic$subspecies
 species[match(duplic$Sp.code,species$Sp.code),"tip"]= paste(duplic$Genus,duplic$Species, sep="_")
 
+# add juncus and rytido as native specie
+species[c("JUNCUS", "RYTIDO"), "ALIEN"] <- 1
+
 #####  Subset of species : alien vs. native
 tmp=species[species$ALIEN==1,]
 aliens=as.character(tmp$Sp.code)
@@ -291,3 +294,5 @@ rm(d, importBPdata)
 # species$preferredtip <- names.species[match(species$tipcomplete,as.character(names.species$originalname)),"preferredname"]
 # species$preferredtip <- sapply(species$preferredname,FUN=function(x) paste(strsplit(x, " " )[[1]][c(1,2)],collapse="_" ))
 # species$preferredtip[species$preferredtip %in% c("NA_NA", "")] <- species$tip[species$preferredtip %in% c("NA_NA", "")]
+
+

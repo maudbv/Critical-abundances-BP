@@ -254,14 +254,14 @@ beta.trend <- function(spnames = impsp, group = natives, null.model = "permute.r
 
 ### EXECUTE
 gamma.trend.nat <- gamma.trend(null.model="permute.rare", nreps = 999)
-gamma.trend.nat.below <- gamma.trend(null.model="permute.below", nreps = 999)
-gamma.trend.nat.permute <- gamma.trend(null.model="permute.all", nreps = 999)
+# gamma.trend.nat.below <- gamma.trend(null.model="permute.below", nreps = 999)
+# gamma.trend.nat.permute <- gamma.trend(null.model="permute.all", nreps = 999)
 
 
 
-beta.trend.nat <- beta.trend(null.model="permute.rare", nreps = 999)
-beta.trend.nat.below <- beta.trend(null.model="permute.below", nreps = 999)
-beta.trend.nat.permute <- beta.trend(null.model="permute.all", nreps = 999)
+# beta.trend.nat <- beta.trend(null.model="permute.rare", nreps = 999)
+# beta.trend.nat.below <- beta.trend(null.model="permute.below", nreps = 999)
+# beta.trend.nat.permute <- beta.trend(null.model="permute.all", nreps = 999)
 
 #########    plot GAMMA diversity  ##########
 
