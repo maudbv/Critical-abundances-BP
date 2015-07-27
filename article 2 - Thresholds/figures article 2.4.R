@@ -61,12 +61,14 @@ mtext(1,text = "abundance class", outer=T, line= 1)
 threshold ="th.CI"
 sel <- impsp
 
-x11()
-par(mfrow = c(3,3), mar=c(0,0,1,1), oma=c(6,6,2,1))
+
+par(mfrow = c(3,4), mar=c(0,0,2,2), oma=c(6,6,2,3))
+
 M <- glmSRnat.overall
   ylim=c(-3,3)
   ### Loop on selected species 
   for (i in 1:length(sel))  {
+    if (i ==4) plot.new()
     sp <- sel[i]
     es <- as.numeric(M$est[sp,])
     n <- as.numeric(M$n.obs[sp,])[2:6]
@@ -86,16 +88,19 @@ M <- glmSRnat.overall
     if ( all(is.na(c(hi, low)))) lims <-  max(c(abs(es)), na.rm=T) +0.02
 
     col <- rep("white",6)
-    col[ as.numeric( M$thresh[sp,threshold])] <- "black"  # identify the threshold
+    col[(1:6)>= as.numeric( M$thresh[sp,threshold])] <- "black"  # above threshold
+    col[(2:6)[hi>0]] <- NA  # robust negative coef
+    col[(2:6)[n<5]] <- NA  # sufficient data points
     
     
     plot(1:5,  rep(0,5),ylim=ylim, xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F)
 
     axis(1,at = 1:5, label = rep("",5), tcl= 0.1,mgp=c(1,0.5,0),las=1)
-    if (i %in% c(7,8,9)) text(y=-3.6, x = 1:5, labels= abclasses[2:6],  cex=0.9, srt=45, adj=1, xpd = NA)
+    if (i %in% c(8:11)) text(y=-3.6, x = 1:5, labels= abclasses[2:6],  cex=0.9, srt=45, adj=1, xpd = NA)
     
-    if ( i %in% c(1,4,7)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1)  
+    if ( i %in% c(1,4,8)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1)  
     abline(h=0,lty="dotted")
+    abline(v = M$thresh[sp,threshold]-1, lty="dashed")
     
     if (!all(is.na(small))) points(1:5, small, pch=".")  
     
@@ -109,11 +114,12 @@ M <- glmSRnat.overall
     plot(1:5,es, bg = col[2:6], pch=21, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F)
     
     # Add species name
-    mtext(3, text=paste(species[sp, "Genus"], "\n",species[sp, "Species"], sep="") ,
-                       font = 3, outer= F,adj=0.9, cex=0.7, line=-2.5, las = 1)
+     mtext(3, text=paste(species[sp, "Genus"]," ", species[sp, "Species"], sep="") ,
+          font = 3, outer= F,adj=0.9, cex=0.7, line=0.2, las = 1)
+    
     
     # Y axis label
-    if ( i %in% c(1,4,7)) {  
+    if ( i %in% c(1,4,8)) {  
     mtext(2, text="GLM coefficient", ,adj=0.5, cex=0.7, line=1.5, las = 0)
     }
    }
@@ -121,30 +127,34 @@ M <- glmSRnat.overall
 mtext(1, text=c("Abundance class"), adj=0.5, line=4, las = 1, outer=T)
 mtext(2, text=c("Effect on native alpha richness"), adj=0.5, line=4, las = 0, outer=T)
 
-### gamma trends
+##### gamma trends   ############
 
-par(mfrow = c(3,3), mar=c(0,0,1,1), oma=c(6,6,2,1))
-ylim=c(-5,4)
+par(mfrow = c(3,4), mar=c(0,0,1,1), oma=c(6,6,2,1))
+ylim=c(-1,1)
 for (i in 1 : length(impsp)){
+  
+  if (i ==4) plot.new()
   sp <- impsp[i]
   # identify significant classes in black
-  cols <- c(NA, "black") [ (gamma.trend.nat$P.gamma[i,] <=0.025) +1]
-  
+   cols <- c(NA, "black") [ (gamma.trend.nat$P.gamma[i,] <=0.025) +1]
+  n <- as.numeric(M$n.obs[sp,])[2:6]
   # create x axis for the 5 abundance classes
   x = c(0:5)
   
   # create y axis with the gamma richness Standardized effect size
-  y =(gamma.trend.nat$obs[i,] - gamma.trend.nat$mean[i,])/ gamma.trend.nat$sd[i,]
+  y =  (gamma.trend.nat$obs[sp,] - gamma.trend.nat$mean[sp,])/ gamma.trend.nat$mean[sp,]
+  y [ (2:6)[ n < 5] ]=NA
   y[1]=NA
+  
   
   # plot background
   plot(x,y,ylim=ylim, xlim = c(0.5, 5.5), las = 1,type= "p", xaxt = "n", yaxt="n", ann=F,
        pch = 21, col ="black",bg = cols)
 
   axis(1,at = 1:5, label = rep("",5), tcl= 0.1,mgp=c(1,0.5,0),las=1)
-  if (i %in% c(7:9)) text(y=-6, x = 1:5, labels= abclasses[2:6],  cex=0.8, srt=45, adj=1, xpd = NA)
+  if (i %in% c(8,9,10,11)) text(y=-1.2, x = 1:5, labels= abclasses[2:6],  cex=0.8, srt=45, adj=1, xpd = NA)
 
-  if ( i %in% c(1,4,7)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1)  
+  if ( i %in% c(1,4,8)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1)  
   abline(h=0,lty="dotted")
   
   #plot points and lines
@@ -155,16 +165,109 @@ for (i in 1 : length(impsp)){
   mtext(3, text=paste(species[sp, "Genus"], "\n",species[sp, "Species"], sep="") ,
         font = 3, outer= F,adj=0.9, cex=0.7, line=-2.5, las = 1)
   
+#   # Y axis label
+#   if ( i %in% c(1,4,7)) {  
+#     mtext(2, text="SES", ,adj=0.5, cex=0.8, line=1.5, las = 0)
+#   }
+}
+
+mtext(1, text=c("Abundance class"), adj=0.5, line=4, las = 1, outer=T)
+mtext(2, text=c("Effect size of native gamma richness"), adj=0.5, line=3, las = 0, outer=T)
+
+
+##### Gamma and alpha on same graph ########
+
+par(mfrow = c(3,4), mar=c(0,0,2,2), oma=c(6,6,2,3))
+M <- glmSRnat.overall
+ylim=c(-3,3)
+### Loop on selected species 
+for (i in 1:length(sel))  {
+  if (i == 4) {
+    plot.new()
+  legend("topright", legend =c("alpha richness", "gamma richness"),
+         pch =c(25, 24) , col =c("black", "grey50"), lty = "solid", bty = "n")
+  }
+  sp <- sel[i]
+  es <- as.numeric(M$est[sp,])
+  n <- as.numeric(M$n.obs[sp,])[2:6]
+  
+  low <- as.numeric(M$CIlow[sp,])
+  hi <- as.numeric(M$CIhi[sp,])
+  M$thresh <-M$impact.spread
+  
+  ## correct for small sample sizes
+  small <- es
+  small[which(n>=3)] <- NA
+  es[which(n<3)] <- NA
+  low[n<3] <- NA
+  hi[n<3] <- NA
+  
+  if ( !all(is.na(c(hi, low)))) lims <-  max(c(abs(low),abs(hi)), na.rm=T) +0.02
+  if ( all(is.na(c(hi, low)))) lims <-  max(c(abs(es)), na.rm=T) +0.02
+  
+  col <- rep("white",6)
+  col[1:6>= as.numeric( M$thresh[sp,threshold])] <- "black"  # identify the threshold
+  
+  ### prepare background plots
+  plot(1:5,  rep(0,5),ylim=ylim, xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F)
+  
+  axis(1,at = 1:5, label = rep("",5), tcl= 0.1,mgp=c(1,0.5,0),las=1)
+  if (i %in% c(8:11)) text(y=-3.6, x = 1:5, labels= abclasses[2:6],  cex=0.9, srt=45, adj=1, xpd = NA)
+  axis(1, tcl= 0.2,  mgp=c(1,0.5,0), las=1, labels = FALSE) 
+  
+  if ( i %in% c(1,4,8)) axis(2, tcl= 0,   mgp=c(1,0.5,0), las=1, cex.axis = 0.8, adj =1)  
+  axis(2, tcl= 0.2,   mgp=c(1,0.5,0), las=1, cex.axis = 0.8, adj =1) 
+  
+  abline(h=0,lty="dotted")
+  abline(v = M$thresh[sp,threshold]-1, lty="dashed")
+  
+  if (!all(is.na(small))) points(1:5, small, pch=".")  
+  
+  ## Add bootstrapped CI
+  if ( !all(is.na(c(hi, low)))) {
+    arrows(1:5,low,   1:5,hi, lwd=1, code =3, length=0.02, angle=90)
+  }
+  
+  # draw the points and lines
+  par(new=T)
+  plot(1:5,es, bg = col[2:6], pch=25, type = "b",ylim=ylim, xlim = c(0.5, 5.5), bty="n", xaxt = "n", yaxt="n", ann=F)
+  
+  
+  ### gamma
+  # identify significant classes in black
+  bgs <- c(NA, "grey50") [ (gamma.trend.nat$P.gamma[i,] <=0.025) +1]
+  cols <- c("grey50", "grey50") [ (gamma.trend.nat$P.gamma[i,] <=0.025) +1]
+  
+  # create x axis for the 5 abundance classes
+  x = c(0:5)
+  
+  # create y axis with the gamma richness Standardized effect size
+#   y =(gamma.trend.nat$obs[i,] - gamma.trend.nat$mean[i,])/ gamma.trend.nat$sd[i,]
+  y =  (gamma.trend.nat$obs[i,] - gamma.trend.nat$mean[i,])/ gamma.trend.nat$mean[i,]
+  y [ (2:6)[ n < 5] ]=NA
+  y[1]=NA
+  par(new=T)
+#   plot(x,y, bg = cols,col =cols, pch=24, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F)
+plot(x,y, bg = bgs,col=cols, pch=24, type = "b", ylim = c(-0.8,0.8), xlim = c(0.5, 5.5), bty="n", xaxt = "n", yaxt="n", ann=F)
+if ( i %in% c(3,7,11)) axis(4, tcl= 0,  mgp=c(1,0.3,0), las=1, cex.axis = 0.8, adj =1) 
+axis(4, tcl= 0.2,  mgp=c(1,0.5,0), las=1, labels = FALSE) 
+
+  
+  # Add species name
+  mtext(3, text=paste(species[sp, "Genus"]," ", species[sp, "Species"], sep="") ,
+        font = 3, outer= F,adj=0.9, cex=0.7, line=0.2, las = 1)
+  
   # Y axis label
-  if ( i %in% c(1,4,7)) {  
-    mtext(2, text="SES", ,adj=0.5, cex=0.8, line=1.5, las = 0)
+  if ( i %in% c(1,4,8)) {  
+    mtext(2, text=expression("ES("*alpha*")"), ,adj=0.5, cex=0.7, line=2, las = 0)
+  }
+  if ( i %in% c(3, 7,11)) {  
+    mtext(4, text=expression("ES("*gamma*")"), ,adj=0.5, cex=0.7, line=2, las = 0)
   }
 }
 
 mtext(1, text=c("Abundance class"), adj=0.5, line=4, las = 1, outer=T)
-mtext(2, text=c("Variation in native gamma richness"), adj=0.5, line=4, las = 0, outer=T)
-
-
+mtext(2, text=c("Effect size on native richness"), adj=0.5, line=4, las = 0, outer=T)
 
 ######### ILLUSTRATION of 3 species alpha and gamma richness   ############
 threshold ="th.CI"
@@ -252,6 +355,58 @@ mtext(2,text = "Frequency critical value", outer=F, line= 3)
 mtext(1,text = "abundance class", outer=F, line= 3)
 
 
+##### gamma above vs. below trends   ############
+
+par(mfrow = c(3,4), mar=c(0,0,1,1), oma=c(6,6,2,1))
+
+list.data <-divpart.nat.perm
+gamma.loss <- as.data.frame(matrix(NA, nrow = length(impsp), ncol =6))
+rownames(gamma.loss) <- impsp
+
+ylim=c(-1,1)
+for (i in 1 : length(impsp)){
+  
+  if (i ==4) plot.new()
+  sp <- impsp[i]
+  # identify significant classes in black
+  cols <- c(NA, "black") [ (list.data$P.above[i,] <=0.025) +1]
+  n <- as.numeric(M$n.obs[sp,])[2:6]
+  # create x axis for the 5 abundance classes
+  x = c(0:5)
+  
+  # create y axis with the gamma richness Standardized effect size
+  y =  (list.data$gamma.above[i,] - list.data$null.above[i,])/ list.data$null.above[i,]
+  y [ (2:6)[ n < 5] ]=NA
+  y[1]=NA
+  
+  gamma.loss[sp,] = y
+  
+  # plot background
+  plot(x,y,ylim=ylim, xlim = c(0.5, 5.5), las = 1,type= "p", xaxt = "n", yaxt="n", ann=F,
+       pch = 21, col ="black",bg = cols)
+  
+  axis(1,at = 1:5, label = rep("",5), tcl= 0.1,mgp=c(1,0.5,0),las=1)
+  if (i %in% c(8,9,10,11)) text(y=-1.2, x = 1:5, labels= abclasses[2:6],  cex=0.8, srt=45, adj=1, xpd = NA)
+  
+  if ( i %in% c(1,4,8)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1)  
+  abline(h=0,lty="dotted")
+  
+  #plot points and lines
+  par(new=T)
+  plot(x,y, bg = cols, pch=21, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F)
+  
+  # Add species name
+  mtext(3, text=paste(species[sp, "Genus"], "\n",species[sp, "Species"], sep="") ,
+        font = 3, outer= F,adj=0.9, cex=0.7, line=-2.5, las = 1)
+  
+  #   # Y axis label
+  #   if ( i %in% c(1,4,7)) {  
+  #     mtext(2, text="SES", ,adj=0.5, cex=0.8, line=1.5, las = 0)
+  #   }
+}
+
+mtext(1, text=c("Abundance class"), adj=0.5, line=4, las = 1, outer=T)
+mtext(2, text=c("Effect size of native gamma richness"), adj=0.5, line=3, las = 0, outer=T)
 
 ######### Graphs of delta gamma vs delta alpha  ###########
 #community change plots
@@ -263,135 +418,110 @@ cm <- cm[,colSums(cm)>0]
 ord <- colnames(cm)[order(colSums(cm))]
 ord <- ord[ord %in% natives]
 
-
-
-# gams <-  rowSums(divpart.nat.perm$obs[,c("shared","lost", "gained")])
-# alphas <- as.numeric(impact.SRnat[rownames(divpart.nat.perm$obs),]$SRo)
-# dg<- (divpart.nat.perm$obs$above.gamm - divpart.nat.perm$obs$below.gamm)/gams
-# da<- (divpart.nat.perm$obs$above.alpha - divpart.nat.perm$obs$below.alpha) / alphas
-# gams <-  rowSums(divpart.ali.perm$obs[,c("shared","lost", "gained")])
-# alphas <- as.numeric(impact.SRali[rownames(divpart.nat.perm$obs),]$SRo)
-# dga<- (divpart.ali.perm$obs$above.gamm - divpart.ali.perm$obs$below.gamm)/gams
-# daa<- (divpart.ali.perm$obs$above.alpha - divpart.ali.perm$obs$below.alpha) / alphas
-
 ## NON STANDARDIZED effect sizes
 dg<- divpart.nat.perm$obs$above.gamm - divpart.nat.perm$null$above.gamm
 da<- divpart.nat.perm$obs$above.alpha - divpart.nat.perm$null$above.alpha
 dga<- divpart.ali.perm$obs$above.gamm - divpart.ali.perm$null$above.gamm
 daa<- divpart.ali.perm$obs$above.alpha - divpart.ali.perm$null$above.alpha
 
-
 cgam <- c("grey50", "black")[ (divpart.nat.perm$P$above.gamm<=0.05 | divpart.nat.perm$P$above.gamm>=0.95) + 1]
 
 
 x11()
-par( mar=c(4,4,2,2), las = 1)
-plot(da, dg ,xlim =c(-5,2),ylim =c(-40,7) , pch = 3, col=cgam , ann=F)
 
-# segments (da, dg, daa, dga,col="grey", lty ="dotted")
-# points(daa, dga, pch = 21, col="grey" ,bg = "grey"  )
+dg<- -(table.div.part$GRc - table.div.part$GRnull )
+da<-  -( table.div.part $aRc -table.div.part$aRo )
+cgam <- c("grey50", "black")[ (table.div.part$GR.P<=0.05) + 1]
 
-text(x = da,
-     y = dg-01,
-     label = rownames(divpart.nat.perm$P) , col=cgam, cex =0.7 )
+par(mfrow = c(2,2), mar=c(4,4,2,2), las = 1)
+plot(da, dg ,pch = 20, col=cgam , ann=F,ylim=c(1,40), xlim= c(1,10), type ="n")
 
-abline(h=0, v=0, col="grey")
-# legend("topright", legend = c("native richness", "alien richness"), cex=0.85,
-#        pch= c(21,3), pt.bg=c("black","white"), bty="o")
+text(x = da,y = dg,label = rownames(divpart.nat.perm$P) , col=cgam, cex =0.85)
 
-mtext(1,text = expression(Delta*" alpha richness"), line=2.5 )
-mtext(2,text = expression(Delta*" gamma richness"), line=2.5  , las=0)
+f <- cor.test(da ,dg)
+mtext(3, text = substitute(r == est *" "*p, list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),
+      adj = 1, cex=0.8)
 
-# PERCENTS effect sizes
-# dg<- (divpart.nat.perm$obs$above.gamm - divpart.nat.perm$null$above.gamm)/divpart.nat.perm$null$above.gamm
-# da<- (divpart.nat.perm$obs$above.alpha - divpart.nat.perm$null$above.alpha)/divpart.nat.perm$null$above.alpha
-# dga<- (divpart.ali.perm$obs$above.gamm - divpart.ali.perm$null$above.gamm)/divpart.ali.perm$null$above.gamm
-# daa<- (divpart.ali.perm$obs$above.alpha - divpart.ali.perm$null$above.alpha)/divpart.ali.perm$null$above.alpha
-# 
-# 
-# x11()
-# par( mar=c(4,4,2,2))
-# plot(da, dg ,xlim =c(-1,1),ylim =c(-1,1) , pch = 21, col=cgam ,bg = cgam, ann=F)
-# # points(daa, dga,  pch = 21, col=cgam )
-# # segments (da, dg, daa, dga,col=cgam)
-# 
-# text(x = da,
-#      y = dg-0.01,
-#      label = rownames(divpart.nat.perm$P) , col=cgam, cex =0.7 )
-# 
-# abline(h=0, v=0, col="grey")
-# legend("topright", legend = c("Native richness", "Alien Richness"), cex=0.9,
-#        pch= c(21,21), pt.bg=c("black","white"), bty="n")
-# 
-# mtext(1,text = "Change in Alpha", line=2.5 )
-# mtext(2,text = "Change in Gamma", line=2.5  )
-# 
+mtext(1,text = expression(Delta*" alpha richness"), line=2.5, cex =0.85 )
+mtext(2,text = expression(Delta*" gamma richness"), line=2.5  , las=0, cex =0.85)
 
-# 
-## Effect sizes :   STANDARDIZED
-dg<- divpart.nat.perm$z$above.gamm 
-da<- divpart.nat.perm$z$above.alpha
 
-dga<- divpart.ali.perm$z$above.gamm
-daa<- divpart.ali.perm$z$above.alpha
+## threshold
+thresh <-  glmSRnat.overall$impact.spread[impsp,  "th.CI"]
+plot (thresh ,dg , pch = 20, col=cgam , ann=F, xlim= c(1,6.5), type = "n")
+f <- cor.test(thresh ,dg)
 
-cgam <- c("darkgrey", "black")[ (divpart.nat.perm$P$above.gamm<=0.05 | divpart.nat.perm$P$above.gamm>=0.95) + 1]
-# 
+text(x = thresh , y = dg,
+     label = rownames(divpart.nat.perm$P) ,col=cgam, cex =0.85 )
+
+mtext(3, text = substitute(r == est *" "*p, list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),
+      adj = 1, cex=0.8)
+
+mtext(1,text = "Critical abundance", line=2.5, cex =0.85 )
+mtext(2,text = expression(Delta*" gamma richness"), line=2.5  , las=0, cex =0.85)
+
+### gamma above/below against threhold values
+spread <-  glmSRnat.overall$impact.spread[impsp,  "n.plot.impact"]
+plot (spread,dg , pch = 20, col=cgam , ann=F, log = "x", xlim =c(2.5, 700), type= "n")
+f <- cor.test(spread ,dg)
+text(x = spread,
+     y = dg,
+     label = rownames(divpart.nat.perm$P) ,col=cgam, cex =0.85)
+
+mtext(3, text = substitute(r == est *" "*p, list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),
+      adj = 1, cex=0.8)
+
+mtext(1,text = "Number of plots > critical abundance", line=2.5, cex =0.85 )
+mtext(2,text = expression(Delta*" gamma richness"), line=2.5  , las=0, cex =0.85)
+
+# spatial clustering
+cluster<-  mnnd.th[impsp, "P<obs_above"]
+cluster<- - (mnnd.th[impsp, "mnnd.obs_above"] - mnnd.th[impsp, "null.mean_above"])/ mnnd.th[impsp, "null.sd_above"] 
+plot (cluster,dg , pch = 20, col=cgam , ann=F,  type="n")
+f <- cor.test(cluster ,dg)
+
+text(x = cluster,
+     y = dg,
+     label = rownames(divpart.nat.perm$P) ,col=cgam, cex =0.7 )
+
+mtext(3, text = substitute(r == est *" "*p, list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),
+      adj = 0, cex=0.8)
+
+mtext(1,text = "Spatial clustering of plots > critical abundance", line=2.5, cex =0.85 )
+mtext(2,text = expression(Delta*" gamma richness"), line=2.5  , las=0, cex =0.85)
+
+
+
 x11()
-par( mar=c(4,4,2,2), las = 1)
-plot(daa, dga ,xlim =c(-8,2),ylim =c(-5,2) , pch = 3, col="darkgrey", ann=F)
-segments (da, dg, daa, dga,col="grey", lty ="dotted")
-points(da, dg, pch = 21, col=cgam ,bg = cgam  )
+# prop of impact
+spread <-  glmSRnat.overall$impact.spread[impsp,  "prop.plot.impact"]
+plot (spread,dg , pch = 20, col=cgam , ann=F, xlim =c(0, 1), type="n")
+f <- cor.test(spread ,dg)
 
-# text(x = da,
-#      y = dg -0.1,
-#     label = rownames(divpart.nat.perm$P) , col=cgam, cex =0.7 )
-# 
-# 
-# text(x = da,
-#      y = dg -0.1)
-# ind <- locator(type="p")
-text(x = ind$x,
-     y = ind$y,
-     label = rownames(divpart.nat.perm$P) , col=cgam, cex =0.7 )
+text(x = spread,
+     y = dg,
+     label = rownames(divpart.nat.perm$P) ,col=cgam, cex =0.7 )
+
+mtext(3, text = substitute(r == est *" "*p, list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),
+      adj = 0, cex=0.8)
+
+mtext(1,text = "Prop. of plots > critical abundance", line=2.5, cex =0.85 )
+mtext(2,text = expression(Delta*" gamma richness"), line=2.5  , las=0, cex =0.85)
 
 
-abline(h=0, v=0, col="grey")
-legend("topright", legend = c("native richness", "alien richness"), cex=0.85,
-       pch= c(21,3), pt.bg=c("black","white"), bty="o")
+x11()
+# spatial clustering
+cluster<-  mnnd.th[impsp, "P<obs_above"]
+cluster<-  (mnnd.th[impsp, "mnnd.obs_above"] - mnnd.th[impsp, "null.mean_above"])/ mnnd.th[impsp, "null.sd_above"] 
+plot (cluster,dg , pch = 20, col=cgam , ann=F,  type="n")
+f <- cor.test(cluster ,dg)
 
-# mtext(1,text = expression("SES"^alpha), line=2.5 )
-# mtext(2,text = expression("SES"^gamma), line=2.5  , las=0)
+text(x = cluster,
+     y = dg,
+     label = rownames(divpart.nat.perm$P) ,col=cgam, cex =0.7 )
 
- mtext(1,text = expression("SES ("*alpha*" richness)"), line=3 )
- mtext(2,text = expression("SES ("*gamma*" richness)"), line=2.5  , las=0)
+mtext(3, text = substitute(r == est *" "*p, list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),
+      adj = 0, cex=0.8)
 
-# #### quantiles
-# 
-# dg<- (divpart.nat.perm$P$above.gamm -0.5)*2
-# da<- (divpart.nat.perm$P$above.alpha - 0.5)*2
-# dga<- (divpart.ali.perm$P$above.gamm -0.5)*2
-# daa<- (divpart.ali.perm$P$above.alpha - 0.5)*2
-# 
-# x11()
-# par( mar=c(4,4,2,2))
-# plot(da, dg, xlim =c(-1,1),ylim =c(-1,1) , pch = 21, col=cgam ,bg = cgam, ann=F)
-# points(daa, dga,  pch = 21, col=cgam )
-# segments (da, dg, daa, dga,col=cgam)
-# 
-# text(x = da +  (c(0.00, 0.15, 0.00,  0, 0.0, 0.00, 0    ,0.0  , 0.00, 0.21, 0    )-0.2),
-#      y = dg +    c(+0.1, -0.1, 0.00, 0 , 0.0, 0.00, -0.01, 0.0 , 0.00, -0.1, -0.03)
-# )
-# 
-# ind <- locator()
-# 
-# text(x = ind$x,
-#      y = ind$y,
-#      label = rownames(divpart.nat.perm$P) , col=cgam, cex =0.7 )
-# 
-# abline(h=0, v=0, col="grey")
-# legend("topright", legend = c("Native richness", "Alien Richness"), cex=0.9,
-#        pch= c(21,21), pt.bg=c("black","white"), bty="n")
-# 
-# mtext(1,text = "Change in Alpha", line=2.5 )
-# mtext(2,text = "Change in Gamma", line=2.5  )
+mtext(1,text = "SES of MNND", line=2.5, cex =0.85 )
+mtext(2,text = expression(Delta*" gamma richness"), line=2.5  , las=0, cex =0.85)

@@ -127,7 +127,7 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
     spear[i,] <-  c(s$estimate, s$p.value)
     
     # GLM test
-    f <-  glm(sp.dat$var ~ as.factor(sp.dat$abun), family=poisson(log))
+    f <-  glm(sp.dat$var ~ as.factor(sp.dat$abun), family=poisson(log)) 
     glms[i,] <-  c(df= f$df.resid, resid.dev= f$dev,dev.ratio= (f$null.deviance -f$dev)/f$null.deviance )
     n <-  1:(length(abun)-1)
     est[i,n] <- summary(f)$coef [-1, 1]

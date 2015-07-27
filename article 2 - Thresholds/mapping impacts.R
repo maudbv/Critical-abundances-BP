@@ -42,7 +42,7 @@ plot(envplot, add = T, pch=22, col = landcover.col[envplot$landcover],bg = landc
 
 legend('topright',legend= c("High productivity grassland", 
                             "Low productivity grassland","forest","other"),
-       fill=c("goldenrod","forestgreen","red","grey"), cex=0.6)
+       fill=c("goldenrod","forestgreen","grey30","grey"), cex=0.6)
 
 #outliers in the NMDS.complete :
 
@@ -61,11 +61,12 @@ plot(envplot, add = T, pch=22, col = cp[as.numeric(x)], bg = cp[as.numeric(x)])
 ### Impact spread :
 pdf(file = "map impasct.pdf")
 db=databp[databp$PlotName %in% realgrasslands,]
-targets <- rownames(glmSRnat.overall$impact.spread)[
-  which(!is.na(glmSRnat.overall$impact.spread$th.CI) &
-          rownames(glmSRnat.overall$impact.spread)%in% aliens)]
+targets <- impsp
 
-par(mfrow=c(3,4), mar=c(1,1,1,1))                         
+par(mfrow=c(3,4), mar=c(1,1,1,1))     
+
+
+
 for( i in targets) {
   plot.alien=as.character(db[which(db$abun%in%c(1,2,3,4,5,6) & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])  
   th= glmSRnat.overall$impact.spread[i, "th.CI"]

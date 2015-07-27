@@ -2,7 +2,7 @@
 ### Function recalculating the critical values using the bootstrapped CI
 
 impact.spread <- function(M = glmSRnat.overall, db=databp[databp$PlotName %in% realgrasslands,], 
-                           variable = "SRnat") {
+                           variable = "SRnat", threshold.type = "weak") {
 
 a <- row.names(M$dif)
 db.modif <- db[which(db$SpeciesCode %in% a),] 
@@ -11,8 +11,8 @@ db.modif <- db[which(db$SpeciesCode %in% a),]
 sp.names <- a
 
 output<- data.frame(matrix(NA, nrow= dim(M$dif), ncol =9))
-names(output)<- c("th","th.CI.weak","th.CI", "pth" , "pth.CI",
-                  "prevalence", "n.plot.impact", "prop.plot.impact", "SRo")
+names(output)<- c("th","th.CI.weak","th.CI", "pth" , "pth.CI.weak","pth.CI",
+                  "prevalence", "n.plot.impact", "prop.plot.impact")
 rownames(output) <- row.names(M$dif)
 for (i in 1:length(sp.names)) {
   
@@ -82,7 +82,15 @@ if (length(pos)>=1) {
   if (length(y)>=1) pth <- min( y, na.rm=T)
 }
 
-
+pth.CI.weak<- NA
+if (length(sig)>=1) {
+  y <- sig [sapply(sig, FUN= function(l) {
+    c1 <- ( if ( l <= max(ab)) all(((l):max(ab)) %in% pos) # all higher classes have negative diferences
+            else c1 =F)
+    return(c1)
+  })]
+  if (length(y)>=1) pth.CI <- min( y, na.rm=T)
+}
 pth.CI<- NA
 if (length(sig)>=1) {
   y <- sig [sapply(sig, FUN= function(l) {
@@ -93,13 +101,21 @@ if (length(sig)>=1) {
   if (length(y)>=1) pth.CI <- min( y, na.rm=T)
 }
 
+## choosing type of threshold :
+
+if (threshold.type == "weak") {
+  th.CI <- th.CI.weak
+  pth.CI <-pth.CI.weak
+}
+
+# Calculate impact spread
 
 prevalence <- dim(sp.dat)[1]
 nb.plot.impact<- sum(sp.dat$abun >=  th.CI, na.rm=T)
 prop.plot.impact <- nb.plot.impact/prevalence
-SRo <-nb.plot.impact/prevalence
 
-output [i, ] <- c(th, th.CI.weak, th.CI, pth, pth.CI, prevalence,nb.plot.impact,prop.plot.impact, SRo)
+output [i, ] <- c(th, th.CI.weak, th.CI, pth, pth.CI.weak, pth.CI,
+                  prevalence,nb.plot.impact,prop.plot.impact)
 }
 
 

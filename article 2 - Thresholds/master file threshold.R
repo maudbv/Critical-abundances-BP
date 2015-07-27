@@ -58,19 +58,20 @@ min.class <- 2
 # 
 # save( boot.output, boot.indices , 
 #  file = "saved Rdata/article 2 - threshold/boot.output.2.0.Rdata")
-   load(file = "saved Rdata/article 2 - threshold/boot.output.2.0.Rdata")
+   
+load(file = "saved Rdata/article 2 - threshold/boot.output.2.0.Rdata")
 
-save( boot.output, boot.indices , 
-        file = "saved Rdata/article 2 - threshold/boot.output.99reps.Rdata")
+# save( boot.output, boot.indices , 
+#         file = "saved Rdata/article 2 - threshold/boot.output.99reps.Rdata")
 
 # calculate glms on bootstraps
-system.time(glmSR.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SR', min.occur= min.occur, min.class = min.class, nreps=nreps))
-# system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRnat', min.occur= min.occur, min.class = min.class, nreps=nreps))
- system.time(glmSRali.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRali', min.occur= min.occur, min.class = min.class, nreps=nreps))
+# system.time(glmSR.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SR', min.occur= min.occur, min.class = min.class, nreps=nreps))
+# # system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRnat', min.occur= min.occur, min.class = min.class, nreps=nreps))
+#  system.time(glmSRali.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRali', min.occur= min.occur, min.class = min.class, nreps=nreps))
+#  
+# save(glmSR.overall, glmSRnat.overall, glmSRali.overall,file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
  
-save(glmSR.overall, glmSRnat.overall, glmSRali.overall,file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
- 
-#  load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
+  load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
 
 
 # ## GLMs with dominance index as covariate
@@ -126,7 +127,59 @@ glmSRali$boot.thresh = add.prop(N = glmSRali, var ="SRali", data=db)
  impsp <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$th.CI) 
                                                         & (rownames(glmSRnat.overall$impact.spread) %in% aliens)),])
  
- 
+## gamma and beta trends
+source('script/article 2 - Thresholds/gamma.trend.R')
+gamma.trend.nat <- gamma.trend(spnames = impsp, null.model="permute.rare", nreps = 999)
+beta.trend.nat <- beta.trend(spnames = rownames(glmSRnat.overall$mean),null.model="permute.rare", nreps = 999)
+
+
+##### Partition Gamma/beta/alpha native diversity for each imp species above/below #######
+
+system.time(divpart.nat.perm <- div.part.nm(spnames = impsp, group=natives, null.model = "permute", nreps =999))
+system.time(divpart.ali.perm <- div.part.nm(spnames = impsp, group=aliens, null.model = "permute", nreps = 999))
+
+save(div.part.overall, div.part.nm, divpart.nat.perm, divpart.ali.perm,file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata")
+
+# extract result table for diversity partitionning :
+# 
+# out <- glmSRnat.overall$impact.spread
+# out <- out[impsp,c("th.CI", "prevalence", "n.plot.impact")]
+# out<- cbind(species = species[impsp, "tip"], out)
+# 
+# out$aRo <- glmSRnat.overall$mean[impsp, "C1"]
+# out$aRc <- sapply(impsp, FUN = function(m) glmSRnat.overall$mean[m,out[m, "th.CI"]] )
+# out$aR.coef <- sapply(impsp, FUN = function(m) glmSRnat.overall$est[m,(out[m, "th.CI"]-1) ] )
+#   
+# out$GRo <- gamma.trend.nat$obs[impsp,"c1"]
+# out$GRc <- sapply(impsp, FUN = function(m) gamma.trend.nat$obs[m,out[m, "th.CI"]] )
+# out$GR.P <- sapply(impsp, FUN = function(m) gamma.trend.nat$P.gamma[m,out[m, "th.CI"]] )
+# 
+# out$BRo <- beta.trend.nat$obs[impsp,"c1"]
+# out$BRc <- sapply(impsp, FUN = function(m) beta.trend.nat$obs[m,out[m, "th.CI"]] )
+# out$BR.P <- sapply(impsp, FUN = function(m) beta.trend.nat$P.beta[m,out[m, "th.CI"]] )
+
+
+
+out <- glmSRnat.overall$impact.spread
+out <- out[impsp,c("th.CI", "prevalence", "n.plot.impact")]
+out<- cbind(species = species[impsp, "tip"], out)
+
+out$aRo <- sapply(impsp, FUN = function(m) divpart.nat.perm$alpha.below[m,out[m, "th.CI"]] )
+out$aRc <- sapply(impsp, FUN = function(m) divpart.nat.perm$alpha.above[m,out[m, "th.CI"]] )
+out$aR.coef <- sapply(impsp, FUN = function(m) glmSRnat.overall$est[m,(out[m, "th.CI"]) ] )
+
+out$GRo <- sapply(impsp, FUN = function(m) divpart.nat.perm$gamma.below[m,out[m, "th.CI"]] )
+out$GRc <- sapply(impsp, FUN = function(m) divpart.nat.perm$gamma.above[m,out[m, "th.CI"]] )
+out$GRnull <- sapply(impsp, FUN = function(m)  divpart.nat.perm$null.above[m,out[m, "th.CI"]]  )
+
+out$GR.P <- sapply(impsp, FUN = function(m)  divpart.nat.perm$P.above[m,out[m, "th.CI"]] )
+
+out$BRo <- sapply(impsp, FUN = function(m) divpart.nat.perm$betap.below[m,out[m, "th.CI"]] )
+out$BRc <-sapply(impsp, FUN = function(m) divpart.nat.perm$betap.above[m,out[m, "th.CI"]] )
+table.div.part <- out
+write.csv(data.frame(out), file="output diversity partitioning.csv")
+
+
 # save results
  save.image("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")
 
