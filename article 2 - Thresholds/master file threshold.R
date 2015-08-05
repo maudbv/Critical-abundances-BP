@@ -129,16 +129,19 @@ glmSRali$boot.thresh = add.prop(N = glmSRali, var ="SRali", data=db)
  
 ## gamma and beta trends
 source('script/article 2 - Thresholds/gamma.trend.R')
-gamma.trend.nat <- gamma.trend(spnames = impsp, null.model="permute.rare", nreps = 999)
-beta.trend.nat <- beta.trend(spnames = rownames(glmSRnat.overall$mean),null.model="permute.rare", nreps = 999)
+# gamma.trend.nat <- gamma.trend(spnames = impsp, null.model="permute.rare", nreps = 999)
+# beta.trend.nat <- beta.trend(spnames = rownames(glmSRnat.overall$mean),null.model="permute.rare", nreps = 999)
+# 
+# 
+# ##### Partition Gamma/beta/alpha native diversity for each imp species above/below #######
+# 
+# system.time(divpart.nat.perm <- div.part.nm(spnames = impsp, group=natives, null.model = "permute", nreps =999))
+# system.time(divpart.ali.perm <- div.part.nm(spnames = impsp, group=aliens, null.model = "permute", nreps = 999))
+# 
+# save(div.part.overall, div.part.nm, divpart.nat.perm, divpart.ali.perm,file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata")
 
+load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata")
 
-##### Partition Gamma/beta/alpha native diversity for each imp species above/below #######
-
-system.time(divpart.nat.perm <- div.part.nm(spnames = impsp, group=natives, null.model = "permute", nreps =999))
-system.time(divpart.ali.perm <- div.part.nm(spnames = impsp, group=aliens, null.model = "permute", nreps = 999))
-
-save(div.part.overall, div.part.nm, divpart.nat.perm, divpart.ali.perm,file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata")
 
 # extract result table for diversity partitionning :
 # 
@@ -166,17 +169,18 @@ out<- cbind(species = species[impsp, "tip"], out)
 
 out$aRo <- sapply(impsp, FUN = function(m) divpart.nat.perm$alpha.below[m,out[m, "th.CI"]] )
 out$aRc <- sapply(impsp, FUN = function(m) divpart.nat.perm$alpha.above[m,out[m, "th.CI"]] )
-out$aR.coef <- sapply(impsp, FUN = function(m) glmSRnat.overall$est[m,(out[m, "th.CI"]) ] )
 
 out$GRo <- sapply(impsp, FUN = function(m) divpart.nat.perm$gamma.below[m,out[m, "th.CI"]] )
 out$GRc <- sapply(impsp, FUN = function(m) divpart.nat.perm$gamma.above[m,out[m, "th.CI"]] )
 out$GRnull <- sapply(impsp, FUN = function(m)  divpart.nat.perm$null.above[m,out[m, "th.CI"]]  )
+out$GRsdnull <- sapply(impsp, FUN = function(m)  divpart.nat.perm$sdnull.above[m,out[m, "th.CI"]]  )
 
 out$GR.P <- sapply(impsp, FUN = function(m)  divpart.nat.perm$P.above[m,out[m, "th.CI"]] )
 
 out$BRo <- sapply(impsp, FUN = function(m) divpart.nat.perm$betap.below[m,out[m, "th.CI"]] )
 out$BRc <-sapply(impsp, FUN = function(m) divpart.nat.perm$betap.above[m,out[m, "th.CI"]] )
 table.div.part <- out
+
 write.csv(data.frame(out), file="output diversity partitioning.csv")
 
 

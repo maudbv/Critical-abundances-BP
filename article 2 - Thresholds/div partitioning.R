@@ -81,21 +81,17 @@ rownames(div.part.overall) = c("total richness", "native richness", "alien richn
 div.part.nm <- function(spnames = impsp, group = natives, thresh = c("th", "max"),
                         null.model = "permute", nreps = 99) {
   
-  tmp<- as.data.frame(matrix(NA, nrow = length(spnames), ncol = (6*2 +3+6),
+  tmp<- as.data.frame(matrix(NA, nrow = length(spnames), ncol = 6,
                              dimnames= list(
                                spnames,
-                               c(
-                                 paste(c(rep("below",6), rep("above", 6)),
-                                       c("nb.plot", "gamm", "alpha", "beta.add", "beta.mult","beta.prop"),
-                                       sep="."),
-                                 c("shared",  "lost","gained"),
-                                 c("median.loss", "mean.loss", "first.loss",
-                                   "median.loss.B", "mean.loss.B", "first.loss.B")
-                               )
-                             )
-                             ))
+                              paste(rep("C"), 1:6, sep="")
+                             )))
   
-  divpart.list    <- list( obs.divpart = tmp , P.divpart = tmp, z.divpart= tmp, null.divpart = tmp, sdnull.divpart= tmp  )
+  divpart<- list( nplot.below = tmp,nplot.above = tmp, 
+                  alpha.below = tmp , alpha.above = tmp,
+                  gamma.below = tmp , gamma.above = tmp,
+                  betap.below = tmp , betap.above = tmp,
+                  P.above = tmp, z.above= tmp, null.above = tmp, sdnull.above= tmp  )
   
   
   for (sp in spnames) {
@@ -103,161 +99,218 @@ div.part.nm <- function(spnames = impsp, group = natives, thresh = c("th", "max"
     community <- comm[which((rownames(comm) %in% realgrasslands) & (comm[,sp]>0) ),]
     community <- community[,colSums(community)>0]
     community<- community[,colnames(community) %in% group] 
-    community<- ceiling(community>0)
+   community<- ceiling(community>0)
     
-    if ( thresh == "th"){
-      var <- comm[rownames(community),sp]
-      var[var < glmSRnat.overall$impact.spread [sp,"th.CI"]] <- 0
-      var[var >= glmSRnat.overall$impact.spread [sp,"th.CI"]] <- 1
-    }
+    var <- comm[rownames(community),sp]
+    abun <- table(var)
+    abun <- as.numeric(names(abun[abun>=5]))
     
-    if ( thresh == "max"){
-      var <- comm[rownames(community),sp]     
-      M<- max(var)
-      if(sum(var==max(var))<5) M <- max(var)-1
-      var[var< M] <- 0
-      var[var>= M] <- 1
-    }
+    for (k in 1:max(abun)){
+    divpart$alpha.below [sp,k] <- mean(rowSums(community[var<k,]), na.rm=T)
+    divpart$alpha.above [sp,k] <- mean(rowSums(community[var>=k,]), na.rm=T)
+    divpart$gamma.below [sp,k] <- sum(colSums(community[var<k,])>0)
+    divpart$gamma.above [sp,k] <- sum(colSums(community[var>=k,])>0) 
+    divpart$nplot.below [sp,k] <- sum(rowSums(community[var<k,])>0)
+    divpart$nplot.above [sp,k] <- sum(rowSums(community[var>=k,])>0)
     
-    freq <- colSums(community)/dim(community)[1]
-    B.freq <- colSums(community[var==0,])/sum(var==0)
+    divpart$betap.below [sp,k] <- (divpart$gamma.below [sp,k] - divpart$alpha.below [sp,k]) /divpart$gamma.below [sp,k]
+    divpart$betap.above [sp,k] <- (divpart$gamma.above [sp,k] - divpart$alpha.above [sp,k]) /divpart$gamma.above [sp,k]
+  }
     
-    divpart <- c(n <- sum(rowSums(community[var==0,])>0),
-                 gam <- sum(colSums(community[var==0,])>0),
-                 alpha <- mean(rowSums(community[var==0,]), na.rm=T),
-                 beta.add <- gam - alpha,
-                 beta.mult <- gam/alpha,
-                 beta.prop <- (gam - alpha)/gam,
-                 
-                 n2 <- sum(rowSums(community[var==1,])>0),
-                 gam2 <- sum(colSums(community[var==1,])>0),
-                 alpha2 <- mean(rowSums(community[var==1,]), na.rm=T),
-                 beta.add2 <- gam2 - alpha2,
-                 beta.mult2 <- gam2/alpha2,
-                 beta.prop2 <- (gam2 - alpha2)/gam2,
-                 
-                 shared <- sum(((colSums(community[var==0,])>0) + (colSums(community[var==1,])>0)) == 2),
-                 lost <- sum(((colSums(community[var==0,])>0) + (colSums(community[var==1,])==0)) == 2),
-                 gained <- sum(((colSums(community[var==0,])>0) + (colSums(community[var==1,])>0)) == 2),
-                 
-                 median.lost<- median(freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T),
-                 mean.lost<- mean(freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T),
-                 first.lost<- max(freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T),
-                 
-                 median.lost.B<- median(B.freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T),
-                 mean.lost.B<- mean(B.freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T),
-                 first.lost.B<- max(B.freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T)
-    )
     
     # build random expectatinos
-    r.divpart <- matrix(NA, nreps, (6*2 +3+6)) 
-    
-    for (k in 1:nreps) {
+  r.gamma.above <- matrix(NA, nreps,6) 
+  
+  for (j in 1:nreps) {
       
       # null model A : simple permutation of the below/above plots
       if( null.model == "permute") {
-        r.var <- sample(var)
-        rcommunity <- community
-        B.freq <- colSums(rcommunity[r.var==0,])/sum(r.var==0)
-      
+        rvar <- sample(var)
+        rcommunity <- community   
+        abun <- table(rvar)
+        abun <- as.numeric(names(abun[abun>=5]))
       }
       
-      # null model B : resampling of plots within total community pool
-      if (null.model == "resample"){
-        r.var <- var
-        names(r.var) <- sample( realgrasslands, length(var)) 
-        
-        rcommunity <- comm[names(r.var),]
-        rcommunity<- rcommunity[,colnames(rcommunity) %in% group] 
-        rcommunity <- rcommunity[,colSums(rcommunity)>0]
-        rcommunity<- ceiling(rcommunity>0)
-      }
-      
-      ## bootstrap: resampling with replacement within each group (above/below) of plots
-      if (null.model == "boot"){
-        r.var <- as.vector(var)
-        names(r.var) <- rownames(community) 
-        names(r.var)[r.var == 0] <- sample(names(r.var[r.var == 0]), replace = T)
-        names(r.var)[r.var == 1] <- sample(names(r.var[r.var == 1]), replace = T)
-        
-        rcommunity <- comm[names(r.var),]
-        rcommunity<- rcommunity[,colnames(rcommunity) %in% group] 
-        rcommunity <- rcommunity[,colSums(rcommunity)>0]
-        rcommunity<- ceiling(rcommunity>0)
-      }
-      
-      ### calculate random parameters
-      r.divpart[k,] <- c( n <- sum(rowSums(rcommunity[r.var==0,])>0),
-                          gam <- sum(colSums(rcommunity[r.var==0,])>0),
-                          alpha <-mean(rowSums(rcommunity[r.var==0,]), na.rm=T),
-                          beta.add <- gam - alpha,
-                          beta.mult <- gam/alpha,
-                          beta.prop <- (gam - alpha)/gam,
-                          
-                          n2 = sum(rowSums(rcommunity[r.var==1,])>0),
-                          gam2<- sum(colSums(rcommunity[r.var==1,])>0),
-                          alpha2 <-mean(rowSums(rcommunity[r.var==1,]), na.rm=T),
-                          beta.add2 <- gam2 - alpha2,
-                          beta.mult2 <- gam2/alpha2,
-                          beta.prop2 <- (gam2 - alpha2)/gam2,
-                          
-                          shared <- sum(((colSums(rcommunity[r.var==0,])>0) + (colSums(rcommunity[r.var==1,])>0)) == 2),
-                          lost <- sum(((colSums(rcommunity[r.var==0,])>0) + (colSums(rcommunity[r.var==1,])==0)) == 2),
-                          gained <- sum(((colSums(rcommunity[r.var==0,])==0) + (colSums(rcommunity[r.var==1,])>0)) == 2),
-                          
-                          median.lost<- median(freq[(((colSums(rcommunity[r.var==0,])>0) + (colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T),
-                          mean.lost<- mean(freq[(((colSums(rcommunity[r.var==0,])>0)+(colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T),
-                          first.lost<- max(freq[(((colSums(rcommunity[r.var==0,])>0)+(colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T),
-                          
-                          median.lost.B<- median(B.freq[(((colSums(rcommunity[r.var==0,])>0)+(colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T),
-                          mean.lost.B<- mean(B.freq[(((colSums(rcommunity[r.var==0,])>0)+(colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T),
-                          first.lost.B<- max(B.freq[(((colSums(rcommunity[r.var==0,])>0)+(colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T)
-      )
-      
-      print(paste(sp, ":" ,k))
+      for (k in  1:max(abun)){
+        r.gamma.above  [j,k] <- sum(colSums(rcommunity[rvar>=k,])>0) 
+             }
+       print(paste(sp, ":" ,j))
     }
-    r.divpart <-  rbind(divpart, r.divpart)
+  r.gamma.above<-  rbind(as.numeric(divpart$gamma.above [sp,]), r.gamma.above)
     
-    divpart.list$P.divpart[sp,] <- apply(r.divpart, 2, function(x) (sum(x<x[1]) + sum(x == x[1])/2)/(nreps+1))
-    divpart.list$z.divpart[sp,] <- apply(r.divpart, 2, function(x) {
-      z=(x[1] - mean(x, na.rm=T))/sd(x, na.rm=T)
-      if(sd(x, na.rm=T) == 0) z=0
+    divpart$P.above[sp,] <- apply(r.gamma.above, 2, function(x) (sum(x<x[1]) + sum(x == x[1])/2)/(nreps+1))
+    divpart$z.above[sp,]  <- apply(r.gamma.above, 2, function(x) {
+      if(sd(x, na.rm=T) != 0 & !all(is.na(x))) z=(x[1] - mean(x, na.rm=T))/sd(x, na.rm=T)
+      if(sd(x, na.rm=T) == 0 | all(is.na(x))) z=NA
       return(z)
     } )
-    divpart.list$null.divpart[sp,] <-  apply(r.divpart, 2, function(x) mean(x, na.rm=T))
-    divpart.list$sdnull.divpart[sp,] <-  apply(r.divpart, 2, function(x) sd(x, na.rm=T))
-    divpart.list$obs.divpart [sp,] <- divpart
+  divpart$null.above[sp,]  <-  apply(r.gamma.above, 2, function(x) mean(x, na.rm=T))
+  divpart$sdnull.above[sp,] <-  apply(r.gamma.above, 2, function(x) sd(x, na.rm=T))
   }
   
-  return(divpart.list)
+  return(divpart)
 }
 
 
-
-# Partition Gamma/beta/alpha native diversity for each imp species above/below
-
-system.time(divpart.nat.perm <- div.part.nm(group=natives, null.model = "permute", nreps =999))
-system.time(divpart.ali.perm <- div.part.nm(group=aliens, null.model = "permute", nreps = 999))
-
-## div part for max abundance as threshol
-system.time(divpart.nat.max.perm <- div.part.nm(group=natives,thresh = "max", null.model = "permute", nreps =99))
-system.time(divpart.ali.max.perm <- div.part.nm(group=aliens, thresh = "max", null.model = "permute", nreps = 99))
-
-
-# BOOOTSTRAP AND RESAMPLE options are not working : community is not being really changed
-# system.time(divpart.nat.boot <- div.part.nm(group=natives, null.model = "boot", nreps = 999))
-# system.time(divpart.ali.boot <- div.part.nm(group=aliens, null.model = "boot", nreps = 999))
-
-save(div.part.overall, div.part.nm,
-     divpart.nat.perm,divpart.ali.perm,divpart.nat.boot,divpart.ali.boot, 
-     file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata")
-
-
-out <- rbind(cbind(divpart.nat.perm$obs,divpart.nat.perm$P),
-            cbind( divpart.ali.perm$obs, divpart.ali.perm$P))
-out <- out[order( names(out), decreasing=T)]
-
-write.csv(out,file ="divpart.csv")
+## FUNCTION Partition diversity with standaridzation against null expectation ########
+# div.part.nm <- function(spnames = impsp, group = natives, thresh = c("th", "max"),
+#                                                  null.model = "permute", nreps = 99) {
+#     
+#       tmp<- as.data.frame(matrix(NA, nrow = length(spnames), ncol = (6*2 +3+6),
+#                                                                dimnames= list(
+#                                                                    spnames,
+#                                                                    c(
+#                                                                        paste(c(rep("below",6), rep("above", 6)),
+#                                                                                                                      c("nb.plot", "gamm", "alpha", "beta.add", "beta.mult","beta.prop"),
+#                                                                                                                      sep="."),
+#                                                                        c("shared",  "lost","gained"),
+#                                                                        c("median.loss", "mean.loss", "first.loss",
+#                                                                                                              "median.loss.B", "mean.loss.B", "first.loss.B")
+#                                                                      )
+#                                                                  )
+#                                                                ))
+#     
+#       divpart.list    <- list( obs.divpart = tmp , P.divpart = tmp, z.divpart= tmp, null.divpart = tmp, sdnull.divpart= tmp  )
+#     
+#       
+#       for (sp in spnames) {
+#           
+#             community <- comm[which((rownames(comm) %in% realgrasslands) & (comm[,sp]>0) ),]
+#           community <- community[,colSums(community)>0]
+#           community<- community[,colnames(community) %in% group] 
+#           community<- ceiling(community>0)
+#           
+#             if ( thresh == "th"){
+#                 var <- comm[rownames(community),sp]
+#                 var[var < glmSRnat.overall$impact.spread [sp,"th.CI"]] <- 0
+#                 var[var >= glmSRnat.overall$impact.spread [sp,"th.CI"]] <- 1
+#               }
+#           
+#             if ( thresh == "max"){
+#                 var <- comm[rownames(community),sp]     
+#                 M<- max(var)
+#                 if(sum(var==max(var))<5) M <- max(var)-1
+#                 var[var< M] <- 0
+#                 var[var>= M] <- 1
+#               }
+#           
+#             freq <- colSums(community)/dim(community)[1]
+#           B.freq <- colSums(community[var==0,])/sum(var==0)
+#           
+#             divpart <- c(n <- sum(rowSums(community[var==0,])>0),
+#                                            gam <- sum(colSums(community[var==0,])>0),
+#                                            alpha <- mean(rowSums(community[var==0,]), na.rm=T),
+#                                            beta.add <- gam - alpha,
+#                                            beta.mult <- gam/alpha,
+#                                            beta.prop <- (gam - alpha)/gam,
+#                                            
+#                                              n2 <- sum(rowSums(community[var==1,])>0),
+#                                            gam2 <- sum(colSums(community[var==1,])>0),
+#                                            alpha2 <- mean(rowSums(community[var==1,]), na.rm=T),
+#                                            beta.add2 <- gam2 - alpha2,
+#                                            beta.mult2 <- gam2/alpha2,
+#                                            beta.prop2 <- (gam2 - alpha2)/gam2,
+#                                            
+#                                              shared <- sum(((colSums(community[var==0,])>0) + (colSums(community[var==1,])>0)) == 2),
+#                                            lost <- sum(((colSums(community[var==0,])>0) + (colSums(community[var==1,])==0)) == 2),
+#                                            gained <- sum(((colSums(community[var==0,])>0) + (colSums(community[var==1,])>0)) == 2),
+#                                            
+#                                            median.lost<- median(freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T),
+#                                            mean.lost<- mean(freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T),
+#                                            first.lost<- max(freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T),
+#                                            
+#                                           median.lost.B<- median(B.freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T),
+#                                            mean.lost.B<- mean(B.freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T),
+#                                            first.lost.B<- max(B.freq[(((colSums(community[var==0,])>0)+(colSums(community[var==1,])==0)) == 2)],na.rm=T)
+#                               )
+#           
+#             # build random expectatinos
+#             r.divpart <- matrix(NA, nreps, (6*2 +3+6)) 
+#           
+#             for (k in 1:nreps) {
+#                 
+#                   # null model A : simple permutation of the below/above plots
+#                   if( null.model == "permute") {
+#                       r.var <- sample(var)
+#                       rcommunity <- community
+#                       B.freq <- colSums(rcommunity[r.var==0,])/sum(r.var==0)
+#                     
+#                       }
+#                 
+#                   # null model B : resampling of plots within total community pool
+#                   if (null.model == "resample"){
+#                       r.var <- var
+#                       names(r.var) <- sample( realgrasslands, length(var)) 
+#                       
+#                         rcommunity <- comm[names(r.var),]
+#                       rcommunity<- rcommunity[,colnames(rcommunity) %in% group] 
+#                       rcommunity <- rcommunity[,colSums(rcommunity)>0]
+#                       rcommunity<- ceiling(rcommunity>0)
+#                     }
+#                 
+#                   ## bootstrap: resampling with replacement within each group (above/below) of plots
+#                   if (null.model == "boot"){
+#                       r.var <- as.vector(var)
+#                       names(r.var) <- rownames(community) 
+#                       names(r.var)[r.var == 0] <- sample(names(r.var[r.var == 0]), replace = T)
+#                       names(r.var)[r.var == 1] <- sample(names(r.var[r.var == 1]), replace = T)
+#                       
+#                         rcommunity <- comm[names(r.var),]
+#                       rcommunity<- rcommunity[,colnames(rcommunity) %in% group] 
+#                       rcommunity <- rcommunity[,colSums(rcommunity)>0]
+#                       rcommunity<- ceiling(rcommunity>0)
+#                     }
+#                 
+#                   ### calculate random parameters
+#                   r.divpart[k,] <- c( n <- sum(rowSums(rcommunity[r.var==0,])>0),
+#                                                                  gam <- sum(colSums(rcommunity[r.var==0,])>0),
+#                                                                  alpha <-mean(rowSums(rcommunity[r.var==0,]), na.rm=T),
+#                                                                  beta.add <- gam - alpha,
+#                                                                  beta.mult <- gam/alpha,
+#                                                                  beta.prop <- (gam - alpha)/gam,
+#                                                                  
+#                                                                    n2 = sum(rowSums(rcommunity[r.var==1,])>0),
+#                                                                  gam2<- sum(colSums(rcommunity[r.var==1,])>0),
+#                                                                  alpha2 <-mean(rowSums(rcommunity[r.var==1,]), na.rm=T),
+#                                                                  beta.add2 <- gam2 - alpha2,
+#                                                                  beta.mult2 <- gam2/alpha2,
+#                                                                  beta.prop2 <- (gam2 - alpha2)/gam2,
+#                                                                  
+#                                                                    shared <- sum(((colSums(rcommunity[r.var==0,])>0) + (colSums(rcommunity[r.var==1,])>0)) == 2),
+#                                                                  lost <- sum(((colSums(rcommunity[r.var==0,])>0) + (colSums(rcommunity[r.var==1,])==0)) == 2),
+#                                                                  gained <- sum(((colSums(rcommunity[r.var==0,])==0) + (colSums(rcommunity[r.var==1,])>0)) == 2),
+#                                                                  
+#                                                                    median.lost<- median(freq[(((colSums(rcommunity[r.var==0,])>0) + (colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T),
+#                                                                  mean.lost<- mean(freq[(((colSums(rcommunity[r.var==0,])>0)+(colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T),
+#                                                                  first.lost<- max(freq[(((colSums(rcommunity[r.var==0,])>0)+(colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T),
+#                                                                  
+#                                                                    median.lost.B<- median(B.freq[(((colSums(rcommunity[r.var==0,])>0)+(colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T),
+#                                                                  mean.lost.B<- mean(B.freq[(((colSums(rcommunity[r.var==0,])>0)+(colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T),
+#                                                                  first.lost.B<- max(B.freq[(((colSums(rcommunity[r.var==0,])>0)+(colSums(rcommunity[r.var==1,])==0)) == 2)],na.rm=T)
+#                                              )
+#                 
+#                   print(paste(sp, ":" ,k))
+#               }
+#           
+#           r.divpart <-  rbind(divpart, r.divpart)
+#           
+#           divpart.list$P.divpart[sp,] <- apply(r.divpart, 2, function(x) (sum(x<x[1]) + sum(x == x[1])/2)/(nreps+1))
+#           divpart.list$z.divpart[sp,] <- apply(r.divpart, 2, function(x) {
+#               z=(x[1] - mean(x, na.rm=T))/sd(x, na.rm=T)
+#               if(sd(x, na.rm=T) == 0) z=0
+#               return(z)
+#             } )
+#           
+#           divpart.list$null.divpart[sp,] <-  apply(r.divpart, 2, function(x) mean(x, na.rm=T))
+#           divpart.list$sdnull.divpart[sp,] <-  apply(r.divpart, 2, function(x) sd(x, na.rm=T))
+#           divpart.list$obs.divpart [sp,] <- divpart
+#         }
+#     
+#       return(divpart.list)
+#   }
+# 
+  
+  
 
 
 # Beta diversity partitioning 
