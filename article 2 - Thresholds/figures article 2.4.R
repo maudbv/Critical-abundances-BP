@@ -138,20 +138,21 @@ mtext(2, text=c("Effect on native alpha richness"), adj=0.5, line=4, las = 0, ou
 ##### gamma trends   ############
 
 par(mfrow = c(3,4), mar=c(0,0,1,1), oma=c(6,6,2,1))
-ylim = c(-45,30)
+ylim = c(-50,35)
 xlim = c(0.5, 5.5)
+
 for (i in 1 : length(impsp)){
 
   if (i ==4) plot.new()
   sp <- impsp[i]
   # identify significant classes in black
-  cols <- c(NA, "black") [ (gamma.trend.nat$P.gamma[i,] <=0.025) +1]
-  n <- as.numeric(M$n.obs[sp,])[2:6]
+  cols <- c(NA, "black") [ (gamma.trend.nat$P.gamma[sp,] <=0.025) +1]
+  n <- as.numeric(glmSRnat.overall$n.obs[sp,])[2:6]
   # create x axis for the 5 abundance classes
   x = c(0:5)
 
   # create y axis with the gamma richness Standardized effect size
-  y = (gamma.trend.nat$obs[i,] - gamma.trend.nat$mean[i,])
+  y = (gamma.trend.nat$obs[sp,] - gamma.trend.nat$mean[sp,])
   y [ (2:6)[ n < 5] ]=NA
   y[1]=NA
 
@@ -174,15 +175,14 @@ for (i in 1 : length(impsp)){
   mtext(3, text=paste(species[sp, "Genus"]," ", species[sp, "Species"], sep="") ,
         font = 3, outer= F,adj=0.9, cex=0.7, line=0.2, las = 1)
 
-#   # Y axis label
-#   if ( i %in% c(1,4,7)) {
-#     mtext(2, text="SES", ,adj=0.5, cex=0.8, line=1.5, las = 0)
-#   }
+  #   # Y axis label
+  #   if ( i %in% c(1,4,7)) {
+  #     mtext(2, text="SES", ,adj=0.5, cex=0.8, line=1.5, las = 0)
+  #   }
 }
 
 mtext(1, text=c("Abundance class"), adj=0.5, line=4, las = 1, outer=T)
 mtext(2, text=c("Effect size of native gamma richness"), adj=0.5, line=3, las = 0, outer=T)
-
 
 ##### Gamma and alpha on same graph ########
 

@@ -161,6 +161,7 @@ div.part.alpha.nm <- function(spnames = impsp, group = natives, thresh = c("th",
 
   divpart<- list( nplot.below = tmp,nplot.above = tmp,
                   alpha.below = tmp , alpha.above = tmp,
+                  alpha.below.sd = tmp , alpha.above.sd = tmp,
                   gamma.below = tmp , gamma.above = tmp,
                   betap.below = tmp , betap.above = tmp,
                   P.above = tmp, z.above= tmp, null.above = tmp, sdnull.above= tmp  )
@@ -180,6 +181,8 @@ div.part.alpha.nm <- function(spnames = impsp, group = natives, thresh = c("th",
     for (k in 1:max(abun)){
       divpart$alpha.below [sp,k] <- mean(rowSums(community[var<k,]), na.rm=T)
       divpart$alpha.above [sp,k] <- mean(rowSums(community[var>=k,]), na.rm=T)
+      divpart$alpha.below.sd [sp,k] <- sd(rowSums(community[var<k,]), na.rm=T)
+      divpart$alpha.above.sd [sp,k] <- sd(rowSums(community[var>=k,]), na.rm=T)
       divpart$gamma.below [sp,k] <- sum(colSums(community[var<k,])>0)
       divpart$gamma.above [sp,k] <- sum(colSums(community[var>=k,])>0)
       divpart$nplot.below [sp,k] <- sum(var<k)

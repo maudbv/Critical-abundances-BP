@@ -20,34 +20,34 @@ traitdata$LeafWidth_ecotrait <- ecotraits[match(traitdata$Sp.code, ecotraits$Sp.
 traitdata$LeafSize_ecotrait <- traitdata$LeafLength * traitdata$LeafWidth
 
 
-lifeforms <- read.csv(file="data/lifeform correction list.csv",na.str=c("","NA"), as.is=T, stringsAsFactor=F)
+lifeforms <- read.csv(file="data/traits/lifeform correction list.csv",na.str=c("","NA"), as.is=T, stringsAsFactor=F)
 traitdata$lifeform <- lifeforms[match(traitdata$Sp.code, lifeforms$Sp.code), "lifeform_corrected"]
 
 # write.csv(traitdata, file="corrected Ecotrait database")
 
 # ####### Import LEDA trait data
-# 
+#
 # SLA data
-ledaSLA     <- read.csv(file="data/LEDA SLA.csv", stringsAsFactor=F)
+ledaSLA     <- read.csv(file="data/traits/LEDA SLA.csv", stringsAsFactor=F)
 ledaSLA$tip <- sapply(as.character(ledaSLA$SBS_name), FUN=function(x) {paste(strsplit(x, split="_")[[1]][1:2], collapse="_")})
 ledaSLA_mean=summaryBy(mean_SLA_.mm.2.mg. ~ tip, data=ledaSLA, FUN=c(mean, sd), na.rm=T)
  traitdata$SLA_LEDA <- ledaSLA_mean[match( traitdata$tip,ledaSLA_mean$tip), "mean_SLA_.mm.2.mg..mean"]
-              
+
 # SM data
-ledaSM      <- read.csv(file="data/LEDA SM.csv", stringsAsFactor=F)
+ledaSM      <- read.csv(file="data/traits/LEDA SM.csv", stringsAsFactor=F)
 ledaSM$tip  <- sapply(as.character(ledaSM$SBS_name), FUN=function(x) {paste(strsplit(x, split="_")[[1]][1:2], collapse="_")})
 ledaSM_mean <- summaryBy(mean_SM_.mg. ~ tip, data=ledaSM, FUN=c(mean, sd), na.rm=T)
  traitdata$SM_LEDA <- round(ledaSM_mean[match( traitdata$tip,ledaSM_mean$tip), "mean_SM_.mg..mean"],4)
-                    
+
 # Canopy Height data
-ledaHcan      <- read.csv(file="data/LEDA Hcanopy.csv", stringsAsFactor=F)
+ledaHcan      <- read.csv(file="data/traits/LEDA Hcanopy.csv", stringsAsFactor=F)
 ledaHcan$tip  <- sapply(as.character(ledaHcan$SBS_name), FUN=function(x) { paste(strsplit(x, split="_")[[1]][1:2], collapse="_")})
 ledaHcan_mean <- summaryBy(mean_CH_.m. ~ tip, data=ledaHcan, FUN=c(mean, sd), na.rm=T)
  traitdata$H_LEDA <- ledaHcan_mean[match( traitdata$tip,ledaHcan_mean$tip), "mean_CH_.m..mean"]*100
-  
+
 
 ####### Nico Gross trait data (only Height and SLA)
-NGross.data       <- read.csv(file="data/NGross trait data.csv", stringsAsFactor=F)
+NGross.data       <- read.csv(file="data/traits/NGross trait data.csv", stringsAsFactor=F)
 NGross.data$tip<- paste(NGross.data$Genus, NGross.data$species, sep="_")
 
 NGross.data_mean <- summaryBy(VegetativeHeight + SLA ~ Species.Code, id=~tip,data=NGross.data , FUN=c(mean, sd), na.rm=T)
@@ -63,7 +63,7 @@ traitdata$SLA_NG[is.na(traitdata$SLA_NG)] <- NGross.data_mean[match( traitdata$p
 
 
 ###  Ordonez 2014 trait data
-source('script/data/ordonez trait data.R')
+source('script/data/traits/ordonez trait data.R')
 traitdata$SLA_ordo=ordonez[match(traitdata$tip, ordonez$tip), "SLA"]
 traitdata$SLA_ordo[is.na(traitdata$SLA_ordo)]=ordonez[match(traitdata$tip, ordonez$tip), "SLA"][is.na(traitdata$SLA_ordo)]
 
@@ -76,32 +76,32 @@ traitdata$SM_ordo[is.na(traitdata$SM_ordo)]=ordonez[match(traitdata$tip, ordonez
 
 
 # #### Merging continuous data
-# 
+#
 # traitdata$SLA=apply( cbind(traitdata$SLA_NG, traitdata$SLA_LEDA),1, FUN=mean, na.rm=T)
 # traitdata$SLA.sd=apply( cbind(traitdata$SLA_NG, traitdata$SLA_LEDA),1, FUN=sd, na.rm=T)
-# 
+#
 # #200 sp
-# 
+#
 # traitdata$Hmax=apply( cbind(traitdata$H_NG, traitdata$H_LEDA,traitdata$PlantHeight_ecotrait),1, FUN=mean, na.rm=T)
 # traitdata$Hmax.sd=apply( cbind(traitdata$H_NG, traitdata$H_LEDA,traitdata$PlantHeight_ecotrait),1, FUN=sd, na.rm=T)
 # #344 sp
-# 
+#
 # traitdata$SM=apply( cbind(traitdata$SM_LEDA,traitdata$SM_ecotrait),1, FUN=mean, na.rm=T)
 # traitdata$SM.sd=apply( cbind(traitdata$SM_LEDA,traitdata$SM_ecotrait),1, FUN=sd, na.rm=T)
 # #269 sp
 
 
-# 
+#
 # ### source TRY trait info
 # source('script/data/TRY data.R')
-# 
+#
 # # ADD INFORMATION of TRY IN TRAIT DATA
 # traitdata$TRYsla<-NA
 # traitdata$TRYsla[match(TRYsp.SLA, traitdata$tip)] <- 1
-# 
+#
 # traitdata$TRYhveg<-NA
 # traitdata$TRYhveg[match(TRYsp.Hveg, traitdata$tip)] <- 1
-# 
+#
 # traitdata$TRYsm<-NA
 # traitdata$TRYsm[match(TRYsp.SM, traitdata$tip)] <- 1
 
@@ -122,7 +122,7 @@ traitdata$SM= apply(!is.na(cbind( traitdata$SM_LEDA,
                                   traitdata$SM_ordo,
                                   traitdata$SM_ecotrait)),1,
                     function(x) as.numeric(sum(x)>0))
-# 
+#
 # traitdata$SLA.try= apply(cbind(traitdata$SLA,traitdata$TRYsla),1,
 #                          function(x) as.numeric(sum(x, na.rm=T)>0) )
 # traitdata$Hmax.try= apply(cbind(traitdata$Hmax,traitdata$TRYhveg),1,

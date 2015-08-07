@@ -2,7 +2,7 @@
 ### trait dataset curated by Margaret Watts for Landcare Research
 ### Sp.code should match those in Hugh Wilson's abundance surveys.
 
-ecotraits <- read.csv(file="data/Ecotrait database.csv",na.str=c("","NA"), as.is=T, stringsAsFactor=F)
+ecotraits <- read.csv(file="data/traits/Ecotrait database.csv",na.str=c("","NA"), as.is=T, stringsAsFactor=F)
 
 
 ## sp.code matching and verification:

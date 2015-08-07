@@ -13,7 +13,7 @@ library(markdown)
 # load("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")
 
 source('script/data/import BP species and environment data.R', encoding = "native.enc")
-source('script/data/import trait data.R', encoding = "native.enc")
+# source('script/data/import trait data.R', encoding = "native.enc")
 
 ### taxonomy solving :
 # extract names, match them to DB, create a reference list of changes, update initial DB
@@ -74,25 +74,6 @@ load(file = "saved Rdata/article 2 - threshold/boot.output.2.0.Rdata")
   load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.0.Rdata")
 
 
-# ## GLMs with dominance index as covariate
-# system.time(glmSR.dom <- glm.test(db = db,bootstrap = T, nreps=nreps,min.occur= min.occur,  covar ="dominance"))
-# glmSRnat.dom <- glm.test(db = db,var="SRnat",bootstrap = T, nreps=nreps, min.occur= min.occur, covar ="dominance")
-# glmSRali.dom <- glm.test(db = db,var="SRali",bootstrap = T, nreps=nreps,min.occur= min.occur,  covar ="dominance")
-# save(glmSR.dom,glmSRnat.dom,glmSRali.dom, file = "saved Rdata/article 2 - threshold/booststrapped+dominance.glms.Rdata")
-
-
-# ### Transform results by restricting target species :
-# db <- databp[databp$PlotName %in% realgrasslands,]
-# min.occur <- 5
-# min.class <- 2
-# a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=min.occur)>=min.class)
-#                   &  table(db$SpeciesCode, db$abun)[,1]>=min.occur))
-#
-# glmSR.overall   <- lapply (glmSR.overall , FUN = function(X) X[a,])
-#
-# glmSRali.overall <- lapply (glmSRali.overall, FUN = function(X) X[a,])
-#
-#
 ### correct th.CI when miscalculated
 glmSR.overall <- impact.spread(M = glmSR.overall, variable= "SR")
 glmSRnat.overall <- impact.spread(M = glmSRnat.overall, variable= "SRnat")
@@ -129,27 +110,25 @@ glmSRali$boot.thresh = add.prop(N = glmSRali, var ="SRali", data=db)
 
 ## gamma and beta trends
 source('script/article 2 - Thresholds/gamma.trend.R')
-alpha.trend.nat <- alpha.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.rare", nreps = 999)
+ alpha.trend.nat <- alpha.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.rare", nreps = 999)
 gamma.trend.nat <- gamma.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.rare", nreps = 999)
-beta.trend.nat <- beta.trend(spnames = rownames(glmSRnat.overall$mean),null.model="permute.rare", nreps = 999)
-save(gamma.trend.nat, beta.trend.nat, file = "saved Rdata/article 2 - threshold/gamma.trends.Rdata")
+ beta.trend.nat <- beta.trend(spnames = rownames(glmSRnat.overall$mean),null.model="permute.rare", nreps = 999)
+save(gamma.trend.nat, alpha.trend.nat, file = "saved Rdata/article 2 - threshold/gamma.trends.Rdata")
 
-load(file = "saved Rdata/article 2 - threshold/gamma.trends.Rdata")
+# load(file = "saved Rdata/article 2 - threshold/gamma.trends.Rdata")
 
 # ##### Partition Gamma/beta/alpha native diversity for each imp species above/below #######
 source('script/article 2 - Thresholds/div partitioning.R')
-system.time(gamma.above.trend <- div.part.gamma.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "permute", nreps =999))
-system.time(alpha.above.trend <- div.part.alpha.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "permute", nreps =999))
-
-#system.time(divpart.ali.perm <- div.part.nm(spnames = impsp, group=aliens, null.model = "permute", nreps = 999))
+ system.time(gamma.above.trend <- div.part.gamma.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "permute", nreps =999))
+ system.time(alpha.above.trend <- div.part.alpha.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "permute", nreps =999))
 
 save(gamma.above.trend, alpha.above.trend,file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata")
 
-load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata")
+# load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata")
 
 #### Beta diversity = turnover + nestedness
-betasor.nat = betasor(spnames = impsp, group = natives, nreps = 499)
-betasor.ali = betasor(spnames = impsp, group = aliens, nreps = 499)
+# betasor.nat = betasor(spnames = impsp, group = natives, nreps = 499)
+# betasor.ali = betasor(spnames = impsp, group = aliens, nreps = 499)
 
 
 #### SPATIAL CLUSTERING
@@ -165,6 +144,9 @@ load(file = "saved Rdata/article 2 - threshold/spatial MNND.Rdata")
 out <- glmSRnat.overall$impact.spread
 out <- out[impsp,c("th.CI", "prevalence", "n.plot.impact")]
 out<- cbind(species = species[impsp, "tip"], out)
+
+out$aRc.old <- sapply(impsp, FUN = function(m) glmSRnat.overall$mean[m,out[m, "th.CI"]] )
+out$aRo.old <- glmSRnat.overall$mean[impsp, "C1"]
 
 out$aRo <- sapply(impsp, FUN = function(m) alpha.above.trend$alpha.below[m,out[m, "th.CI"]] )
 out$aRc <- sapply(impsp, FUN = function(m) alpha.above.trend$alpha.above[m,out[m, "th.CI"]] )
