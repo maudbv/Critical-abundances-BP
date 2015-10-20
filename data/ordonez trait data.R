@@ -1,6 +1,6 @@
 ### import trait data from Ordonez et al. 2014
 
-ordonez <- read.csv(file="data/ordonez2014 supplementary file.csv",na.str=c("","NA"), as.is=T, stringsAsFactor=F)
+ordonez <- read.csv(file="data/traits/ordonez2014 supplementary file.csv",na.str=c("","NA"), as.is=T, stringsAsFactor=F)
 dim(ordonez)
 
 # # pattern matching with our species names

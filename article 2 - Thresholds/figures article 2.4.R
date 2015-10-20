@@ -257,8 +257,8 @@ for (i in 1:length(sel))  {
   # create y axis with the gamma richness Standardized effect size
     # #   y =(gamma.trend.nat$obs[i,] - gamma.trend.nat$mean[i,])/ gamma.trend.nat$sd[i,]
     #   y =  (gamma.trend.nat$obs[i,] - gamma.trend.nat$mean[i,])/ gamma.trend.nat$mean[i,]
-    y =  (gamma.trend.nat$obs[i,] - gamma.trend.nat$mean[i,])
-      y [ (2:6)[ n < 5] ]=NA
+    y =  (gamma.trend.nat$obs[sp,] - gamma.trend.nat$mean[sp,])
+      y [ (1:6)[ n < 5 | is.na(n)] ]=NA
       y[1]=NA
       par(new=T)
 #   plot(x,y, bg = cols,col =cols, pch=24, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F)
@@ -685,4 +685,107 @@ for (i in 1 : length(impsp)){
 
 mtext(1, text=c("SES MNND"), adj=0.5, line=4, las = 1, outer=T)
 mtext(2, text=c("Effect size of native gamma richness"), adj=0.5, line=3, las = 0, outer=T)
+
+
+### loss in gamma richness above abudnance for all species
+
+### Trends in gamma above vs.below trends
+
+par(mfrow = c(8,10), mar=c(0,0,1,1), oma=c(6,6,2,1))
+
+list.data <-gamma.above.trend
+
+ylim=c(-1,1)
+for (i in 1 : 79){
+
+  sp <- rownames(list.data$P.above)[i]
+  # identify significant classes in black
+  cols <- c(NA, "black") [ (list.data$P.above[sp,] <=0.025) +1]
+  n <- list.data$nplot.above[sp,]
+  # create x axis for the 5 abundance classes
+  x = c(0:5)
+
+  # create y axis with the gamma richness Standardized effect size
+  y =  (list.data$gamma.above[sp,] - list.data$null.above[sp,])/ list.data$null.above[sp,]
+  y [ (1:6)[ n < 5 | is.na(n)] ]=NA
+  y[1]=NA
+
+  gamma.loss[sp,] = y
+
+  # plot background
+  plot(x,y,ylim=ylim, xlim = c(0.5, 5.5), las = 1,type= "p", xaxt = "n", yaxt="n", ann=F,
+       pch = 21, col ="black",bg = cols)
+
+  axis(1,at = 1:5, label = rep("",5), tcl= 0.1,mgp=c(1,0.5,0),las=1)
+  # if (i %in% c(8,9,10,11)) text(y=-1.2, x = 1:5, labels= abclasses[2:6],  cex=0.8, srt=45, adj=1, xpd = NA)
+
+  # if ( i %in% c(1,4,8)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1)
+  abline(h=0,lty="dotted")
+
+  #plot points and lines
+  par(new=T)
+  plot(x,y, bg = cols, pch=21, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F)
+
+  # Add species name
+  mtext(3, text=paste(species[sp, "Genus"], "\n",species[sp, "Species"], sep="") ,
+        font = 3, outer= F,adj=0.9, cex=0.7, line=-2.5, las = 1)
+
+  #   # Y axis label
+  #   if ( i %in% c(1,4,7)) {
+  #     mtext(2, text="SES", ,adj=0.5, cex=0.8, line=1.5, las = 0)
+  #   }
+}
+
+mtext(1, text=c("Abundance class"), adj=0.5, line=4, las = 1, outer=T)
+mtext(2, text=c("Effect size of native gamma richness"), adj=0.5, line=3, las = 0, outer=T)
+
+
+### Trends in alpha above vs.below trends
+
+par(mfrow = c(8,10), mar=c(0,0,1,1), oma=c(6,6,2,1))
+
+list.data <-alpha.above.trend
+
+ylim=c(0,20)
+for (i in 1 : 79){
+
+  sp <- rownames(list.data$P.above)[i]
+  # identify significant classes in black
+  cols <- c(NA, "black") [ (list.data$P.above[sp,] <=0.025) +1]
+  n <- list.data$nplot.above[sp,]
+  # create x axis for the 5 abundance classes
+  x = c(0:5)
+
+  # create y axis with the gamma richness Standardized effect size
+  y =  (list.data$alpha.above[sp,] - list.data$null.above[sp,])/ list.data$null.above[sp,]
+  y =  list.data$alpha.above[sp,]
+  y [ (1:6)[ n < 5 | is.na(n)] ]=NA
+  y[1]=NA
+
+  # plot background
+  plot(x,y,ylim=ylim, xlim = c(0.5, 5.5), las = 1,type= "p", xaxt = "n", yaxt="n", ann=F,
+       pch = 21, col ="black",bg = cols)
+
+  axis(1,at = 1:5, label = rep("",5), tcl= 0.1,mgp=c(1,0.5,0),las=1)
+  # if (i %in% c(8,9,10,11)) text(y=-1.2, x = 1:5, labels= abclasses[2:6],  cex=0.8, srt=45, adj=1, xpd = NA)
+
+  # if ( i %in% c(1,4,8)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1)
+  abline(h=0,lty="dotted")
+
+  #plot points and lines
+  par(new=T)
+  plot(x,y, bg = cols, pch=21, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F)
+
+  # Add species name
+  mtext(3, text=paste(species[sp, "Genus"], "\n",species[sp, "Species"], sep="") ,
+        font = 3, outer= F,adj=0.9, cex=0.7, line=-2.5, las = 1)
+
+  #   # Y axis label
+  #   if ( i %in% c(1,4,7)) {
+  #     mtext(2, text="SES", ,adj=0.5, cex=0.8, line=1.5, las = 0)
+  #   }
+}
+
+mtext(1, text=c("Abundance class"), adj=0.5, line=4, las = 1, outer=T)
+mtext(2, text=c("Effect size of native alpha richness"), adj=0.5, line=3, las = 0, outer=T)
 

@@ -63,7 +63,7 @@ traitdata$SLA_NG[is.na(traitdata$SLA_NG)] <- NGross.data_mean[match( traitdata$p
 
 
 ###  Ordonez 2014 trait data
-source('script/data/traits/ordonez trait data.R')
+source('script/data/ordonez trait data.R')
 traitdata$SLA_ordo=ordonez[match(traitdata$tip, ordonez$tip), "SLA"]
 traitdata$SLA_ordo[is.na(traitdata$SLA_ordo)]=ordonez[match(traitdata$tip, ordonez$tip), "SLA"][is.na(traitdata$SLA_ordo)]
 
@@ -140,4 +140,4 @@ rm(f)
 traitdata$ALIEN=species[rownames(traitdata),"ALIEN"]
 
 
-# write.csv(traitdata, file="traitdata.csv")
+ write.csv(traitdata, file="traitdata.csv")

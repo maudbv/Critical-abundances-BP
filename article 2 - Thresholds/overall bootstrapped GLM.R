@@ -2,37 +2,37 @@
 
 
 ###-----------Creating bootstrap samples of the dataset :
-bootstrap.dataset<- function(db=databp[databp$PlotName %in% realgrasslands,], 
+bootstrap.dataset<- function(db=databp[databp$PlotName %in% realgrasslands,],
                              min.occur =5,  min.class = 2, nreps = 999) {
-  
-  ######### selecting species verifying conditions : 
-  a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=min.occur)>=min.class) 
+
+  ######### selecting species verifying conditions :
+  a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=min.occur)>=min.class)
                     &  table(db$SpeciesCode, db$abun)[,1]>=min.occur))
-  db.modif <- db[which(db$SpeciesCode %in% a),] 
-  
+  db.modif <- db[which(db$SpeciesCode %in% a),]
+
   # list of species =to be targeted in analysis :
   sp.names <- unique(db.modif$SpeciesCode)
-  
-  
+
+
   ######### Bootstrapping the dataset : resampling plots with replacement
-  
-  # Unique set of plots to be resampled 
+
+  # Unique set of plots to be resampled
   d = as.character(unique( db.modif$PlotName))
-  
+
   # resampling the list of plot names with replacement *nreps* times
   boots <- sapply(1:nreps,FUN = function (k) sample(d, replace=TRUE))
-  
+
   return(list(boots =boots,db.size=dim(db)[1],min.occur =min.occur,  min.class = min.class, nreps = nreps))
 }
 
 extract.indices <- function(boot.output, db = db) {
-  
-  a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=boot.output$min.occur)>=boot.output$min.class) 
+
+  a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=boot.output$min.occur)>=boot.output$min.class)
                     &  table(db$SpeciesCode, db$abun)[,1]>=boot.output$min.occur))
-  db.modif <- db[which(db$SpeciesCode %in% a),] 
-  
+  db.modif <- db[which(db$SpeciesCode %in% a),]
+
   indices.table=NULL
-  
+
   for (r in 1:boot.output$nreps){
     ## extract new datasets from original dataset using the bootstrapped line numbers:
     ind <-unlist(lapply(1:length(boot.output$boots[,r]), function (k)  which(db.modif$PlotName == boot.output$boots[k,r])))
@@ -40,154 +40,154 @@ extract.indices <- function(boot.output, db = db) {
     indices.table =rbind(indices.table, cbind(nrep, ind))
     print(paste(r, ":","(",Sys.time(),")"))
   }
-  
+
   return(list(index = as.data.frame(indices.table), nreps = boot.output$nreps, min.class = boot.output$min.class, min.occur = boot.output$min.occur, db.size = boot.output$db.size))
 }
 
 
 ###-----------Calculating GLMs, critical values and impact size for bootstrapped samples
 
-glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,], 
+glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
                            boot.indices  = boot.indices , sp.target = NA,
                            variable='SR', min.occur =5,  min.class = 2, nreps = 999) {
-  
+
   library(doParallel)
   cl<-makeCluster(6)
   registerDoParallel(cl)
-  
+
   ### Check that boot.output is the right one
   stopifnot(min.occur == boot.indices$min.occur,
             min.class == boot.indices$min.class,
             dim(db)[1] == boot.indices$db.size)
-  
-  
-  ######### selecting species verifying conditions : 
-  a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=min.occur)>=min.class) 
+
+
+  ######### selecting species verifying conditions :
+  a <- names(which( (rowSums(table(db$SpeciesCode, db$abun)[,2:6]>=min.occur)>=min.class)
                     &  table(db$SpeciesCode, db$abun)[,1]>=min.occur))
-  db.modif <- db[which(db$SpeciesCode %in% a),] 
-  
+  db.modif <- db[which(db$SpeciesCode %in% a),]
+
   # list of species =to be targeted in analysis :
   sp.names <- unique(db.modif$SpeciesCode)
-  
-  
+
+
   #### Calculating GLM for observed and bootstrap datasets for each species
-  
+
   # initiate result dataframes :
   crit.vals <- crit.vals.P  <- crit.vals.CI <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= nreps +1,
                                                                   dimnames=list(sp.names,1:(nreps+1))))
   # coefs.C2 <- coefs.C3 <- coefs.C4 <- coefs.C5 <- coefs.C6 <- crit.vals
   # boot.coefs <- list(coefs.C2,coefs.C3,coefs.C4,coefs.C5,coefs.C6)
-  
-  
-  
+
+
+
   init <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= 5,
                              dimnames=list(sp.names,c("c2", "c3", "c4", "c5", "c6"))))
   dif <-   est<- P <- z <- init
-  
+
   n.obs <- mean.values <- data.frame(matrix(NA, nrow=length(sp.names), ncol= 6,
                                             dimnames=list(sp.names,c("C1","c2", "c3", "c4", "c5", "c6"))))
-  
+
   glms <-data.frame(matrix(NA, nrow=length(sp.names), ncol= 3,
                            dimnames=list(sp.names, c( "df", "resid.dev","dev.ratio"))))
-  
+
   spear <-data.frame(matrix(NA, nrow=length(sp.names), ncol= 2,
                             dimnames=list(sp.names, c("rho" ,"p.val"))))
-  
+
   impact.size <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= 9,
                                     dimnames=list(sp.names, c("th","th.CI","prevalence", "nb.plot.impact","prop.plot.impact",
                                                               "mean.dif","wtd.mean.dif", "th.dif", "max.dif"))))
-  
+
   impact.spread <-  data.frame(matrix(NA, nrow=length(sp.names), ncol= 5,
                                       dimnames=list(sp.names, c("th","th.CI","prevalence", "nb.plot.impact","prop.plot.impact"))))
-  
-  
-  bootCI.low <-bootCI.hi <- boot.mean <- boot.sd <-  init 
-  
-  
-  
+
+
+  bootCI.low <-bootCI.hi <- boot.mean <- boot.sd <-  init
+
+
+
   # looping on species
   for (i in 1:length(sp.names) ) {
-    
+
     sp <- sp.names[i]  # select species name
     print(paste(i, ":", sp, "(",Sys.time(),")"))
-    
+
     ### FIRST : calculate GLM for observed dataset :
     sp.dat <- db.modif[as.character(db.modif$SpeciesCode)==sp,c("abun",variable,'PlotName')] # select occurrences of the species
     names(sp.dat) <- c('abun','var','PlotName')[1:dim(sp.dat)[2]]
-    
+
     abun <- sort(as.numeric(as.character(na.omit(unique(sp.dat$abun))))) ## list of abundance classes for species i
     n.obs[i,] <- sapply(1:6, FUN=function(j) length(sp.dat[which(sp.dat$abun==j),"var"]))
-    
+
     #calculate diference in class mean SR
     dif[i,] <-  sapply(2:6, FUN=function(j) mean(sp.dat[which(sp.dat$abun==j),"var"], na.rm=T) - mean (sp.dat[which(sp.dat$abun==min(abun)),"var"], na.rm=T))
     mean.values[i,] <- sapply(1:6, FUN=function(j) mean(sp.dat[which(sp.dat$abun==j),"var"], na.rm=T))
-    
+
     # spearmnan test across all classes
-    s <- cor.test(sp.dat$var,sp.dat$abun, method="spearman")  
+    s <- cor.test(sp.dat$var,sp.dat$abun, method="spearman")
     spear[i,] <-  c(s$estimate, s$p.value)
-    
+
     # GLM test
-    f <-  glm(sp.dat$var ~ as.factor(sp.dat$abun), family=poisson(log)) 
+    f <-  glm(sp.dat$var ~ as.factor(sp.dat$abun), family=poisson(log))
     glms[i,] <-  c(df= f$df.resid, resid.dev= f$dev,dev.ratio= (f$null.deviance -f$dev)/f$null.deviance )
-    n <-  1:(length(abun)-1)
+    n <- (abun-1)[-1]
     est[i,n] <- summary(f)$coef [-1, 1]
     z[i,n] <- summary(f)$coef [-1, 3]
     P[i,n] <- summary(f)$coef [-1, 4]
-    
-    
+
+
     ## SECOND : recalculate coefs for each of the *nreps* bootstrapped datasets:
-    
+
     #extract the observed coefs for species i
     obs.coef <- rep(NA,5)
     for(j  in abun[-1])  obs.coef[j-1]  <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
     names(obs.coef) <- c("c2", "c3", "c4", "c5", "c6")
-    
+
     # bootstrapping of coefficients nreps times
     boot.coef <-  foreach(r=1:nreps, .combine='rbind') %dopar%  {
 
       ## extract new datasets from original dataset using the bootstrapped line numbers:
       boot.db <- db.modif [boot.indices$index[boot.indices$index$nrep == r, "ind" ], c("SpeciesCode", "abun",variable,'PlotName')]
-      
+
       # print(paste(r, ":","(",Sys.time(),")"))
       dat <- boot.db[as.character( boot.db$SpeciesCode)==sp, ] # select occurrences of the species
       names(dat) <- c("sp",'abun','var','PlotName')[1:dim(dat)[2]]
       rm(boot.db)
       abun <- sort(as.numeric(as.character(na.omit(unique(dat$abun))))) ## list of abundance classes for species i
- 
+
       ### Calculate GLM model if possible (sufficient abundance classes)
-      if ("1" %in% abun & length(abun) >1 ) 
+      if ("1" %in% abun & length(abun) >1 )
       {
         f <-  glm(dat$var ~ as.factor(dat$abun), family=poisson(log))
-        
+
         # ## store coefficients for each bootstrapped sample k
         coef.string <- rep(NA,5)
         for(j  in abun[-1]) coef.string[j-1] <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
-        
+
         if (!all(na.omit(coef.string) > -10)) coef.string <- rep(NA,5)
         print(paste(i, ":",r, ":", "(",Sys.time(),")"))
-      }    
+      }
        return(coef.string)
     }
-    
+
     # assemble observed and bootstrapped coefs
     coefs <- rbind(obs.coef, boot.coef)
-    
-    
-    #### THIRD: statistics for species i 
-    
-    
+
+
+    #### THIRD: statistics for species i
+
+
     # detect minimal critical value (simple start of negative trend)
-    
+
     crit.vals[i,] <- sapply(1:(nreps+1), function(x, n.obs) {
       crit <- NA
       co <-coefs [x,]
-      
+
       if (!all (is.na(co))) {
       ab = which(!is.na(co))+1
       neg <-   which(co<0 ) +1
-      
+
       candidates <- which(co<0 & n.obs[2:6] >= min.occur ) +1
-      
+
       if (length(candidates)>=1) {
         y <- candidates [sapply(candidates, FUN= function(l) {
           c1 <- ( if ( l+1 <= max(abun)) all(((l+1):max(ab)) %in% neg) # all higher classes have negative diferences
@@ -199,8 +199,8 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
       }
       return(crit)
     }, n.obs  = n.obs[i,])
-    
-    
+
+
     # detect minimal critical value using GLM Pvalues
     # crit.vals.P[i,] <- sapply(1:(nreps+1), function(x, n.obs) {
     #   crit <- NA
@@ -210,7 +210,7 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
     #   neg <-   which(co<0) +1
     #   sig <-  which(ps<=0.05 & n.obs[2:6] >= min.occur) +1
     #   sig= sig [sig %in% neg]
-    # 
+    #
     #   if (length(sig)>=1) {
     #     y <- sig [sapply(sig, FUN= function(l) {
     #       c1 <- ( if ( l+1 <= max(abun)) all(((l+1):max(ab)) %in% neg) # all higher classes have negative diferences
@@ -221,20 +221,20 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% realgrasslands,],
     #   }
     #   return(crit)
     # }, n.obs  = n.obs[i,])
-    
+
     # calculate CI for bootstrapped coefs
-    boot.mean [i,] <-apply(coefs, 2, mean,na.rm =T) 
-    boot.sd [i,] <-apply(coefs, 2, sd,na.rm =T) 
-    
-    bootCI.low [i,] <-apply(coefs, 2, quantile, probs = 0.025,na.rm =T) 
-    bootCI.hi [i,] <-apply(coefs, 2, quantile, probs = 0.975,na.rm =T) 
+    boot.mean [i,] <-apply(coefs, 2, mean,na.rm =T)
+    boot.sd [i,] <-apply(coefs, 2, sd,na.rm =T)
+
+    bootCI.low [i,] <-apply(coefs, 2, quantile, probs = 0.025,na.rm =T)
+    bootCI.hi [i,] <-apply(coefs, 2, quantile, probs = 0.975,na.rm =T)
   }
-  
+
   stopCluster(cl)
-  
+
   return(list(glms=glms,boot.mean = boot.mean, boot.sd=boot.sd, CIlow = bootCI.low, CIhi = bootCI.hi,
               crit.vals = crit.vals, spearman=spear, n.obs = n.obs,
               mean.values = mean.values,
               dif = dif,est= est, z=z,P= P))
-  
+
 }
