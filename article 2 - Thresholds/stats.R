@@ -64,14 +64,19 @@ ali.tab <- data.frame(
   type = c(rep("NR",5), rep("AR",5)),
   class = c(2:6, 2:6),
   total.obs = c(glmSRnat.sum$class.summary$nb.sp[6:10],glmSRnat.sum$class.summary$nb.sp[6:10]),
-  th = c(glmSRnat.sum$class.summary$freq.negative[6:10],glmSRali.sum$class.summary$freq.negative[6:10])
+  neg = c(glmSRnat.sum$class.summary$freq.negative[6:10],glmSRali.sum$class.summary$freq.negative[6:10]),
+  th = c(glmSRnat.sum$class.summary$freq.thr[6:10],glmSRali.sum$class.summary$freq.thr[6:10])
 )
 
 ali.tab$noth <- ali.tab$total.obs - ali.tab$th
 
-vglm.SRnat<- vglm(cbind(th, noth) ~ class + type, data = ali.tab, family = binomialff,trace = TRUE)
-summary(vglm.SR)
+ali.tab$noneg <- ali.tab$total.obs - ali.tab$neg
 
+vglm.SRnat<- vglm(cbind(th, noth) ~ class + type, data = ali.tab, family = binomialff,trace = TRUE)
+summary(vglm.SRnat)
+
+vglm.SRnat<- vglm(cbind(neg, noneg) ~ class + type, data = ali.tab, family = binomialff,trace = TRUE)
+summary(vglm.SRnat)
 
 # (thresh, no thresh) ~ class.abun + type of richness
 #frequency of negative ES :
@@ -109,6 +114,7 @@ t.test(freq.thr/nb.sp ~ group, data = tbl, paired =T)   ### signif P = 0.03048, 
 t.test(freq.thr/freq.negative ~ group, data = tbl, paired =T)
 round(tbl$freq.thr/tbl$nb.sp , 4)
 
+#SRali
 tbl <- glmSRali.sum $class.summary
 t.test(freq.negative/nb.sp ~ group, data = tbl, paired = T)
 t.test(freq.thr/nb.sp ~ group, data = tbl, paired =T)
@@ -162,4 +168,6 @@ chisq.test(unstack(tbl, form = freq.positive ~ group)[1:4,]) ### no diff in prop
 
 t.test(freq.impact/nb.sp ~ group, data=tbl, paired = T)  ### signif P= 0.01681, df=4, t=-3.9508
 t.test(freq.thr/nb.sp ~ group, data = tbl, paired =T)   ### signif P = 0.03048, df=4, t=-32808
+
+
 

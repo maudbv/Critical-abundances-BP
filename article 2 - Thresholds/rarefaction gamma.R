@@ -1,5 +1,5 @@
 ### gamma rarefaction curves
-# TODO
+# OUTDATED see gamma estimators for updated version
 
 library(vegan)
 ### my rarefy function : rarefies the number of plots sampled
@@ -37,7 +37,7 @@ if (plot.curve) plot(mean.gammas ~ samples, curve.summary, type ="l", ...)
 gamma.rarecurve (community)
 
 ### Rarefaction curves above / below
-
+group=natives
 par(mfrow = c(3,4), mar=c(2,2,2,2), oma=c(4,4,2,2))
 for(sp in impsp) {
   community <- comm[which((rownames(comm) %in% realgrasslands) & (comm[,sp]>0) ),]
@@ -69,18 +69,6 @@ for(sp in impsp) {
         font = 3, outer= F,adj=0.9, cex=0.7, line=0.2, las = 1)
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 ### Rarefaction curve for one species abundance gradient
 
@@ -162,7 +150,7 @@ for(sp in impsp) {
   rownames(com.freq) <- c("below", "above")
   com.freq <-com.freq[which(rowSums(com.freq)>5),]
 
-  rarecurve(com.freq, step = 2)
+  rarecurve(com.freq, step = 2, col=c("black", "red"))
   mtext(3, text=paste(species[sp, "Genus"]," ", species[sp, "Species"], sep="") ,
         font = 3, outer= F,adj=0.9, cex=0.7, line=0.2, las = 1)
 

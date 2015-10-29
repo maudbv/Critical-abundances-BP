@@ -29,8 +29,12 @@ abline(v =tmp[glmSRnat.overall$impact.spread[sp,threshold]+1], lty="dashed")
 mtext(2, outer=T, text = "proportion of improved pastures", line =1)
 
 
-### proportion of individual species incidence in each class
+
+### test proportion of improved grassland at rare vs. threshold abundance
 par(mfrow = c(3,4), mar=c(2,2,2,2), oma=c(3,3,2,3))
+
+pasture.effect<- matrix(NA, nrow= 12, ncol = 10)
+
 for (i in 1:length(sel))  {
   sp <- sel[i]
 
@@ -41,34 +45,30 @@ for (i in 1:length(sel))  {
   ab.vector$ALIEN.dom  <- envplot@data[rownames(ab.vector),]$ALIEN.dom
   ab.vector$grasslands <- "other"
   ab.vector$grasslands[grep("High",ab.vector$landuse)] <- "high"
-  ab.vector$grasslands[grep("Low",ab.vector$landuse)] <- "low"
 
 
-  ab.vector$first.rank  <- envplot@data[rownames(ab.vector),]$first.rank
-  ab.vector$lolper.pres <- comm[realgrasslands,"LOLPER"]>0
-  ab.vector$trirep.pres <- comm[realgrasslands,"TRIREP"]>0
-  ab.vector$achmil.pres<- comm[realgrasslands,"ACHMIL"]>0
+  tab <- t(as.data.frame.matrix(table(ab.vector$grasslands, ab.vector$abun)))
+  th<- glmSRnat.overall$impact.spread[sp,threshold]
 
-  tab <- table(ab.vector$grasslands, ab.vector$abun)
-  plot(colnames(tab), tab[2,] / colSums(tab),pch=23, bg = "green", col = "green", main = sp, ylim = c(0,1))
-
-  tab3 <- table(ab.vector$lolper.pres, ab.vector$abun)
-  points(colnames(tab), tab3[2,] / colSums(tab),pch=20, cex=1.5, col = "blue", main = sp, ylim = c(0,1))
-  tab4 <- table(ab.vector$trirep.pres, ab.vector$abun)
-  points(colnames(tab), tab4[2,] / colSums(tab),pch=20, cex=1.5, col = "brown", main = sp, ylim = c(0,1))
-  tab4 <- table(ab.vector$achmil.pres, ab.vector$abun)
-  points(colnames(tab), tab4[2,] / colSums(tab),pch=20, cex=1.5, col = "pink", main = sp, ylim = c(0,1))
-
-  abline(v =glmSRnat.overall$impact.spread[sp,threshold], lty="dashed")
-}
+  prop.tab <- as.matrix(tab/rowSums(tab))
+tbl <-  table(ab.vector$grasslands, ab.vector$abun)[,c(2,th+1)]
+  (cor.pasture <- cor.test(prop.tab[2:dim(tab)[1],1],2:dim(tab)[1], method = "spearman", exact = FALSE))
+  (t.pasture <- t.test(tbl))
+  (Ftest.pasture <-  fisher.test(tbl,simulate.p.value = TRUE))
 
 
-### correlation between abundance of the 11 impsp
 
-cor.impsp <- cor(comm[, impsp], use = "complete.obs", method= "spearman")
-heatmap(cor.impsp)
+  pasture.effect[i,] <- c(th, as.numeric(prop.tab[c(2,th+1),1]),
+    S.rho = cor.pasture$est, S.P = cor.pasture$p.val,
+                                     t =t.pasture$statistic, t.df = t.pasture$parameter, t.P = t.pasture$p.value,
+                                     F.odds =Ftest.pasture$estimate, F.P = Ftest.pasture$p.value)
 
-heatmap(ceiling(cor.impsp>0.2))
 
-heatmap(as.matrix(dist(t(comm[, impsp]))))
-heatmap(ceiling(t(comm[, impsp] >0))
+  tmp <- barplot(t(tab/rowSums(tab)), col=c("grey", "white"), main=sp,    cex.axis=0.8, cex.names=0.8, las=1)
+  abline(v =tmp[glmSRnat.overall$impact.spread[sp,threshold]+1], lty="dashed")
+
+  }
+rownames(pasture.effect) <- impsp
+
+colnames(pasture.effect) <- c("th","p.rare","p.th","S.rho", "S.P","t", "t.df", "t.P", "F.odds", "F.P")
+

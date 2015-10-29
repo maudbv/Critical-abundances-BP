@@ -16,13 +16,11 @@ require(gstat)
 require(maps)
 library(raster)
 
-### restore saved results:
+### restore saved results:  ################
 # load("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")  ## all lucas grasslands
 # load("saved Rdata/article 2 - threshold/article threshold 1.3.Rdata")  ## unimproved only lucas grasslands
 
-
-
-### Import and modify data from scratch:
+### Import and modify data from scratch:  ############
 source('script/data/import BP species and environment data.R', encoding = "native.enc")
 # source('script/data/import trait data.R', encoding = "native.enc")
 
@@ -73,7 +71,7 @@ species$grassland.occur <- tmp[match(rownames(species), names(tmp))]
 tmp <- colSums(comm[which(rownames(comm) %in% as.character(unimprovedgrasslands)),]>0, na.rm=T)
 species$unimproved_grassland.occur <- tmp[match(rownames(species), names(tmp))]
 
-# load functions
+# load functions   #############
 source('script/functions/p2star.R')
 source('script/article 2 - Thresholds/glm test.R')
 source('script/article 2 - Thresholds/plotting functions.R')
@@ -88,12 +86,13 @@ source('script/article 2 - Thresholds/Beta turnover and nestedness.R')
 source('script/article 2 - Thresholds/gamma.trend.R')
 source('script/article 2 - Thresholds/div partitioning.R')
 
-### threshold analysis using GLMs
+
+##### threshold analysis using GLMs  ########
 
 # set bootstrap sample size
 nreps <- 999
- # db<- databp[databp$PlotName %in% realgrasslands,]
- db<- databp[databp$PlotName %in% unimprovedgrasslands,]
+  db<- databp[databp$PlotName %in% realgrasslands,]
+ # db<- databp[databp$PlotName %in% unimprovedgrasslands,]
 min.occur <- 5
 min.class <- 2
 
@@ -136,22 +135,22 @@ min.class <- 2
 
 
 ### correct th.CI when miscalculated
-glmSR.overall <- impact.spread(M = glmSR.overall, variable= "SR")
+# glmSR.overall <- impact.spread(M = glmSR.overall, variable= "SR")
 glmSRnat.overall <- impact.spread(M = glmSRnat.overall, variable= "SRnat")
 glmSRali.overall <- impact.spread(M = glmSRali.overall, variable= "SRali")
 
 ### SUMMARY of frequencies of significantly negative effects and thresholds
-glmSR.sum <-  summary.glmtest(M=glmSR.overall, group="ALIEN", type="overall.boot")
+# glmSR.sum <-  summary.glmtest(M=glmSR.overall, group="ALIEN", type="overall.boot")
 glmSRnat.sum <- summary.glmtest(M=glmSRnat.overall, group="ALIEN", type="overall.boot")
 glmSRali.sum <- summary.glmtest(M=glmSRali.overall, group="ALIEN", type="overall.boot")
 
 
-glmSR.sum.th <-  summary.glmtest(M=glmSR.overall, group="ALIEN", type="overall.boot",threshold= "th")
+# glmSR.sum.th <-  summary.glmtest(M=glmSR.overall, group="ALIEN", type="overall.boot",threshold= "th")
 glmSRnat.sum.th <- summary.glmtest(M=glmSRnat.overall, group="ALIEN", type="overall.boot",threshold= "th")
 glmSRali.sum.th <- summary.glmtest(M=glmSRali.overall, group="ALIEN", type="overall.boot", threshold= "th")
 
 ## overall bootstrap impact size
-impact.SR <- impact.size (glmSR.overall)
+# impact.SR <- impact.size (glmSR.overall)
 impact.SRnat <- impact.size (glmSRnat.overall)
 impact.SRali <- impact.size (glmSRali.overall)
 
@@ -162,24 +161,29 @@ impact.SRali <- impact.size (glmSRali.overall)
 impsp <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$th.CI)
                                                         & (rownames(glmSRnat.overall$impact.spread) %in% aliens)),])
 
+
+impsp.ali <- rownames(glmSRali.overall$impact.spread[which(!is.na(glmSRali.overall$impact.spread$th.CI)),])
+
+
+
 ## alpha and beta trends
 #  alpha.trend.nat <- alpha.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.rare", nreps = 999)
 #  beta.trend.nat <- beta.trend(spnames = rownames(glmSRnat.overall$mean),null.model="permute.rare", nreps = 999)
 
-###### gamma trends
+##### gamma trends ###############
 
-# permute rare
- gamma.trend.nat <- gamma.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.rare", nreps = 999)
+# # permute rare
+#  gamma.trend.nat <- gamma.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.rare", nreps = 999)
+#
+# # permute all
+  # gamma.trend.nat.permute.all <- gamma.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.all", nreps = 999)
 
-# permute all
- gamma.trend.nat.permute.all <- gamma.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.all", nreps = 999)
-
-# resample beta all
-gamma.trend.nat.beta <- gamma.trend(spnames = impsp, bootstrapped =TRUE, breps = 999,
-                                                null.model="resample.beta", nreps = 999)
-# resample beta rare
-gamma.trend.nat.betarare <- gamma.trend(spnames = impsp, bootstrapped =TRUE, breps = 999,
-                                    null.model="resample.beta.inrare", nreps = 999)
+# # resample beta all
+# gamma.trend.nat.beta <- gamma.trend(spnames = impsp, bootstrapped =TRUE, breps = 999,
+#                                                 null.model="resample.beta", nreps = 999)
+# # resample beta rare
+# gamma.trend.nat.betarare <- gamma.trend(spnames = impsp, bootstrapped =TRUE, breps = 999,
+#                                     null.model="resample.beta.inrare", nreps = 999)
 
 # # resample beta rare.vs.k  ### NOT WORKING
 #  gamma.trend.nat.beta.rarevsk <- gamma.trend(spnames = impsp, bootstrapped =TRUE, breps = 99,
@@ -187,46 +191,76 @@ gamma.trend.nat.betarare <- gamma.trend(spnames = impsp, bootstrapped =TRUE, bre
 #
 #  save(gamma.trend.nat, alpha.trend.nat,gamma.trend.nat.permute.all,gamma.trend.nat.beta,gamma.trend.nat.betarare,
 #  file = "saved Rdata/article 2 - threshold/gamma.trends.2.Rdata")
- save(gamma.trend.nat, alpha.trend.nat,gamma.trend.nat.permute.all,gamma.trend.nat.beta,gamma.trend.nat.betarare,
- file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.Rdata")
+#  save(gamma.trend.nat, alpha.trend.nat,gamma.trend.nat.permute.all,gamma.trend.nat.beta,gamma.trend.nat.betarare,
+#  file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.Rdata")
 
 # load(file = "saved Rdata/article 2 - threshold/gamma.trends.Rdata")
  load(file = "saved Rdata/article 2 - threshold/gamma.trends.2.Rdata")
 # load(file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.Rdata")
 
-# ##### Gamma above/below #######
-  # system.time(alpha.above.trend <- div.part.alpha.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "permute", nreps =999))
-
-# # # permute total
-#  system.time(gamma.above.nat.total <- div.part.gamma.nm(spnames = impsp, group=natives, null.model = "permute.total", nreps =99))
+##### Gamma above/below #######
+#  system.time(alpha.above.trend <- div.part.alpha.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "permute", nreps =999))
+#
+# # # # permute total
+# #  system.time(gamma.above.nat.total <- div.part.gamma.nm(spnames =rownames(glmSRnat.overall$mean), group=natives, null.model = "permute.total", nreps =99))
+# # #
+# # # # permute all
+#    system.time(gamma.above.nat.permute.all <- div.part.gamma.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "permute.all", nreps =999))
+# # #
+# # # # # # resample all
+# #    system.time(gamma.above.nat.beta <- div.part.gamma.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "resample.beta", nreps =99))
+# # # #
+# # # # # resample in rare
+# #    system.time(gamma.above.nat.betarare <- div.part.gamma.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "resample.beta.inrare", nreps =999))
+# # # #
 # #
-# # # permute all
-#   system.time(gamma.above.nat.permute.all <- div.part.gamma.nm(spnames = impsp, group=natives, null.model = "permute.all", nreps =999))
 # #
-# # # # resample all
-#   system.time(gamma.above.nat.beta <- div.part.gamma.nm(spnames = impsp, group=natives, null.model = "resample.beta", nreps =99))
-# #
-# # # resample in rare
-#   system.time(gamma.above.nat.betarare <- div.part.gamma.nm(spnames = impsp, group=natives, null.model = "resample.beta.inrare", nreps =999))
-# #
+#  save(alpha.above.trend, gamma.above.nat.permute.all,
+#     gamma.above.nat.beta,gamma.above.nat.betarare,
+#    file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata")
 
+#  save(alpha.above.trend,gamma.above.nat.total, gamma.above.nat.permute.all,
+#    gamma.above.nat.permute.all,gamma.above.nat.beta,gamma.above.nat.betarare,
+#    file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.Rdata")
 
-# save(gamma.above.nat,gamma.above.nat.beta,gamma.above.nat.betarare,alpha.above.trend, file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata")
-#  save(alpha.above.trend,gamma.above.nat.total, gamma.above.nat.permute.all, gamma.above.nat.permute.all,gamma.above.nat.beta,gamma.above.nat.betarare,alpha.above.trend,       file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.Rdata")
-
- load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.2.Rdata") # all lucas grasslands
+ load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata") # all lucas grasslands
 # load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.Rdata") ##unimproved grasslands only
 
 
-#### Beta diversity = turnover + nestedness   => NOT USED
+##### gamma trends ALIEN richness ###############
+
+# # permute rare
+#  gamma.trend.ali <- gamma.trend(spnames = rownames(glmSRali.overall$mean), group = aliens,
+#                                 null.model="permute.rare", nreps = 999)
+#  save(gamma.trend.ali,
+#  file = "saved Rdata/article 2 - threshold/gamma.trends.SRali.Rdata")
+
+ load(file = "saved Rdata/article 2 - threshold/gamma.trends.SRali.Rdata")
+
+##### Gamma and alpha above/below  ALIEN richness #######
+#
+#  system.time(alpha.above.trend.ali <- div.part.alpha.nm(spnames = rownames(glmSRali.overall$mean), group=aliens, null.model = "permute", nreps =999))
+# #permute all
+# system.time(gamma.above.ali.permute.all <- div.part.gamma.nm(spnames =  rownames(glmSRali.overall$mean), group=aliens, null.model = "permute.all", nreps =999))
+#
+# #resample all
+# system.time(gamma.above.ali.beta <- div.part.gamma.nm(spnames = rownames(glmSRali.overall$mean), group=aliens, null.model = "resample.beta", nreps =99))
+#
+# save(alpha.above.trend.ali, gamma.above.ali.permute.all,
+# gamma.above.ali.beta, file= "saved Rdata/article 2 - threshold/diversity.partitioning.SRali.Rdata")
+
+load( file= "saved Rdata/article 2 - threshold/diversity.partitioning.SRali.Rdata")
+
+
+##### Beta diversity = turnover + nestedness   => NOT USED   ###########
  library(vegan)
 # betasor.nat.all = betasor(spnames = "overall", group = natives, nreps = 999)
 # betasor.ali.all = betasor(spnames = "overall", group = aliens, nreps = 999)
- betasor.nat = betasor(spnames = impsp, group = natives, nreps = 999)
- betasor.ali = betasor(spnames = impsp, group = aliens, nreps = 999)
-
- save(betasor.ali, betasor.nat, betasor.ali.all,betasor.nat.all,file="saved Rdata/article 2 - threshold/betasor results.Rdata")
- load(file="saved Rdata/article 2 - threshold/betasor results.Rdata")
+#  betasor.nat = betasor(spnames = impsp, group = natives, nreps = 999)
+#  betasor.ali = betasor(spnames = impsp, group = aliens, nreps = 999)
+#
+#  save(betasor.ali, betasor.nat, betasor.ali.all,betasor.nat.all,file="saved Rdata/article 2 - threshold/betasor results.Rdata")
+#  load(file="saved Rdata/article 2 - threshold/betasor results.Rdata")
 
 #
 # betasor.output <- as.data.frame(t(sapply(impsp, FUN = function(x) {
@@ -264,9 +298,8 @@ gamma.trend.nat.betarare <- gamma.trend(spnames = impsp, bootstrapped =TRUE, bre
 # load(file = "saved Rdata/article 2 - threshold/spatial MNND.Rdata")
 
 
-
-# extract result table for loss in native diversity above thresholds:
-sp.names = c(impsp)
+# extract result table for loss in native diversity above thresholds:   ################
+sp.names = impsp
 out <- glmSRnat.overall$impact.spread
 out <- out[sp.names,c("th.CI", "prevalence", "n.plot.impact")]
 out<- cbind(species = species[sp.names, "tip"], out)
@@ -299,17 +332,18 @@ out$aR.t <- sapply(sp.names, FUN = function(m)  alpha.above.trend$t[m,out[m, "th
 out$aR.df<- sapply(sp.names, FUN = function(m)  alpha.above.trend$df[m,out[m, "th"]] )
 out$aR.Pt <- sapply(sp.names, FUN = function(m)  alpha.above.trend$P.t[m,out[m, "th"]] )
 
-out$GRo <- sapply(sp.names, FUN = function(m) gamma.above.nat.total$gamma.below[m,out[m, "th"]] )
-out$GRc <- sapply(sp.names, FUN = function(m) gamma.above.nat.total$gamma.above[m,out[m, "th"]] )
-out$GRnull <- sapply(sp.names, FUN = function(m)  gamma.above.nat.total$null.above[m,out[m, "th"]]  )
-out$GRsdnull <- sapply(sp.names, FUN = function(m)  gamma.above.nat.total$sdnull.above[m,out[m, "th"]]  )
+out$GRo <- sapply(sp.names, FUN = function(m) gamma.above.nat.permute.all$gamma.below[m,out[m, "th"]] )
+out$GRc <- sapply(sp.names, FUN = function(m) gamma.above.nat.permute.all$gamma.above[m,out[m, "th"]] )
+out$GRnull <- sapply(sp.names, FUN = function(m)  gamma.above.nat.permute.all$null.above[m,out[m, "th"]]  )
+out$GRsdnull <- sapply(sp.names, FUN = function(m)  gamma.above.nat.permute.all$sdnull.above[m,out[m, "th"]]  )
 out$gamma.loss <- out$GRnull - out$GRc
 
-out$deltagamma <- sapply(sp.names, FUN = function(m)  gamma.above.nat$deltagamma[m,out[m, "th"]]  )
-out$delta.z.permute.all <- sapply(sp.names, FUN = function(m)  gamma.above.nat$z.delta[m,out[m, "th"]]  )
-out$delta.null.permute.all <- sapply(sp.names, FUN = function(m)  gamma.above.nat$null.delta[m,out[m, "th"]]  )
-out$GRP.permute.all <- sapply(sp.names, FUN = function(m)  gamma.above.nat$P.delta[m,out[m, "th"]] )
+out$deltagamma <- sapply(sp.names, FUN = function(m)  gamma.above.nat.permute.all$deltagamma[m,out[m, "th"]]  )
+out$delta.z.permute.all <- sapply(sp.names, FUN = function(m)  gamma.above.nat.permute.all$z.delta[m,out[m, "th"]]  )
+out$delta.null.permute.all <- sapply(sp.names, FUN = function(m)  gamma.above.nat.permute.all$null.delta[m,out[m, "th"]]  )
+out$GRP.permute.all <- sapply(sp.names, FUN = function(m)  gamma.above.nat.permute.all$P.delta[m,out[m, "th"]] )
 
+out$deltagamma.beta <- sapply(sp.names, FUN = function(m)  gamma.above.nat.beta$deltagamma[m,out[m, "th"]]  )
 out$delta.z.beta <- sapply(sp.names, FUN = function(m)  gamma.above.nat.beta$z.delta[m,out[m, "th"]]  )
 out$delta.null.beta <- sapply(sp.names, FUN = function(m)  gamma.above.nat.beta$null.delta[m,out[m, "th"]]  )
 out$GRP.beta <- sapply(sp.names, FUN = function(m)  gamma.above.nat.beta$P.delta[m,out[m, "th"]] )
@@ -325,12 +359,38 @@ table.div.part <- out[impsp,]
 
 table.div.part <- orderBy(~ th.CI, table.div.part)
 
-write.csv(data.frame(table.div.part), file="output diversity partitioning.csv")
+write.csv(as.matrix(table.div.part), file="output diversity partitioning.csv", fileEncoding= "native.enc")
+
+### table S1 with AR and NR critical abundances  ##############
+sp.names= rownames(glmSRnat.overall$impact.spread)[!is.na(glmSRnat.overall$impact.spread$th.CI)  |
+                                                     !is.na(glmSRali.overall$impact.spread$th.CI)]
+
+out <- glmSRnat.overall$impact.spread
+out <- out[sp.names,c("prevalence", "th.CI",  "n.plot.impact")]
+out.ali <- glmSRali.overall$impact.spread
+out.ali <- out.ali[sp.names,c("th.CI", "n.plot.impact")]
+
+out<- cbind(species = species[sp.names, c("SpeciesName", "ALIEN")], out, out.ali)
+
+names(out) <- c("SpeciesName","ALIEN", "prevalence", "th.nat", "nplot.nat", "th.ali", "nplot.ali")
+
+out$aRc.nat.old <- sapply(sp.names, FUN = function(m) {
+  if (!is.na(out[m, "th.nat"])) glmSRnat.overall$mean[m,out[m, "th.nat"]] else NA
+  })
+out$aRo.nat.old <- glmSRnat.overall$mean[sp.names, "C1"]
+
+out$aRc.ali.old <- sapply(sp.names, FUN = function(m) {
+  if (!is.na(out[m, "th.ali"])) glmSRali.overall$mean[m,out[m, "th.ali"]] else NA
+})
+out$aRo.ali.old <- glmSRnat.overall$mean[sp.names, "C1"]
 
 
 
-# save results
- save.image("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")
+write.csv(as.matrix(out), file="critical abundances AR and NR.csv", fileEncoding= "native.enc")
+
+
+# save results   ############
+ # save.image("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")
 
  # save.image("saved Rdata/article 2 - threshold/article threshold 1.3.Rdata")
 
