@@ -39,3 +39,4 @@ mtext(side=2, text=c("Alien\nfocal\nspecies", "Native\nfocal\nspecies"),line=4, 
 mtext(side=3, text=c("a) Native richness", "b) Alien richness"),line=0, at=c(0.25,0.75),adj=0.5, outer=T, las=1)
 
 mtext(text="Abundance class", side=1, outer=T, line=3)
+

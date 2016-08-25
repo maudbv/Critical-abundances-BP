@@ -70,7 +70,7 @@ threshold ="th.CI"
 sel <- impsp
 
 
-par(mfrow = c(3,4), mar=c(0,0,2,2), oma=c(6,6,2,3))
+par(mfrow = c(4,4), mar=c(0,0,2,2), oma=c(6,6,2,3))
 
 M <- glmSRnat.overall
   ylim=c(-3,3)

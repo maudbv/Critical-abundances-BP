@@ -1,8 +1,6 @@
 
 ### Function recalculating the critical values using the bootstrapped CI
-
-impact.spread <- function(M = glmSRnat.overall, db=databp[databp$PlotName %in% realgrasslands,],
-                           variable = "SRnat", threshold.type = "weak") {
+impact.spread <- function(M = glmSRnat.overall, db=databp[databp$PlotName %in% realgrasslands,], variable = "SRnat", threshold.type = "weak") {
 
 a <- row.names(M$dif)
 db.modif <- db[which(db$SpeciesCode %in% a),]
@@ -47,7 +45,7 @@ for (i in 1:length(sp.names)) {
 
 # calculate critical abundance with all robust/significant negative coefs above
   th.CI.weak<- NA
-  if (length(sig)>=1) {
+  if (length(sig)>=1) {  # if there is at least  1 significant negative coef
     y <- sig [sapply(sig, FUN= function(l) {
       c1 <- ( if ( l <= max(ab)) all(((l):max(ab)) %in% neg) # all higher classes have negative diferences
               else c1 =F)
@@ -57,7 +55,7 @@ for (i in 1:length(sp.names)) {
 }
 
 th.CI<- NA
-if (length(sig)>=1) {   # if there is more than 1 significant negative coef
+if (length(sig)>=1) {   # if there is at least  1 significant negative coef
   y <- sig [sapply(sig, FUN= function(l) { # for all significant coefs
     c1 <- ( if ( l <= max(ab)) (all(((l):max(ab.freq)) %in% sig) & all(((l):max(ab)) %in% neg)) # all higher classes have robust negative diferences
             else c1 =F)
@@ -82,15 +80,19 @@ if (length(pos)>=1) {
   if (length(y)>=1) pth <- min( y, na.rm=T)
 }
 
+
 pth.CI.weak<- NA
-if (length(sig)>=1) {
+if (length(sig)>=1) {  # if there is at least  1 significant negative coef
   y <- sig [sapply(sig, FUN= function(l) {
     c1 <- ( if ( l <= max(ab)) all(((l):max(ab)) %in% pos) # all higher classes have negative diferences
             else c1 =F)
     return(c1)
   })]
-  if (length(y)>=1) pth.CI <- min( y, na.rm=T)
+  if (length(y)>=1) pth.CI.weak <- min( y, na.rm=T)
 }
+
+
+
 pth.CI<- NA
 if (length(sig)>=1) {
   y <- sig [sapply(sig, FUN= function(l) {

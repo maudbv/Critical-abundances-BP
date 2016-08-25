@@ -1,0 +1,303 @@
+---
+title: "Results for all 88 focal species"
+author: "Maud Bernard-Verdier"
+date: "6 August 2015"
+output: 
+html_document: 
+toc: yes
+---
+
+
+```{r setup, echo=FALSE, warning= FALSE}
+require(knitr)
+if( length(grep('mac', .Platform$pkgType) ) == 0){
+knitr::opts_knit$set( root.dir = "C:/Users/bernarm2/Dropbox/Work/doc boulot/post doc Lincoln/R_alienimpactBP")
+}
+
+ if( length(grep('mac', .Platform$pkgType) ) == 1) {
+knitr::opts_knit$set( root.dir = "~/Dropbox/Work/doc boulot/post doc Lincoln/R_alienimpactBP")
+ }
+
+knitr::opts_chunk$set( echo = FALSE, warning=FALSE)
+# packages
+library(doBy)
+
+```
+
+```{r loaddata, echo=FALSE, warning = FALSE}
+
+# load data and results
+load("saved Rdata/article 2 - threshold/article threshold 1.3.1.Rdata")
+
+#default grpahical parameters
+.defaultpar <- par(no.readonly = T)
+
+# Define some elements
+abclasses= c("Rare" ,"Occasional",  "Frequent", "Common", "Abundant","Dominant")
+threshold ="th.CI"
+sel <- impsp
+```
+
+
+# ALIEN trends for all sp
+
+### trends in gamma ALIEN RICHNESS effect size for 88 species:
+```{r gammatrendsSRali.allsp, echo=FALSE}
+
+par(mfrow = c(8,11), mar=c(0,0,1,0), oma=c(4,4,2,1))
+ylim = c(-50,35)
+xlim = c(0.5, 5.5)
+
+for (i in 1 : length(rownames(glmSRnat.overall$mean.values))){
+  
+  # if (i ==4) plot.new()
+  sp <- rownames(glmSRnat.overall$mean.values)[i]
+  # identify significant classes in black
+  cols <- c(NA, "black") [ (gamma.trend.ali$P.gamma[sp,] <=0.025) +1]
+  n <- as.numeric(glmSRali.overall$n.obs[sp,])[1:6]
+  # create x axis for the 5 abundance classes
+  x = c(0:5)
+
+  # create y axis with the gamma richness Standardized effect size
+  y = (gamma.trend.ali$obs[sp,] - gamma.trend.ali$mean.null[sp,])
+  y [ (1:6)[ n < 5] ]=NA
+  y[1]=NA
+
+
+  # plot background
+  plot(x,y,ylim=ylim, xlim = c(0.5, 5.5), las = 1,type= "p", xaxt = "n", yaxt="n", ann=F, pch = 21, col ="black",bg = cols)
+
+  abline(h=0,lty="dotted")
+  abline(v =glmSRali.overall$impact.spread[sp,threshold]-1, lty="dashed")
+
+
+  #plot points and lines
+  par(new=T)
+  plot(x,y, bg = cols, pch=21, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F)
+
+  # Add species name
+ # Add species name
+  mtext(3, text=sp, font = 3, outer= F,adj=0.9, cex=0.5, line=0, las = 1)
+
+}
+
+mtext(1, text=c("Abundance class"), adj=0.5, line=1.5, las = 1, outer=T)
+mtext(2, text=c("Alien gamma richness"), adj=0.5, line=1, las = 0, outer=T)
+```
+
+### trends in ALIEN alpha effect size for 88 species:
+```{r alphatrends.SRali.allsp, echo = FALSE}
+
+par(mfrow = c(8,11), mar=c(0,0,1,0), oma=c(6,6,2,3))
+sel <- impsp
+M <- glmSRali.overall
+  ylim=c(-1,1)
+  ### Loop on selected species 
+  for (i in 1:length(rownames(glmSRnat.overall$mean.values)))  {
+    # if (i ==4) plot.new()
+    sp <- rownames(glmSRnat.overall$mean.values)[i]
+    es <- as.numeric(M$est[sp,])
+    n <- as.numeric(M$n.obs[sp,])[2:6]
+    
+      low <- as.numeric(M$CIlow[sp,])
+      hi <- as.numeric(M$CIhi[sp,])
+      M$thresh <-M$impact.spread
+    
+    ## correct for small sample sizes
+    small <- es
+    small[which(n>=3)] <- NA
+    es[which(n<3)] <- NA
+    low[n<3] <- NA
+    hi[n<3] <- NA
+    
+    if ( !all(is.na(c(hi, low)))) lims <-  max(c(abs(low),abs(hi)), na.rm=T) +0.02
+    if ( all(is.na(c(hi, low)))) lims <-  max(c(abs(es)), na.rm=T) +0.02
+
+    col <- rep("white",6)
+    col[(1:6)>= as.numeric( M$thresh[sp,threshold])] <- "black"  # above threshold
+    col[(2:6)[hi>0]] <- NA  # robust negative coef
+    col[(2:6)[n<5]] <- NA  # sufficient data points
+    
+    
+    plot(1:5,  rep(0,5),ylim=ylim, xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F)
+
+    axis(1,at = 1:5, label = rep("",5), tcl= 0.1,mgp=c(1,0.5,0),las=1)
+   
+    abline(h=0,lty="dotted")
+    abline(v = M$thresh[sp,threshold]-1, lty="dashed")
+    
+    if (!all(is.na(small))) points(1:5, small, pch=".")  
+    
+    ## Add bootstrapped CI
+    if ( !all(is.na(c(hi, low)))) {
+      arrows(1:5,low,   1:5,hi, lwd=1, code =3, length=0.05, angle=90)
+    }
+    
+    # draw the points and lines
+    par(new=T)
+    plot(1:5,es, bg = col[2:6], pch=21, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F)
+    
+    # # Add species name
+ mtext(3, text=sp, font = 3, outer= F,adj=0.9, cex=0.5, line=0, las = 1)
+   }
+
+mtext(1, text=c("Abundance class"), adj=0.5, line=1, las = 1, outer=T)
+mtext(2, text=c("Effect on alien alpha richness"), adj=0.5, line=1, las = 0, outer=T)
+
+```
+
+# NATIVE trends for all species
+
+### trends in gamma native RICHNESS effect size for 88 species:
+```{r gammatrendsSRnat.allsp, echo=FALSE}
+
+par(mfrow = c(8,11), mar=c(0,0,1,0), oma=c(4,4,2,1))
+ylim = c(-50,35)
+xlim = c(0.5, 5.5)
+
+for (i in 1 : length(rownames(glmSRnat.overall$mean.values))){
+  
+  # if (i ==4) plot.new()
+  sp <- rownames(glmSRnat.overall$mean.values)[i]
+  # identify significant classes in black
+  cols <- c(NA, "black") [ (gamma.trend.nat$P.gamma[sp,] <=0.025) +1]
+  n <- as.numeric(glmSRnat.overall$n.obs[sp,])[1:6]
+  # create x axis for the 5 abundance classes
+  x = c(0:5)
+
+  # create y axis with the gamma richness Standardized effect size
+  y = (gamma.trend.nat$obs[sp,] - gamma.trend.nat$mean.null[sp,])
+  y [ (1:6)[ n < 5] ]=NA
+  y[1]=NA
+
+
+  # plot background
+  plot(x,y,ylim=ylim, xlim = c(0.5, 5.5), las = 1,type= "p", xaxt = "n", yaxt="n", ann=F, pch = 21, col ="black",bg = cols)
+
+  abline(h=0,lty="dotted")
+  abline(v =glmSRnat.overall$impact.spread[sp,threshold]-1, lty="dashed")
+
+
+  #plot points and lines
+  par(new=T)
+  plot(x,y, bg = cols, pch=21, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F)
+
+  # Add species name
+ # Add species name
+   mtext(3, text=sp, font = 3, outer= F,adj=0.9, cex=0.5, line=0, las = 1)
+
+}
+
+mtext(1, text=c("Abundance class"), adj=0.5, line=1.5, las = 1, outer=T)
+mtext(2, text=c("native gamma richness"), adj=0.5, line=1, las = 0, outer=T)
+```
+
+### trends in native alpha effect size for 88 species:
+```{r alphatrends.SRnat.allsp, echo = FALSE}
+
+par(mfrow = c(8,11), mar=c(0,0,1,0), oma=c(6,6,2,3))
+sel <- impsp
+M <- glmSRnat.overall
+  ylim=c(-3,3)
+  ### Loop on selected species 
+  for (i in 1:length(rownames(glmSRnat.overall$mean.values)))  {
+    # if (i ==4) plot.new()
+    sp <- rownames(glmSRnat.overall$mean.values)[i]
+    es <- as.numeric(M$est[sp,])
+    n <- as.numeric(M$n.obs[sp,])[2:6]
+    
+      low <- as.numeric(M$CIlow[sp,])
+      hi <- as.numeric(M$CIhi[sp,])
+      M$thresh <-M$impact.spread
+    
+    ## correct for small sample sizes
+    small <- es
+    small[which(n>=3)] <- NA
+    es[which(n<3)] <- NA
+    low[n<3] <- NA
+    hi[n<3] <- NA
+    
+    if ( !all(is.na(c(hi, low)))) lims <-  max(c(abs(low),abs(hi)), na.rm=T) +0.02
+    if ( all(is.na(c(hi, low)))) lims <-  max(c(abs(es)), na.rm=T) +0.02
+
+    col <- rep("white",6)
+    col[(1:6)>= as.numeric( M$thresh[sp,threshold])] <- "black"  # above threshold
+    col[(2:6)[hi>0]] <- NA  # robust negative coef
+    col[(2:6)[n<5]] <- NA  # sufficient data points
+    
+    
+    plot(1:5,  rep(0,5),ylim=ylim, xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F)
+
+    axis(1,at = 1:5, label = rep("",5), tcl= 0.1,mgp=c(1,0.5,0),las=1)
+   
+    abline(h=0,lty="dotted")
+    abline(v = M$thresh[sp,threshold]-1, lty="dashed")
+    
+    if (!all(is.na(small))) points(1:5, small, pch=".")  
+    
+    ## Add bootstrapped CI
+    if ( !all(is.na(c(hi, low)))) {
+      arrows(1:5,low,   1:5,hi, lwd=1, code =3, length=0.05, angle=90)
+    }
+    
+    # draw the points and lines
+    par(new=T)
+    plot(1:5,es, bg = col[2:6], pch=21, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F)
+    
+    # # Add species name
+  mtext(3, text=sp, font = 3, outer= F,adj=0.9, cex=0.5, line=0, las = 1)
+   }
+
+mtext(1, text=c("Abundance class"), adj=0.5, line=1, las = 1, outer=T)
+mtext(2, text=c("Effect on native alpha richness"), adj=0.5, line=1, las = 0, outer=T)
+
+```
+
+### Trends in gamma above vs.below trends for 88 sp
+```{r gamma.above-below.SRnat.all, echo = FALSE}
+par(mfrow = c(8,11), mar=c(0,0,1,0), oma=c(4,4,2,1))
+
+list.data <- gamma.above.nat.permute.all
+gamma.loss <- as.data.frame(matrix(NA, nrow = length(impsp), ncol =6))
+rownames(gamma.loss) <- impsp
+
+ylim=c(-1,1)
+for (i in 1 : length(rownames(glmSRnat.overall$mean.values))){
+  
+  # if (i ==4) plot.new()
+  sp <- rownames(glmSRnat.overall$mean.values)[i]
+  # identify significant classes in black
+  cols <- c(NA, "black") [ (list.data$P.above[sp,] <=0.025) +1]
+  n <- list.data$nplot.above[sp,]
+  # create x axis for the 5 abundance classes
+  x = c(0:5)
+  
+  # create y axis with the gamma richness Standardized effect size
+  y =  (list.data$gamma.above[sp,] - list.data$null.above[sp,])/ list.data$null.above[sp,]
+  y [ (1:6)[ n < 5 | is.na(n)] ]=NA
+  y[1]=NA
+  
+  gamma.loss[sp,] = y
+  
+  # plot background
+  plot(x,y,ylim=ylim, xlim = c(0.5, 5.5), las = 1,type= "p", xaxt = "n", yaxt="n", ann=F,pch = 21, col ="black",bg = cols)
+  
+   abline(h=0,lty="dotted")
+  abline(v = M$thresh[sp,threshold]-1, lty="dashed")
+   
+  #plot points and lines
+  par(new=T)
+  plot(x,y, bg = cols, pch=21, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F)
+  
+  # Add species name
+   mtext(3, text=sp, font = 3, outer= F,adj=0.9, cex=0.5, line=0, las = 1)
+  
+  #   # Y axis label
+  #   if ( i %in% c(1,4,7)) {  
+  #     mtext(2, text="SES", ,adj=0.5, cex=0.8, line=1.5, las = 0)
+  #   }
+}
+
+mtext(1, text=c("Abundance class"), adj=0.5, line=1, las = 1, outer=T)
+mtext(2, text=c("ES of native gamma richness above/below"), adj=0.5, line=3, las = 0, outer=T)
+```

@@ -28,7 +28,7 @@ pdf(file = "map impasct.pdf")
 db=databp[databp$PlotName %in% realgrasslands,]
 targets <- impsp
 
-par(mfrow=c(3,4), mar=c(1,1,1,1))
+par(mfrow=c(3,4), mar=c(0,0,0,0),oma= c(2,0,0,0))
 
 for( i in targets) {
   plot.alien=as.character(db[which(db$abun%in%c(1,2,3,4,5,6) & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])
@@ -38,7 +38,7 @@ for( i in targets) {
   es[which(n<5)] <- NA
   es = which(!is.na(es))+1
   m <- max(es, na.rm=T)
-  max.impact=as.character(db[which(db$abun>= m & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])
+  max.impact=as.character(db[which(db$abun>=6 & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])
   th.impact=as.character(db[which(db$abun>= th & db$vegtype=="G" & db$SpeciesCode==i),"PlotName" ])
 
   plot(study_area, col="white", border = "grey60")
@@ -46,12 +46,13 @@ for( i in targets) {
   plot(envplot[th.impact, ],pch=22, cex = 0.5, col="sienna2", bg="sienna2", add=T)
   plot(envplot[max.impact, ],pch=22,  cex = 0.5, col="sienna4", bg="sienna4", add=T)
 
-  mtext(3, text =sub("_", " ",species[i, "tip"]), line= -1, font=3, cex = 0.7)
+  mtext(3, text =sub("_", " ",species[i, "tip"]),adj = 0.1, line= -2, font=3, cex = 0.7)
 }
 
-plot.new()
-legend("center", legend = c("< critical abundance",">critical abundance", "maximum abundance"),
-       fill=c( "tan", "sienna2","sienna4"), bty="n", border =c( "tan", "sienna2","sienna4"))
+
+legend(extent(study_area)@xmin,
+       extent(study_area)@ymin , legend = c("< critical abundance",">critical abundance", "Dominant"),
+       fill=c( "tan", "sienna2","sienna4"),xpd = NA, bty="n", border =c( "tan", "sienna2","sienna4"))
 
 
 dev.off()
