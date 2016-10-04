@@ -291,8 +291,6 @@ sp.target = c("AGRCAP","FESCOM","HYPRAD","VULBRO")
 
 sel <-  sp.target
 
-x11()
-
 par(mfrow = c(2,4), mar=c(2,2,1,1), oma=c(2,9,2,1))
 
 M=glmSRnat.overall
@@ -360,7 +358,7 @@ mtext(1, text=c("Abundance class"), adj=0.5, line=1, las = 1, outer=T)
 # ### frequency with bootstrap variance #######
 x11()
 
-tab <- apply(glmSR.overall$crit.vals[,], 2, FUN=function(x) {
+tab <- apply(glmSRnat.overall$crit.vals[,], 2, FUN=function(x) {
   x <- factor(x,levels= c("2","3","4","5","6"))
   f = table(x)
 })
@@ -499,8 +497,6 @@ daa<- divpart.ali.perm$obs$above.alpha - divpart.ali.perm$null$above.alpha
 cgam <- c("grey50", "black")[ (divpart.nat.perm$P$above.gamm<=0.05 | divpart.nat.perm$P$above.gamm>=0.95) + 1]
 
 ### figure 4 panels : ##########
-x11()
-
 dg<- -(table.div.part$GRc - table.div.part$GRnull )
 # dg<- -(table.div.part$GRc - table.div.part$GRnull )/table.div.part$GRsdnull
 da<-  -( table.div.part $aRc -table.div.part$aRo )

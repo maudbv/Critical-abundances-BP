@@ -13,6 +13,13 @@ require(gstat)
 require(maps)
 library(raster)
 
+
+
+### TO DO:
+# remove the one signif native sp. from the correlation results
+# recreate the maps 
+# count number of significant targets above critical abundance in each plot : map and correlate to SRnat
+
 ### restore saved results:  ################
 # load("saved Rdata/article 2 - threshold/article threshold 1.2.Rdata")  ## all lucas grasslands
 # load("saved Rdata/article 2 - threshold/article threshold 1.3.1.Rdata")  ## unimproved only lucas grasslands
@@ -157,7 +164,8 @@ impact.SRali <- impact.size (glmSRali.overall)
  # Select pecies which show a threshold for Native richness
 impsp <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$th.CI)
                                                         & (rownames(glmSRnat.overall$impact.spread) %in% aliens)),])
-impsp <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$th.CI)),])
+
+# impsp <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$th.CI)),])
 
 
 impsp.ali <- rownames(glmSRali.overall$impact.spread[which(!is.na(glmSRali.overall$impact.spread$th.CI)),])

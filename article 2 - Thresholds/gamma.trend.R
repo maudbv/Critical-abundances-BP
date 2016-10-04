@@ -8,7 +8,7 @@
 # null.model: one of these :
 #       permute.all : permute all sites randomly
 #       permute.rare: permutes only the sites of a given abundance with sites where the species is rare
-#       permute.below: permute only sites of a given abundance with all sites where abudnance is inferior
+#       permute.below: permute only sites of a given abundance with all sites where abundance is inferior to this given abundance
 #
 # output : a list
 #         $obs : gamma trends for each species
