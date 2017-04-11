@@ -1,0 +1,6 @@
+ 	Label	Area
+1	P1120310.JPG (blue).jpg	370.092
+2	P1120310.JPG (blue).jpg	243.078
+3	P1120310.JPG (blue).jpg	429.797
+4	P1120310.JPG (blue).jpg	508.482
+5	P1120310.JPG (blue).jpg	295.251

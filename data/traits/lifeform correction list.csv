@@ -1,0 +1,682 @@
+Sp.code,SpeciesName,Growth.forms,Growth.forms_corrected,GROWTH_FORM_ALL,LIFE_DURATION,lifestyle,lifestyle.corrected,woody,lifeform,lifeform_corrected,source
+ANOLEP,Anogramma leptophylla (L.) Link,FE,,FE,A,A,,0,NA,Therophyte,Annual
+CHESIE,Cheilanthes sieberi Kunze in Lehm.,FE,,FE,A,A,,0,NA,Therophyte,Annual
+PELFAL,Pellaea calidirupium Brownsey & Lovis,FE,,FE,A,A,,0,NA,Therophyte,Annual
+POLNEO,Polystichum neozelandicum Fée,FE,,FE,A,A,,0,NA,Therophyte,Annual
+TRISTR,Trichomanes venosum R.Br.,FE,,FE,A,A,,0,NA,Therophyte,Annual
+AIRCAR,Aira caryophyllea L.,GR,,MG,A,A,,0,Therophyte,Therophyte,
+AIRPRA,Aira praecox L.,GR,,MG,A,A,,0,Therophyte,Therophyte,
+ANTODO,Anthoxanthum odoratum L.,GR,,MG,A,A,,0,Hemicryptophyte,Hemicryptophyte,
+BRIMIN,Briza minor L.,GR,,MG,A,A,,0,Therophyte,Therophyte,
+BRODIA,Bromus diandrus Roth,GR,,MG,A,A,,0,Therophyte,Therophyte,
+BROHOR,Bromus hordeaceus L.,GR,,MG,A,A,,0,Therophyte,Therophyte,
+BROSIT,Bromus sitchensis Trin.,GR,,MG,A,A,P,0,Hemicryptophyte,Hemicryptophyte,plants.usda.gov
+BROSTE,Bromus sterilis L.,GR,,MG,A,A,,0,NA,Therophyte,http://www.kew.org
+CRIHYS,Critesion hystrix (Roth) Á.Löve,GR,,MG,A,A,,0,NA,Therophyte,Annual
+CRIMAR,Critesion marinum (Huds) Á.Löve,GR,,MG,A,A,,0,NA,Therophyte,Annual
+CRIMUR,Critesion murinum (L.) Á.Löve,GR,,MG,A,A,,0,NA,Therophyte,Annual
+CRILEP,Critesion murinum subsp. leporinum (Link) Á.Löve,GR,,MG,A,A,,0,NA,Therophyte,Annual
+CYNECH,Cynosurus echinatus L.,GR,,MG,A,A,,0,Therophyte,Therophyte,
+HORDEU,Hordeum spp. L.,GR,,MG,A,A,,0,NA,Therophyte,Annual
+HORDIS,Hordeum vulgare subsp. distichon (L.) Körn.,GR,,MG,A,A,,0,Therophyte,Therophyte,
+LACPIL,Lachnagrostis pilosa (Buchanan) Edgar,GR,,MG,A.P,A,P,0,Hemicryptophyte,Hemicryptophyte,http://www.nzpcn.org.nz
+LOLMUL,Lolium multiflorum Lam.,GR,,MG,A,A,P,0,Hemicryptophyte,Hemicryptophyte,plants.usda.gov
+PHAMIN,Phalaris minor Retz.,GR,,MG,B,A,,0,Therophyte,Therophyte,
+PHLPRA,Phleum pratense L.,GR,,MG,A,A,,0,NA,Therophyte,Annual
+POACIT,Poa cita Edgar,GR,,MG,A,A,P,0,Hemicryptophyte,Hemicryptophyte,http://www.nzpcn.org.nz
+POAMAT,Poa matthewsii Petrie,GR,,MG,A,A,P,0,Hemicryptophyte,Hemicryptophyte,http://www.nzflora.info
+PUCSTR,Puccinellia stricta (Hook.f.) C.H.Blom,GR,,MG,A,A,P,0,NA,Hemicryptophyte,http://www.nzpcn.org.nz
+PUCWAL,Puccinellia walkeri (Kirk) Allan,GR,,MG,A.P,A,P,0,NA,Hemicryptophyte,http://www.kew.org
+SECCER,Secale cereale L.,GR,,MG,A,A,,0,Therophyte,Therophyte,
+TRISET,Trisetum lepidum Edgar & A.P.Druce,GR,,MG,A,A,P,0,Hemicryptophyte,Hemicryptophyte,http://www.kew.org
+TRITIC,Triticum spp. L.,GR,,MG,A,A,,0,NA,NA,
+VULBRO,Vulpia bromoides (L.) Gray,GR,,MG,A,A,,0,Therophyte,Therophyte,
+VULMYU,Vulpia myuros (L.) C.C.Gmel. var. myuros,GR,,MG,A,A,,0,NA,Therophyte,Annual
+AMADEF,Amaranthus deflexus L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+AMAPOW,Amaranthus powellii S.Watson,HR,,OD,A,A,,0,Therophyte,Therophyte,
+ANAARV,Anagallis arvensis L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+HELBEL,Anaphalioides bellidioides (G.Forst.) Glenny,HR,,DC,A,A,,0,NA,Hemicryptophyte,http://nzpcn.org.nz
+ANTCAU,Anthriscus caucalis M.Bieb.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+APHARV,Aphanes arvensis L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+APHINE,Aphanes inexspectata W.Lippert,HR,,OD,A,A,,0,NA,Therophyte,Annual
+APHANE,Aphanes spp. L.,HR,,OD,A,A,,0,NA,Therophyte,http://www.massey.ac.nz
+ARCCAL,Arctotheca calendula (L.) Levyns,HR,,DC,A,A,,0,Therophyte,Therophyte,
+ARCTOT,Arctotis spp. L.,HR,,DC,A,A,NA,0,NA,NA,
+ARESER,Arenaria serpyllifolia L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+ATRPRO,Atriplex prostrata Boucher ex DC.,HR,,OD,A,A,,0,NA,Therophyte,Annual
+BRARAP,Brassica rapa L.,HR,,OD,B,A,,0,Therophyte,Therophyte,
+BRARSS,Brassica rapa subsp. sylvestris (L.) Janch.,HR,,OD,A,A,,0,NA,Therophyte,Annual
+CALMEN,Calandrinia menziesii (Hook.) Torr. & A.Gray,HR,,OD,A,A,,0,Therophyte,Therophyte,
+CAPBUR,Capsella bursa-pastoris (L.) Medik.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+CARDEB,Cardamine debilis Banks ex DC.,HR,,DC,A,A,P,0,NA,Hemicryptophyte,http://www.nzflora.info
+CARBRE,Carex breviculmis R.Br.,HR,,OD,A,A,,0,Hemicryptophyte,Hemicryptophyte,
+CARCOR,Carex coriacea Hamlin,HR,,DC,A,A,,0,Hemicryptophyte,Hemicryptophyte,
+CENERY,Centaurium erythraea Rafn.,HR,,DC,B,A,,0,Hemicryptophyte,Hemicryptophyte,
+CENTAU,Centaurium spp. Hill,HR,,OD,A,A,,0,NA,NA,
+CENRUB,Centranthus ruber (L.) DC.,HR,,OD,A,A,P,0,Phanerophyte,Phanerophyte,http://www.missouribotanicalgarden.org
+CERGLO,Cerastium glomeratum Thuill.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+CERSEM,Cerastium semidecandrum L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+CHEMUR,Chenopodium murale L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+CIRVUL,Cirsium vulgare (Savi) Ten.,HR,,DC,B,A,,0,Hemicryptophyte,Hemicryptophyte,
+CLAPER,Claytonia perfoliata Donn ex Willd.,HR,,OD,A,A,,0,NA,Therophyte,Annual
+CONBON,Conyza bonariensis (L.) Cronquist,HR,,OD,A,A,,0,Therophyte,Therophyte,
+CONSUM,Conyza sumatrensis (Retz.) E.H.Walker,HR,,DC,A,A,,0,Phanerophyte,Therophyte,http://www.cabi.org
+COTCOR,Cotula coronopifolia L.,HR,,DC,A,A,,0,Hemicryptophyte,Hemicryptophyte,
+CRECAP,Crepis capillaris (L.) Wallr.,HR,,DC,A,A,,0,Therophyte,Therophyte,
+CREVES,Crepis vesicaria L.,HR,,DC,A,A,,0,Therophyte,Therophyte,
+DAUGLO,"Daucus glochidiatus (Labill.) Fisch., C.A.Mey. & Avé-Lall.",HR,,OD,B,A,,0,Therophyte,Therophyte,
+DIAARM,Dianthus armeria L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+DIGPUR,Digitalis purpurea L.,HR,,OD,B,A,,0,Phanerophyte,Hemicryptophyte,http://www.nzflora.info
+DIPMUR,Diplotaxis muralis (L.) DC.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+EROCIC,Erodium cicutarium (L.) L'Hér.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+EROMOS,Erodium moschatum (L.) L'Hér.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+ESCCAL,Eschscholzia californica Cham.,HR,,OD,A,A,P,0,Hemicryptophyte,Hemicryptophyte,
+EUPPEP,Euphorbia peplus L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+FALCON,Fallopia convolvulus (L.) Á.Löve,HR,,OD,A,A,,0,Therophyte,Therophyte,
+FUMMUR,Fumaria muralis W.D.J.Koch,HR,,OD,A,A,,0,Therophyte,Therophyte,
+GALAPA,Galium aparine L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+GALDIV,Galium divaricatum Lam.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+GALPRO,Galium propinquum A.Cunn.,HR,,OD,A.P,A,P,0,Hemicryptophyte,Hemicryptophyte,http://www.nzflora.info
+GERMOL,Geranium molle L. ,HR,,OD,A,A,,0,NA,Therophyte,http://www.nzflora.info
+GERPUS,Geranium pusillum L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+HELLAN,Helichrysum lanceolatum (Buchanan) Kirk,HR,,DC,A,A,P,0,Phanerophyte,Phanerophyte,http://www.nzflora.info
+HYPGRA,Hypericum involutum (Labill.) Choisy,HR,,DC,A,A,P,0,NA,Hemicryptophyte,http://www.nzflora.info
+ISOCER,Isolepis cernua (Vahl) Roem. & Schult.,HR,,MS,A,A,P,0,Hemicryptophyte,Hemicryptophyte,http://www.nzflora.info
+ISOHAB,Isolepis habra (Edgar) Soják,HR,,MS,A,A,P,0,Hemicryptophyte,Hemicryptophyte,http://nzpcn.org.nz
+ISOMAR,Isolepis marginata (Thunb.) A.Dietr.,HR,,MS,A,A,,0,Hemicryptophyte,Therophyte,http://www.nzflora.info
+JUNBUF,Juncus bufonius L.,HR,,MR,A,A,,0,Therophyte,Therophyte,
+JUNNOV,Juncus novae-zelandiae Hook.f.,HR,,MR,A.P,A,P,0,Hemicryptophyte,Hemicryptophyte,http://juncaceae.e-monocot.org/
+LACSER,Lactuca serriola L.,HR,,DC,A,A,,0,Therophyte,Therophyte,
+LAGSTR,Lagenifera strangulata Colenso,HR,,DC,A,A,P,0,Hemicryptophyte,Hemicryptophyte,
+LAMPRA,Lampranthus spp. N.E.Br.,HR,SH,OD,A,A,P,0,NA,Phanerophyte,http://www.nzflora.info
+LEPDID,Lepidium didymum L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+LEPIDI,Lepidium spp. L.,HR,,OD,A,A,NA,0,NA,NA,
+LILAEO,Lilaeopsis novae-zelandiae (Gand.) A.W.Hill,HR,,OD,A,A,P,0,Hemicryptophyte,Hemicryptophyte,http://www.nzflora.info
+LINCAT,Linum catharticum L.,HR,,OD,A,A,,0,Hemicryptophyte,Hemicryptophyte,http://www.nzflora.info
+LINMON,Linum monogynum G.Forst.,HR,,OD,B,A,P,0,Chamaephyte,Chamaephyte,http://www.nzflora.info
+LYTHYS,Lythrum hyssopifolia L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+MALLIN,Malva linnaei M.F.Ray,HR,,OD,A,A,,0,Therophyte,Therophyte,
+MALNEG,Malva neglecta Wallr.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+MALNIC,Malva nicaeensis All.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+MATDIS,Matricaria discoidea DC.,HR,,DC,A,A,,0,Phanerophyte,Therophyte,http://plants.usda.gov
+MEDARA,Medicago arabica (L.) Huds.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+MEDLUP,Medicago lupulina L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+MEDSAT,Medicago sativa L.,HR,,OD,A,A,P,0,Chamaephyte,Chamaephyte,http://plants.usda.gov
+MEDICA,Medicago spp. L.,HR,,OD,A,A,,0,NA,NA,
+MIMREP,Mimulus repens R.Br.,HR,,OD,A.P,A,P,0,Hemicryptophyte,Hemicryptophyte,
+MONFON,Montia fontana L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+MYOCAE,Myosotis laxa subsp. caespitosa (Schultz) Hyl. ex Nordh.,HR,,OD,B,A,,0,NA,Hemicryptophyte,http://www.nzflora.info
+MYOSPA,Myosotis spathulata G.Forst.,HR,,OD,A.P,A,P,0,NA,Hemicryptophyte,http://www.nzpcn.org.nz
+PARDEB,Parietaria debilis G.Forst.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+POLPER,Persicaria maculosa Gray,HR,,OD,A,A,,0,Therophyte,Therophyte,
+PETCRI,Petroselinum crispum (Mill.) A.W.Hill,HR,,OD,A,A,,0,Therophyte,Therophyte,
+PLARAO,Plantago raoulii Decne.,HR,,OD,A,A,P,0,Hemicryptophyte,Hemicryptophyte,http://www.nzflora.info
+RANPAR,Ranunculus parviflorus L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+RANSAR,Ranunculus sardous Crantz,HR,,OD,A,A,,0,Therophyte,Therophyte,
+RANSCE,Ranunculus sceleratus L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+SAGAPE,Sagina apetala Ard.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+SENBAS,Senecio glaucophyllus subsp. basinudus Ornduff,HR,,DC,A,A,P,0,NA,Hemicryptophyte,http://www.nzpcn.org.nz
+SENGLO,Senecio glomeratus Poir.,HR,,DC,A,A,,0,Therophyte,Therophyte,
+SENJAC,Senecio jacobaea L. ,HR,,DC,B,A,P,0,NA,Hemicryptophyte,Jacobaea vulgaris at http://www.nzpcn.org.nz
+SENLAU,Senecio lautus G.Forst. ex Willd.,HR,,DC,A,A,,0,NA,Therophyte,Annual
+SENMIN,Senecio minimus Poir.,HR,,DC,A,A,,0,Therophyte,Therophyte,
+SENSYL,Senecio sylvaticus L.,HR,,DC,A,A,,0,Therophyte,Therophyte,
+SENVUL,Senecio vulgaris L.,HR,,DC,A,A,,0,Therophyte,Therophyte,
+SENWAI,Senecio wairauensis Belcher,HR,,DC,A,A,,0,Therophyte,Therophyte,
+SHEARV,Sherardia arvensis L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+SILGAL,Silene gallica L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+SILMAR,Silybum marianum (L.) Gaertn.,HR,,DC,A,A,,0,Therophyte,Therophyte,
+SISOFF,Sisymbrium officinale (L.) Scop.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+SISORI,Sisymbrium orientale L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+SOLGUN,Solenogyne gunnii (Hook.f.) Cabrera,HR,,OD,A,A,P,0,Hemicryptophyte,Hemicryptophyte,http://www.nzflora.info
+SONASP,Sonchus asper (L.) Hill,HR,,DC,A,A,,0,Therophyte,Therophyte,
+SONOLE,Sonchus oleraceus L.,HR,,DC,A,A,,0,Therophyte,Therophyte,
+SPEARV,Spergula arvensis L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+SPEMAR,Spergularia marina (L.) Griseb.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+SPERUB,Spergularia rubra (L.) J.Presl & C.Presl,HR,,OD,A,A,,0,Therophyte,Therophyte,
+STAARV,Stachys arvensis (L.) L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+STEDEC,Stellaria decipiens Hook.f.,HR,,OD,A.P,A,,0,NA,Therophyte,
+STEPAR,Stellaria parviflora Hook.f.,HR,,OD,A.P,A,,0,Therophyte,Therophyte,http://www.nzflora.info
+STUMUE,Stuartina muelleri Sond.,HR,,DC,A,A,,0,NA,Therophyte,http://www.nzflora.info
+THEHAT,Thelymitra hatchii L.B.Moore,HR,,MO,A,A,,0,Geophyte,Geophyte,
+TORNOD,Torilis nodosa (L.) Gaertn.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+TRAPOR,Tragopogon porrifolius L.,HR,,DC,A,A,,0,Chamaephyte,Hemicryptophyte,Biennial
+TRIARV,Trifolium arvense L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+TRICAM,Trifolium campestre Schreb.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+TRIDUB,Trifolium dubium Sibth.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+TRIFRA,Trifolium fragiferum L.,HR,,OD,A,A,P,0,Hemicryptophyte,Hemicryptophyte,http://www.nzflora.info
+TRIGLO,Trifolium glomeratum L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+TRIPRA,Trifolium pratense L.,HR,,OD,A,A,P,0,Hemicryptophyte,Hemicryptophyte,http://www.nzflora.info
+TRIREP,Trifolium repens L.,HR,,OD,A,A,P,0,Chamaephyte,Hemicryptophyte,http://www.nzflora.info
+TRISTT,Trifolium striatum L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+TRISUB,Trifolium subterraneum L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+TRITOM,Trifolium tomentosum L.,HR,,MG,A,A,,0,Therophyte,Therophyte,
+TRIINO,Tripleurospermum inodorum Sch.Bip.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+URTURE,Urtica urens L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+VERTHA,Verbascum thapsus L.,HR,,OD,A,A,,0,Hemicryptophyte,Hemicryptophyte,biennial
+VEROFF,Verbena officinalis L.,HR,,OD,B,A,,0,Hemicryptophyte,Hemicryptophyte,biennial
+VERARV,Veronica arvensis L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+VERPER,Veronica persica Poir.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+VERSER,Veronica serpyllifolia L.,HR,,OD,A,A,P,0,Hemicryptophyte,Hemicryptophyte,
+VICHIR,Vicia hirsuta (L.) Gray,HR,,OD,A,A,,0,Therophyte,Therophyte,
+VICLUT,Vicia lutea L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+VICSAT,Vicia sativa L.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+VICTET,Vicia tetrasperma (L.) Schreb.,HR,,OD,A,A,,0,Therophyte,Therophyte,
+BRASCI,Brachyglottis sciadophila (Raoul) B.Nord.,SH,,DL,A,A,P,1,NA,Phanerophyte,
+CONVER,"Convolvulus waitaha (Sykes) Heenan, Molloy & de Lange",SH,HR,DT,A.B,A,P,1,NA,Hemicryptophyte,
+MELSIM,Melicope simplex A.Cunn.,SH,,SH,A,A,P,1,Phanerophyte,Phanerophyte,
+PARCAP,Parsonsia capsularis (G.Forst.) R.Br.,SH,,SH,A,A,P,1,NA,Phanerophyte,
+PARHET,Parsonsia heterophylla A.Cunn.,SH,,SH,A,A,P,1,Phanerophyte,Phanerophyte,
+PASTET,Passiflora tetrandra Banks ex DC.,SH,,SH,B,A,P,1,NA,Phanerophyte,
+EUCVIM,Eucalyptus viminalis Labill.,TR,,DT,A,A,P,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+MALDOM,Malus ×domestica Borkh. ,TR,,DT,B,A,P,1,NA,Phanerophyte,Growth.forms:Tree
+MYOLAE,Myoporum laetum G.Forst.,TR,,DT,A,A,P,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PSDCOL,Pseudopanax colensoi (Hook.f.) Philipson,TR,,DT,A,A,P,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+ASPTER,Asplenium appendiculatum (Labill.) C. Presl,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+ASPBUL,Asplenium bulbiferum G.Forst.,FE,,FE,P,P,,0,Hemicryptophyte,Hemicryptophyte,Growth.form:Fern
+ASPFLB,Asplenium flabellifolium Cav.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+ASPFLA,Asplenium flaccidum G.Forst.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+ASPGRA,Asplenium gracillimum Colenso,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+ASPHOO,Asplenium hookerianum Colenso,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+ASPOBL,Asplenium oblongifolium Colenso,FE,,FE,P,P,,0,Hemicryptophyte,Hemicryptophyte,Growth.form:Fern
+ASPRIC,Asplenium richardii (Hook.f.) Hook.f.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+BLEBLE,Blechnum blechnoides (Bory) Keyserl.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+BLECHA,Blechnum chambersii L.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+BLECOL,Blechnum colensoi (Hook.f. in Hook.) N.A.Wakef.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+BLEDIS,Blechnum discolor (G.Forst.) Keyserl.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+BLEFLU,Blechnum fluviatile (R.Br.) Lowe ex Salomon,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+BLEMIN,Blechnum minus (R.Br.) Ettingsh.,FE,,FE,P,P,,0,Hemicryptophyte,Hemicryptophyte,Growth.form:Fern
+BLEMON,Blechnum montanum T.C.Chambers & P.A.Farrant,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+BLENOV,Blechnum novae-zelandiae T.C.Chambers & P.A.Farrant,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+BLEPEN,Blechnum penna-marina (Poir.) Kuhn,FE,,FE,P,P,,0,Hemicryptophyte,Hemicryptophyte,Growth.form:Fern
+BLECAP,Blechnum penna-marina subsp. alpina T.C.Chambers & P.A.Farrant (1996),FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+BLEPRO,Blechnum procerum (G.Forst.) Sw.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+BLECHN,Blechnum spp. L.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+BLEVUL,Blechnum vulcanicum (Blume) Kuhn,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+CHEDIS,Cheilanthes distans (R.Br.) Mett.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+CTEHET,Ctenopteris heterophylla (Labill.) Tindale ,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+CYACOL,Cyathea colensoi (Hook.f.) Domin,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+CYADEA,Cyathea dealbata (G.Forst.) Sw.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+CYASMI,Cyathea smithii Hook.f.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+DICSQU,Dicksonia squarrosa (G.Forst.) Sw.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+DRYFIL,Dryopteris filix-mas (L.) Schott,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+GRACIL,Grammitis ciliata Colenso,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+HISINC,Histiopteris incisa (Thunb.) J.Sm.,FE,,FE,P,P,,0,Hemicryptophyte,Hemicryptophyte,Growth.form:Fern
+HUPVAR,Huperzia varia (R.Br.) Trevis.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+HYMRAR,Hymenophyllum rarum R.Br.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+HYPAMB,Hypolepis ambigua (A.Rich.) Brownsey & Chinnock,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+HYPMIL,Hypolepis millefolium Hook.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+HYPRUF,Hypolepis rufobarbata (Colenso) N.A.Wakef.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+LASHIS,Lastreopsis hispida (Sw.) Tindale,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+LASVEL,Lastreopsis velutina (A.Rich.) Tindale,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+LEPHYM,Leptopteris hymenophylloides (A.Rich.) C.Presl,FE,,FE,P,P,,0,Hemicryptophyte,Hemicryptophyte,Growth.form:Fern
+LYCFAS,Lycopodium fastigiatum R.Br.,FE,,FE,P,P,,0,Hemicryptophyte,Hemicryptophyte,Growth.form:Fern
+MICPUS,Microsorum pustulatum (G.Forst.) Copel.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+OPHCOR,Ophioglossum coriaceum A.Cunn.,FE,,FE,P,P,,0,Hemicryptophyte,Hemicryptophyte,Growth.form:Fern
+PAESCA,Paesia scaberula (A.Rich.) Kuhn,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+PELROT,Pellaea rotundifolia (G.Forst.) Hook.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+PNEPEN,Pneumatopteris pennigera (G.Forst.) Holttum,FE,,FE,P,P,,0,Hemicryptophyte,Hemicryptophyte,Growth.form:Fern
+POLSIL,Polystichum oculatum (Hook.) J.B.Armstr.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+POLVES,Polystichum vestitum (G.Forst.) C.Presl,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+PTEESC,Pteridium esculentum (G.Forst.) Cockayne,FE,,FE,P,P,,0,Hemicryptophyte,Hemicryptophyte,Growth.form:Fern
+PTETRE,Pteris tremula R.Br.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+TMESIP,Tmesipteris elongata P.A.Dang.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+TMETAN,Tmesipteris tannensis (Spreng.) Bernh.,FE,,FE,P,P,,0,NA,Hemicryptophyte,Growth.form:Fern
+AGRCAP,Agrostis capillaris L.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+AGRGIG,Agrostis gigantea Roth,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+AGRMUE,Agrostis muelleriana Vickery ,GR,,MG,P,P,,0,NA,Hemicryptophyte,http//www.nzpcn.org.nz
+AGRSTO,Agrostis stolonifera L.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+ALOGEN,Alopecurus geniculatus L.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+ARRELA,Arrhenatherum elatius (L.) J.Presl & C.Presl,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+ARTCAN,Arthropodium candidum Raoul,GR,,MG,P,P,,0,NA,Hemicryptophyte,
+AUSNOD,Austrostipa nodosa (S.T.Blake) S.W.L.Jacobs & J.Everett,GR,,MG,P,P,,0,NA,Hemicryptophyte,
+AVEFAT,Avena fatua L.,GR,,MG,P,P,A,0,Therophyte,Therophyte,tela botanica
+BRALAG,Brachyglottis lagopus (Raoul) B.Nord.,GR,,MG,P,P,,0,NA,Hemicryptophyte,
+BROCAT,Bromus catharticus Vahl,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+BROLIT,Bromus lithobius Trin.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+BROMUS,Bromus spp. Scop.,GR,,MG,P,P,,0,NA,NA,
+BROSTA,Bromus stamineus E.Desv.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+BROWIL,Bromus willdenowii Kunth,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CHICON,Chionochloa conspicua (G.Forst.) Zotov,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CHIRIG,Chionochloa rigida (Raoul) Zotov,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CORRIC,Cortaderia richardii (Endl.) Zotov,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CORSEL,Cortaderia selloana (Schult. & Schult.f.) Asch. & Graebn.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CYNCRI,Cynosurus cristatus L.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+DACGLO,Dactylis glomerata L.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+DEYAVE,Deyeuxia avenoides (Hook.f.) Buchanan ,GR,,MG,P,P,,0,NA,Hemicryptophyte,
+DICCRI,Dichelachne crinita (L.f.) Hook.f.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+ECHOVA,Echinopogon ovatus (G.Forst.) P.Beauv. ,GR,,MG,P,P,,0,NA,Hemicryptophyte,
+ELEACU,Eleocharis acuta R.Br.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+ELYREC,Elymus rectisetus (Nees) Á.Löve & Connor,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+ELYREP,Elytrigia repens (L.) Nevski,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+FESACT,Festuca actae Connor,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+FESNOV,Festuca novae-zelandiae (Hack.) Cockayne,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+FESOVI,Festuca ovina subsp. hirtula (W.G.Travis) M.J.Wilk.,GR,,MG,P,P,,0,NA,Hemicryptophyte,
+FESRUB,Festuca rubra L. subsp. rubra,GR,,MG,P,P,,0,NA,Hemicryptophyte,
+FESCOM,Festuca rubra subsp. commutata Gaudin,GR,,MG,P,P,,0,NA,Hemicryptophyte,
+FESTUC,Festuca spp. L.,GR,,MG,P,P,,0,NA,NA,
+GLYDEC,Glyceria declinata Bréb.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+HIERED,Hierochloe redolens (Vahl) Roem. & Schult.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+HOLLAN,Holcus lanatus L.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+KOENOV,Koeleria novozelandica Domin,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LACHNA,Lachnagrostis spp. Trin.,GR,,MG,P,P,,0,NA,NA,
+LAGOVA,Lagurus ovatus L.,GR,,MG,P,P,A,0,NA,Therophyte,
+LOLPER,Lolium perenne L.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+MICAVE,Microlaena avenacea (Raoul) Hook.f.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+MICPOL,Microlaena polynoda (Hook.f.) Hook.f.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+MICSTI,Microlaena stipoides (Labill.) R.Br.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+PARINC,Parapholis incurva (L.) C.E.Hubb.,GR,,MG,P,P,A,0,Therophyte,Therophyte,
+PASDIL,Paspalum dilatatum Poir.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+PHOCOO,Phormium cookianum Le Jol.,GR,HR,MG,P,P,,0,Phanerophyte,Hemicryptophyte,
+PHOTEN,Phormium tenax J.R.Forst. & G.Forst.,GR,HR,MG,P,P,,0,Phanerophyte,Hemicryptophyte,
+POAANC,Poa anceps G.Forst.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+POAANN,Poa annua L.,GR,,MG,P,P,A,0,Therophyte,Therophyte,
+POACOL,Poa colensoi Hook.f.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+POAIMB,Poa imbecilla Spreng.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+POAINF,Poa infirma Kunth,GR,,MG,P,P,A,0,Therophyte,Therophyte,
+POAPRA,Poa pratensis L.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+POATRI,Poa trivialis L.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+PUCCIN,Puccinellia spp. Parl.,GR,,MG,P,P,,0,NA,Hemicryptophyte,Kew
+RYTBUC,Rytidosperma buchananii (Hook.f.) Connor & Edgar,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RYTCAE,Rytidosperma caespitosum (Gaudich.) Connor & Edgar,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RYTCLA,Rytidosperma clavatum (Zotov) Connor & Edgar,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RYTCOR,Rytidosperma corinum Connor & Edgar,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RYTGRA,Rytidosperma gracile (Hook.f.) Connor & Edgar,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RYTMER,Rytidosperma merum Connor & Edgar,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RYTPIL,Rytidosperma pilosum (R.Br.) Connor & Edgar,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RYTRAC,Rytidosperma racemosum (R.Br.) Connor & Edgar,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RYTIDO,Rytidosperma spp. Steud.,GR,,MG,P,P,,0,NA,Hemicryptophyte,
+RYTTHO,Rytidosperma thomsonii (Buchanan) Connor & Edgar,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RYTUNA,Rytidosperma unarede (Raoul) Connor & Edgar,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+SCHARU,Schedonorus arundinaceus (Schreb.) Dumort.,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+SPOAFR,Sporobolus africanus (Poir.) A.Robyns & Tournay,GR,,MG,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+TRIAES,Triticum aestivum L.,GR,,OD,P,P,A,0,Therophyte,Therophyte,
+ACAAGN,Acaena agnipila Gand.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+ACAANS,Acaena anserinifolia (J.R.Forst. & G.Forst.) J.B.Armstr.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+ACACAE,Acaena caesiiglauca (Bitter) Bergmans,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+ACADUM,Acaena dumicola B.H.Macmill.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+ACAJUV,Acaena juvenca B.H.Macmill.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+ACANOV,Acaena novae-zelandiae Kirk,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+ACAENA,Acaena spp. L.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+ACHMIL,Achillea millefolium L.,HR,,DC,P,P,,0,Chamaephyte,Chamaephyte,
+ACIAUR,Aciphylla aurea W.R.B.Oliv.,HR,,OD,P,P,,0,NA,Hemicryptophyte,http//www.nzpcn.org.nz
+ACISUB,Aciphylla subflabellata W.R.B.Oliv.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+AGAPRO,Agapanthus praecox subsp. orientalis (F.M.Leight.) F.M.Leight.,HR,,OM,P,P,,0,NA,Hemicryptophyte,http://www.plantzafrica.com
+ANIARO,Anisotome aromatica Hook.f.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+ANTCOT,Anthemis cotula L.,HR,,DC,P,P,,0,Therophyte,Therophyte,
+APIPRO,Apium prostratum Labill. ex Vent.,HR,,OD,B.P,P,,0,NA,Chamaephyte,
+ASTFRA,Astelia fragrans Colenso,HR,,OM,P,P,,0,NA,Hemicryptophyte,
+BELPER,Bellis perennis L.,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+BRAOLE,Brassica oleracea L.,HR,,OD,P,P,,0,Phanerophyte,Phanerophyte,
+BUPTEN,Bupleurum tenuissimum L.,HR,,OD,P,P,Annual,0,Therophyte,Therophyte,Therophyte
+CARHIR,Cardamine hirsuta L.,HR,,MS,P,P,Annual,0,Therophyte,Therophyte,
+CARDAM,Cardamine spp. L.,HR,,DC,P,P,,0,NA,NA,
+CARPYC,Carduus pycnocephalus L.,HR,,MS,P,P,Annual,0,Therophyte,Therophyte,
+CARDUU,Carduus spp. L.,HR,,MS,P,P,,0,NA,NA,
+CARTEN,Carduus tenuiflorus Curtis,HR,,DC,P,P,Annual,0,Therophyte,Therophyte,
+CARCOL,Carex colensoi Boott,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CARFLA,Carex flaviformis Nelmes,HR,,MS,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CARFOR,Carex forsteri Wahlenb.,HR,,MS,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CARGEM,Carex geminata Schkuhr,HR,,MS,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CARINV,Carex inversa R.Br.,HR,,MS,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CARRAO,Carex raoulii Boott,HR,,MS,P,P,,0,NA,Hemicryptophyte,cyperaceae
+CARRES,Carex resectans Cheeseman,HR,,MS,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CARSEC,Carex secta Boott,HR,,MS,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CARVIR,Carex virgata Sol. ex Boott,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CARWAK,Carex wakatipu Petrie,HR,,MS,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CAREDU,Carpobrotus edulis (L.) N.E.Br.,HR,,MS,P,P,,0,Chamaephyte,Chamaephyte,
+CELGRA,Celmisia gracilenta Hook.f.,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CELSEM,Celmisia mackaui Raoul,HR,,DC,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+CENSOL,Centaurea melitensis L.,HR,,OD,P,P,A,0,Therophyte,Therophyte,Therophyte
+CENTEN,Centaurium tenuiflorum (Hoffm. & Link) Fritsch ex Janch.,HR,,OD,P,P,A,0,NA,Therophyte,http://www.nzflora.info
+CENUNI,Centella uniflora (Colenso) Nannf.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CERFON,Cerastium fontanum Baumg.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+CERFSV,Cerastium fontanum subsp. vulgare (Hartm.) Greuter & Burdet,HR,,OD,P,P,,0,NA,Chamaephyte,
+CHACOL,Chaerophyllum colensoi (Hook.f.) K.F.Chung,HR,,OD,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+CHANOV,Chaerophyllum novae-zelandiae ,HR,,OD,P,P,,0,NA,Hemicryptophyte,
+CHARAM,Chaerophyllum ramosum (Hook.f.) K.F.Chung,HR,,OD,P,P,,0,NA,Hemicryptophyte,
+CHEALB,Chenopodium album L.,HR,,OD,P,P,A,0,Therophyte,Therophyte,
+CIRARV,Cirsium arvense (L.) Scop.,HR,,DC,P,P,,0,Geophyte,Geophyte,
+CLIVUL,Clinopodium vulgare L.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+COLSTR,Colobanthus strictus Cheeseman,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+CONMAC,Conium maculatum L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+COTAUS,Cotula australis (Spreng.) Hook.f.,HR,,DC,P,P,,0,Therophyte,Therophyte,
+CRAMIN,Craspedia minor (Hook.f.) Allan,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+CRASIE,Crassula sieberiana (Schult. & Schult.f.) Druce ,HR,,OD,P,P,A,0,NA,Therophyte,http://www.nzpcn.org.nz
+DIANTH,Dianthus spp. L.,HR,,OD,P,P,,0,NA,NA,
+DICBRE,Dichondra brevifolia Buchanan,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+DICREP,Dichondra repens J.R.Forst. & G.Forst.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+DISAUS,Disphyma australe (W.T.Aiton) N.E.Br.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+EINALL,Einadia allanii (Aellen) Paul G.Wilson,HR,,OD,P,P,,0,NA,Chamaephyte,
+EINTRI,Einadia triandra (G.Forst.) A.J.Scott,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+EPIALS,Epilobium alsinoides A.Cunn.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+EPIATR,Epilobium alsinoides subsp. atriplicifolium (A.Cunn.) P.H.Raven & Engelhorn,HR,,OD,P,P,,0,NA,Chamaephyte,
+EPICIN,Epilobium billardierianum Ser. ex DC. subsp. cinereum (A. Rich. in d'Urv.) P.H. Raven & Engelhorn,HR,,OD,P,P,,0,NA,Chamaephyte,
+EPIBRU,Epilobium brunnescens (Cockayne) P.H.Raven & Engelhorn subsp. brunnescens,HR,,OD,P,P,,0,NA,Chamaephyte,
+EPICIL,Epilobium ciliatum Raf.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+EPIINS,Epilobium insulare Hausskn.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+EPIKOM,Epilobium komarovianum H.Lév.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+EPINER,Epilobium nerteroides A.Cunn.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+EPINUM,Epilobium nummulariifolium A.Cunn.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+EPIPUB,Epilobium pubens A.Rich.,HR,,OD,P,P,,0,NA,Chamaephyte,
+EPIROT,Epilobium rotundifolium G.Forst.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+EPILOB,Epilobium spp. L.,HR,,OD,P,P,,0,NA,Hemicryptophyte,
+CHECHE,Erysimum cheiri L.,HR,,OD,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+GNAAUD,Euchiton audax (D.G.Drury) Holub,HR,,DC,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+GNAINV,Euchiton involucratus (G.Forst.) Holub,HR,,DC,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+GNAGYM,Euchiton japonicus (Thunb.) Holub,HR,,DC,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+GNALIM,Euchiton limosus (D.G.Drury) Holub,HR,,DC,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+EUCSPH,Euchiton sphaericus (Willd.) Holub,HR,,DC,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+GNAPHA,Euchiton spp. L.,HR,,DC,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+FICNOD,"Ficinia nodosa (Rottb.) Goetgh., Muasya & D.A.Simpson",HR,,MS,P,P,,0,NA,Hemicryptophyte,Cyperaceae
+FOEVUL,Foeniculum vulgare Mill.,HR,,OD,P,P,,0,Phanerophyte,Phanerophyte,
+GALPER,Galium perpusillum (Hook.f.) Allan,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+GAZANI,Gazania spp. Gaertn.,HR,,DC,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+GERBRE,Geranium brevicaule Hook.f.,HR,,OD,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+GERMIC,Geranium microphyllum Hook.f.,HR,,OD,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+GERRET,Geranium retrorsum L'Hér. ex DC.,HR,,OD,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+GERSES,Geranium sessiliflorum Cav.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+GERSOL,Geranium solanderi Carolin,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+GINENY,Gingidia enysii var. peninsulare J.W.Dawson,HR,,OD,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+GUNMON,Gunnera monoica Raoul,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+HALERE,Haloragis erecta (Banks ex Murray) Oken,HR,,OD,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+HELFIL,Helichrysum filicaule Hook.f.,HR,,DC,P,P,,0,Chamaephyte,Chamaephyte,
+HELECH,Helminthotheca echioides (L.) Holub,HR,,DC,P,P,,0,Therophyte,Hemicryptophyte,biennial  http://www.nzflora.info
+HIELEP,Hieracium lepidulum (Stenstr.) Omang,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+HIEPIL,Hieracium pilosella L.,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+HIEPRA,Hieracium praealtum Gochnat,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+HIRINC,Hirschfeldia incana (L.) Lagr.-Foss.,HR,,OD,P,P,,0,Therophyte,Hemicryptophyte,http://plants.usda.gov/
+HYDAME,Hydrocotyle americana L.,HR,,OD,P,P,,0,NA,Chamaephyte,http://plants.usda.gov/
+HYDELO,Hydrocotyle elongata A.Cunn.,HR,,OD,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+HYDHET,Hydrocotyle heteromeria A.Rich.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+HYDMOS,Hydrocotyle moschata G.Forst.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+HYDNOV,Hydrocotyle novae-zeelandiae DC.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+HYDMON,Hydrocotyle novae-zeelandiae var. montana Kirk,HR,,OD,P,P,,0,NA,Chamaephyte,
+HYPJAP,Hypericum pusillum Choisy,HR,,DC,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+HYPGLA,Hypochaeris glabra L.,HR,,OD,P,P,A,0,Therophyte,Therophyte,
+HYPRAD,Hypochaeris radicata L.,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+IRIFOE,Iris foetidissima L.,HR,,OM,P,P,,0,Chamaephyte,Chamaephyte,
+JUNART,Juncus articulatus L.,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+JUNAUS,Juncus australis Hook.f.,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+JUNDIS,Juncus distegus Edgar,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+JUNEDG,Juncus edgariae L.A.S.Johnson & K.L.Wilson,HR,,MR,P,P,,0,NA,Hemicryptophyte,juncus
+JUNEFF,Juncus effusus L.,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+JUNFIL,Juncus filicaulis Buchenau,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+JUNKRA,Juncus kraussii Hochst.,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+JUNPLA,Juncus planifolius R.Br.,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+JUNSAR,Juncus sarophorus L.A.S.Johnson,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+JUNCUS,Juncus spp. L.,HR,,MR,P,P,,0,NA,Hemicryptophyte,
+JUNTEN,Juncus tenuis Willd.,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LAGCUN,Lagenifera cuneata Petrie,HR,,DC,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+LAGPIN,Lagenifera pinnatifida Hook.f.,HR,,DC,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+LAGPUM,Lagenifera pumila (G.Forst.) Cheeseman,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LAMPUR,Lamium purpureum L.,HR,,OD,P,P,A,0,Therophyte,Therophyte,
+LEOTAR,Leontodon saxatilis Lamarck,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LEPAFR,Lepidium africanum (Burm.f.) DC.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LEPDES,Lepidium desvauxii Thell.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LEPDRA,Lepidium draba L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LEPHYS,Lepidium hyssopifolium Desv.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LEPPSE,Lepidium pseudotasmanicum Thell.,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LEPSQU,Lepidium squamatum Forssk.,HR,,OD,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+LEPDIO,Leptinella dioica Hook.f.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LEPMIN,Leptinella minor Hook.f.,HR,,DC,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+LEPPUS,Leptinella pusilla Hook.f.,HR,,DC,P,P,,0,Chamaephyte,Chamaephyte,
+LEPSQA,Leptinella squalida Hook.f.,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LEPSET,Leptostigma setulosa (Hook.f.) Fosberg,HR,,OD,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+LEUVUL,Leucanthemum vulgare Lam.,HR,,DC,P,P,,0,Phanerophyte,Phanerophyte,
+LIBIXI,Libertia ixioides (G.Forst.) Spreng.,HR,,OM,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LINPUR,Linaria purpurea (L.) Mill.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LINBIE,Linum bienne Mill.,HR,,OD,P,P,,0,Therophyte,Hemicryptophyte,http://plants.usda.gov
+PRAANG,Lobelia angulata G.Forst.,HR,,MO,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+LOBMAR,Lobularia maritima (L.) Desv.,HR,,OD,P,P,A,0,Therophyte,Therophyte,
+LOTPED,Lotus pedunculatus Cav.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LUZORI,Luzula banksiana var. orina Edgar,HR,,MR,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+LUZCON,Luzula congesta (Thuill.) Lej.,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LUZPIC,Luzula picta A.Rich.,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+LUZPVL,Luzula picta var. limosa Edgar,HR,,MR,P,P,,0,NA,Hemicryptophyte,subspecies
+LUZPAL,Luzula picta var. pallida (Hook.f.) Edgar,HR,,MR,P,P,,0,NA,Hemicryptophyte,subspecies
+LUZRUF,Luzula rufa Edgar,HR,,MR,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+MALDEN,Malva arborea L.,HR,,OD,P,P,,0,NA,Hemicryptophyte,biennial  http://www.nzflora.info
+MALSYL,Malva sylvestris L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+MARVUL,Marrubium vulgare L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+MEDNIG,Medicago nigra (L.) Krock.,HR,,OD,P,P,A,0,Therophyte,Therophyte,http://www.nzflora.info
+MELIND,Melilotus indicus (L.) All.,HR,,OD,P,P,A,0,Therophyte,Therophyte,http://www.nzflora.info
+MENCUN,Mentha cunninghamii Benth.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+MICOLI,Microtis oligantha L.B.Moore,HR,,MO,P,P,,0,Geophyte,Geophyte,
+MICUNI,Microtis unifolia (G.Forst.) Rchb.f.,HR,,MO,P,P,,0,Geophyte,Geophyte,
+MIMGUT,Mimulus guttatus DC.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+MIMMOS,Mimulus moschatus Lindl.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+MYCMUR,Mycelis muralis (L.) Dumort.,HR,,DC,P,P,,0,Phanerophyte,Phanerophyte,
+MYOARV,Myosotis arvensis (L.) Hill,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+NASMIC,Nasturtium microphyllum Boenn. ex Rchb.,HR,,OD,P,P,,0,Helophyte,Helophyte,
+NASOFF,Nasturtium officinale R.Br.,HR,,OD,P,P,,0,Helophyte,Helophyte,
+NEMMAC,Nematoceras macranthum Hook.f.,HR,,MO,P,P,,0,NA,Geophyte,http://www.nzpcn.org.nz
+NEMTRI,Nematoceras trilobum Hook.f.,HR,,MO,P,P,,0,NA,Geophyte,http://www.nzpcn.org.nz
+NERDEP,Nertera depressa Banks & Sol. ex Gaertn.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+OROMIN,Orobanche minor Sm.,HR,,OD,P,P,A,0,Therophyte,Therophyte,therophyte
+OURLAC,Ourisia macrophylla subsp. lactea (L.B.Moore) Meudt,HR,,OD,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+OXAART,Oxalis articulata Savigny,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+OXACOR,Oxalis corniculata L.,HR,,OD,P,P,A,0,Therophyte,Therophyte,
+OXAEXI,Oxalis exilis A.Cunn.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+OXALAT,Oxalis latifolia Kunth,HR,,OD,P,P,,0,Geophyte,Geophyte,
+OXARUB,Oxalis rubens Haw.,HR,,OD,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+PARVIS,Parentucellia viscosa (L.) Caruel,HR,,OD,P,P,A,0,Therophyte,Therophyte,http://plants.usda.gov
+PASSAT,Pastinaca sativa L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+PELINO,Pelargonium inodorum Willd.,HR,,OD,P,P,A,0,Therophyte,Therophyte,http://plants.usda.gov
+PHYOCT,Phytolacca octandra L.,HR,,OD,P,P,,0,Phanerophyte,Phanerophyte,
+PILOFF,Pilosella officinarum Vaill.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+PLACOR,Plantago coronopus L.,HR,,OD,P,P,A,0,Therophyte,Therophyte,http://plants.usda.gov
+PLALAN,Plantago lanceolata L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+PLAMAJ,Plantago major L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+POLTET,Polycarpon tetraphyllum L.,HR,,OD,P,P,A,0,NA,Hemicryptophyte,http://www.nzflora.info
+POLAVI,Polygonum aviculare L.,HR,,OD,P,P,,0,Therophyte,Therophyte,
+PRACOL,Prasophyllum colensoi Hook.f.,HR,,OD,P,P,,0,Geophyte,Geophyte,
+PRUTAX,Prumnopitys taxifolia (D.Don) de Laub.,HR,,OD,P,P,,0,Phanerophyte,Phanerophyte,
+PRUVUL,Prunella vulgaris L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+PSELUT,Pseudognaphalium luteoalbum (L.) Hilliard & B.L.Burtt,HR,,DC,P,P,,0,Chamaephyte,Chamaephyte,
+PTEARE,Pterostylis areolata Petrie,HR,,MO,P,P,,0,Geophyte,Geophyte,
+PTEAUS,Pterostylis australis Hook.f.,HR,,MI,P,P,,0,Geophyte,Geophyte,
+PTEGRA,Pterostylis graminea Hook.f.,HR,,MO,P,P,,0,Geophyte,Geophyte,
+PTEMON,Pterostylis montana Hatch,HR,,MO,P,P,,0,Geophyte,Geophyte,
+PTEROS,Pterostylis spp. R.Br.,HR,,MO,P,P,,0,NA,Geophyte,genus
+RANFOL,Ranunculus foliosus Kirk,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RANGLA,Ranunculus glabrifolius Hook.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RANMUL,Ranunculus multiscapus Hook.f.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RANREF,Ranunculus reflexus Garn.-Jones,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RANREP,Ranunculus repens L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RAOGLA,Raoulia glabra Hook.f.,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RAOSUB,Raoulia subsericea Hook.f.,HR,,DC,P,P,,0,Chamaephyte,Chamaephyte,
+ROMMIN,Romulea minutiflora Klatt,HR,,OM,P,P,,0,NA,Geophyte,cormous http://florabase.dpaw.wa.gov.au
+RUMACE,Rumex acetosella L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RUMCRI,Rumex crispus L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RUMFLE,Rumex flexuosus Sol. ex G.Forst.,HR,,OD,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+RUMOBT,Rumex obtusifolius L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+RUMPUL,Rumex pulcher L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+SAGPRO,Sagina procumbens L.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+SARQUI,Sarcocornia quinqueflora (Bunge ex Ung.-Sternb.) A.J.Scott subsp. quinqueflora ,HR,,OD,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+SCAGEN,Scandia geniculata (G.Forst.) J.W.Dawson,HR,SH,OD,P,P,,0,NA,Phanerophyte,http://www.nzpcn.org.nz/
+SCHTRI,Schizeilema trifoliolatum (Hook.f.) Domin,HR,,MS,P,P,,0,Chamaephyte,Chamaephyte,
+SCHPUN,Schoenoplectus pungens (Vahl) Palla,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+SCLBRO,Scleranthus brockiei P.A.Williamson,HR,,OD,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+SCLUNI,Scleranthus uniflorus P.A.Williamson,HR,,OD,P,P,,0,NA,Chamaephyte,http://www.nzflora.info
+SEDACR,Sedum acre L.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+SEDPRA,Sedum praealtum A.DC.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+SELRAD,Selliera radicans Cav.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+SENCAR,Senecio carnosulus (Kirk) C.J.Webb,HR,,DC,P,P,,0,NA,Therophyte,http://www.nzflora.info
+SENGLA,Senecio glaucophyllus Cheeseman,HR,,DC,P,P,,0,Chamaephyte,Chamaephyte,
+SENQUA,Senecio quadridentatus Labill.,HR,,DC,P,P,,0,Chamaephyte,Chamaephyte,
+SILCOR,Silene coronaria (L.) Clairv.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+SOLCHE,Solanum chenopodioides Lam.,HR,,OD,P,P,,0,Phanerophyte,Phanerophyte,
+SOLDUL,Solanum dulcamara L.,HR,,OD,P,P,,0,Phanerophyte,Phanerophyte,
+SOLNIG,Solanum nigrum L.,HR,,DC,P,P,,0,Therophyte,Therophyte,
+SOLDOM,Solenogyne dominii L.G.Adams,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+SOLENO,Solenogyne spp. Cass.,HR,,OD,P,P,,0,NA,Hemicryptophyte,genus  http://www.nzflora.info
+SPEMED,Spergularia tasmanica (Kindb.) L.G.Adams,HR,,OD,P,P,,0,NA,Chamaephyte,http://www.nzpcn.org.nz/
+STAMIN,Stackhousia minima Hook.f.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+STEALS,Stellaria alsine Grimm,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+STEGRA,Stellaria gracilenta Hook.f.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+STEMED,Stellaria media (L.) Vill.,HR,,OD,P,P,,0,Therophyte,Therophyte,
+TAROFF,Taraxacum officinale F.H.Wigg.,HR,,DC,P,P,,0,NA,Hemicryptophyte,http://www.nzflora.info
+THELON,Thelymitra longifolia J.R.Forst. & G.Forst.,HR,,MO,P,P,,0,Geophyte,Geophyte,
+TRIMIC,Trifolium micranthum Viv.,HR,,OD,P,P,A,0,Therophyte,Therophyte,http://www.nzflora.info
+TRIORN,Trifolium ornithopodioides L.,HR,,OD,P,P,,0,Therophyte,Therophyte,http://www.nzflora.info
+TRIFOL,Trifolium spp. L.,HR,,OD,P,P,,0,NA,NA,
+TRISUF,Trifolium suffocatum L.,HR,,OD,P,P,A,0,Therophyte,Therophyte,http://www.nzflora.info
+UNCLEP,Uncinia leptostachya Raoul,HR,,MS,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+UNCRUB,Uncinia rubra Boott,HR,,MS,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+UNCRUP,Uncinia rupestris Raoul,HR,,MS,P,P,,0,NA,Hemicryptophyte,http://www.nzpcn.org.nz/
+UNCSCA,Uncinia scabra Boott,HR,,MS,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+UNCINI,Uncinia spp. Pers.,HR,,MS,P,P,,0,NA,Hemicryptophyte,http://www.nzpcn.org.nz/
+UNCUNC,Uncinia uncinata (L.f.) Kük.,HR,,MS,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+URTFER,Urtica ferox G.Forst.,HR,,OD,P,P,,0,Phanerophyte,Phanerophyte,
+URTINC,Urtica incisa Poir.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+VERVIR,Verbascum virgatum Stokes,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+VINMAJ,Vinca major L.,HR,,OD,P,P,,0,Phanerophyte,Phanerophyte,
+VIOCUN,Viola cunninghamii Hook.f.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+VIOFIL,Viola filicaulis Hook.f.,HR,,OD,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+VITAUS,Vittadinia australis A.Rich.,HR,,DC,P,P,,0,Hemicryptophyte,Hemicryptophyte,
+VITGRA,Vittadinia gracilis (Hook.f.) N.T.Burb.,HR,,DC,P,P,,0,Phanerophyte,Phanerophyte,
+WAHALB,Wahlenbergia albomarginata Hook.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+WAHGRA,Wahlenbergia gracilis (G.Forst.) A.DC.,HR,,OD,P,P,,0,Chamaephyte,Chamaephyte,
+ACAANE,Acacia aneura F. Muell.,SH,,SH,P,P,,1,NA,Phanerophyte,http://www.anbg.gov.au/abrs/online-resources/flora/
+ACADEA,Acacia dealbata Link,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+ACRCOL,Acrothamnus colensoi (Hook.f.) Quinn,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+BERGLA,Berberis glaucocarpa Stapf,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+CALSTA,Callitriche stagnalis Scop.,SH,,DL,P,P,,1,Hydrophyte,Hydrophyte,
+CALSIL,Calystegia silvatica (Kit.) Griseb.,SH,,DL,P,P,,1,Phanerophyte,Phanerophyte,
+CALTUG,Calystegia tuguriorum (G.Forst.) R.Br. ex Hook.f.,SH,,DL,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+CARAUS,Carmichaelia australis R.Br.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+CARMIC,Carmichaelia spp. R.Br.,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+CHRMON,Chrysanthemoides monilifera (L.) Norl.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+CLEAFO,Clematis afoliata Buchanan,SH,,DL,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+CLEFOE,Clematis foetida Raoul,SH,,DL,P,P,,1,Phanerophyte,Phanerophyte,
+CLEPAN,Clematis paniculata J.F.Gmel.,SH,,DL,P,P,,1,Phanerophyte,Phanerophyte,
+CLEVIT,Clematis vitalba L.,SH,,DL,P,P,,1,Phanerophyte,Phanerophyte,
+COPARE,Coprosma areolata Cheeseman,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COPCIL,Coprosma ciliata Hook.f.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COPCRA,Coprosma crassifolia Colenso,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COPLUC,Coprosma lucida J.R.Forst. & G.Forst.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COPOBC,Coprosma obconica Kirk,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+COPPRO,Coprosma propinqua A.Cunn.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COPRHA,Coprosma rhamnoides A.Cunn.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COPRIG,Coprosma rigida Cheeseman,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COPROB,Coprosma robusta Raoul,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COPROT,Coprosma rotundifolia A.Cunn.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COPRUB,Coprosma rubra Petrie,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COPROS,Coprosma spp. J.R.Forster & G.Forster,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+COPVIR,Coprosma virescens Petrie,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COPWAL,Coprosma wallii Petrie in Cheeseman,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+CORSAR,Coriaria sarmentosa G.Forst.,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+CORCOT,Corokia cotoneaster Raoul,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+COTONE,Cotoneaster spp. Medik.,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+COTORB,Cotyledon orbiculata L.,SH,,SH,P,P,,1,Chamaephyte,Chamaephyte,
+CYTSCO,Cytisus scoparius (L.) Link,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+DISTOU,Discaria toumatou Raoul,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+DRAACE,Dracophyllum acerosum Berggr.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+ECHCAN,Echium candicans L.f.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+FORSYT,Forsythia spp. Vahl,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+FUCCOL,Fuchsia ×colensoi Hook.f.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+FUCMAG,Fuchsia magellanica Lam.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+FUCPER,Fuchsia perscandens Cockayne & Allan ,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+GAUANT,Gaultheria antipoda G.Forst.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+GAUDEP,Gaultheria depressa Hook.f.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+GAUDVN,Gaultheria depressa var. novae-zelandiae D.A.Franklin ,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+TELMON,Genista monspessulana (L.) L.A.S.Johnson,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+HEBSAL,Hebe salicifolia (G.Forst.) Pennell,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+HEBSTR,Hebe strictissima (Kirk) L.B.Moore,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+HEDHEL,Hedera helix L.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+HEBLAV,Heliohebe lavaudiana (Raoul) Garn.-Jones,SH,,SH,P,P,,1,Chamaephyte,Chamaephyte,
+HYPAND,Hypericum androsaemum L.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+ILEMIC,Ileostylus micranthus (Hook.f.) Tiegh.,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+LEPJUN,Leptecophylla juniperina (J.R.Forst. & G.Forst.) C.M.Weiller,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+LEPSCO,Leptospermum scoparium J.R.Forst. & G.Forst.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+LEUFAS,Leucopogon fasciculatus (G.Forst.) A.Rich.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+LEUFRA,Leucopogon fraseri A.Cunn.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+LEYFOR,Leycesteria formosa Wall.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+LOPBUL,Lophomyrtus bullata (Sol. ex A.Cunn.) Burret,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+LYCFER,Lycium ferocissimum Miers,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+MACEXC,Macropiper excelsum (G.Forst.) Miq.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+MELALP,Melicytus alpinus (Kirk) Garn.-Jones,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+MELCRA,Melicytus crassifolius (Hook.f.) Garn.-Jones,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+MELICY,Melicytus spp. J.R.Forst. & G.Forst.,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+MUEAUS,Muehlenbeckia australis (G.Forst.) Meisn.,SH,,DL,P,P,,1,Phanerophyte,Phanerophyte,
+MUECOM,Muehlenbeckia complexa (A.Cunn.) Meisn.,SH,,DL,P,P,,1,Phanerophyte,Phanerophyte,
+MYRDIV,Myrsine divaricata A.Cunn.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+NEOPED,Neomyrtus pedunculata (Hook.f.) Allan,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+OLEILI,Olearia ilicifolia Hook.f.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+PLADIV,Plagianthus divaricatus J.R.Forst. & G.Forst.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+RIBSAN,Ribes sanguineum Pursh,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+RIBUVA,Ribes uva-crispa L.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+RIPSCA,Ripogonum scandens J.R.Forst. & G.Forst.,SH,,ML,P,P,,1,Phanerophyte,Phanerophyte,
+ROSRUB,Rosa rubiginosa L.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+RUBECH,Rubus caesius L.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+RUBCIS,Rubus cissoides A.Cunn.,SH,,DL,P,P,,1,Phanerophyte,Phanerophyte,
+RUBFRU,Rubus fruticosus L.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+RUBIDA,Rubus idaeus L.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+RUBSCH,Rubus schmidelioides A.Cunn.,SH,,DL,P,P,,1,Phanerophyte,Phanerophyte,
+RUBSUB,Rubus schmidelioides var. subpauperatus (Cockayne) Allan,SH,,DL,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+RUBSQU,Rubus squarrosus Fritsch,SH,,DL,P,P,,1,Phanerophyte,Phanerophyte,
+SOLAVI,Solanum aviculare G.Forst. var. aviculare,SH,,SH,P,P,,1,NA,Phanerophyte,Growth.forms:Shrub
+SOLLAC,Solanum laciniatum Aiton,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+SOLMAR,Solanum marginatum L.f.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+SOPPRO,Sophora prostrata Buchanan,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+ULEEUR,Ulex europaeus L.,SH,,SH,P,P,,1,Phanerophyte,Phanerophyte,
+ACAMEA,Acacia mearnsii De Wild.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+ACEPSE,Acer pseudoplatanus L.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+ALEEXC,Alectryon excelsus Gaertn.,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+ARISER,Aristotelia serrata (J.R.Forst. & G.Forst.) W.R.B.Oliv.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+CARSER,Carpodetus serratus J.R.Forst. & G.Forst.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+CEDATL,Cedrus atlantica (Endl.) Carrière,TR,,GY,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+CHAPAL,Chamaecytisus palmensis (H.Christ) F.A.Bisby & K.W.Nicholls,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+COLPUL,Coleonema pulchrum Hook.,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+COPPAR,Coprosma dumosa (Cheeseman) G.T.Jane,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+COPLIN,Coprosma linariifolia Hook.f.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+COPREP,Coprosma repens A.Rich.,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+CORAUS,Cordyline australis (G.Forst.) Endl.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+CORARB,Coriaria arborea Linds.,TR,,MT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+CORFIC,Corymbia ficifolia (F.Muell.) K.D.Hill & L.A.S.Johnson,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+CRAMON,Crataegus monogyna Jacq.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+CUPMAC,Cupressus macrocarpa Hartw. ex Gordon,TR,,GY,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+CUPSEM,Cupressus sempervirens L.,TR,,GY,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+DACDAC,Dacrycarpus dacrydioides (A.Rich.) de Laub.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+DODVIS,Dodonaea viscosa Jacq.,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+EUCGLO,Eucalyptus globulus Labill.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+EUCOBL,Eucalyptus obliqua L'Hér.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+EUCALY,Eucalyptus spp. L'Hér.,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+FUCEXC,Fuchsia excorticata (J.R.Forst. & G.Forst.) L.f.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+GRILIT,Griselinia littoralis Raoul,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+HEDARB,Hedycarya arborea J.R.Forst. & G.Forst. ,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+HOHANG,Hoheria angustifolia Raoul,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+HOHPOP,Hoheria populnea A.Cunn.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+JUGREG,Juglans regia L.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+KUNERI,Kunzea ericoides (A.Rich.) Joy Thomps.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+LOPOBC,Lophomyrtus obcordata (Raoul) Burret,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+MELRAM,Melicytus ramiflorus J.R.Forst. & G.Forst.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+METDIF,Metrosideros diffusa (G.Forst.) Sm.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+MYRAUS,Myrsine australis (A.Rich.) Allan,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+NOTFUS,Nothofagus fusca (Hook.f.) Oerst. (1873),TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+OLEPAN,Olearia paniculata (J.R.Forst. & G.Forst.) Druce,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PENCOR,Pennantia corymbosa J.R.Forst. & G.Forst.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PINRAD,Pinus radiata D.Don,TR,,GY,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PITEUG,Pittosporum eugenioides A.Cunn.,TR,,GY,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PITTEN,Pittosporum tenuifolium Sol. ex Gaertn.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PLAREG,Plagianthus regius (Poit.) Hochr.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PLARES,Plagianthus regius (Poit.) Hochr. subsp. regius,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+PODHAL,Podocarpus hallii Kirk,TR,,GY,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PODTOT,Podocarpus totara G.Benn. ex D.Don,TR,,GY,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PRUCER,Prunus cerasifera Ehrh.,TR,,GY,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PSEARB,Pseudopanax arboreus (Murray) Philipson,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PSECRA,Pseudopanax crassifolius (Sol. ex A.Cunn.) K.Koch,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PSEFER,Pseudopanax ferox Kirk,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+PSEMEN,Pseudotsuga menziesii (Mirb.) Franco,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PSECOL,Pseudowintera colorata (Raoul) Dandy,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+QUEROB,Quercus robur L.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+PSEANO,"Raukaua anomalus (Hook.) A.D.Mitch., Frodin & Heads",TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+SALFRA,Salix ×fragilis L.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+SALCIN,Salix cinerea L.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+SAMNIG,Sambucus nigra L.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+SCHDIG,Schefflera digitata J.R.Forst. & G.Forst.,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+SOPMIC,Sophora microphylla Aiton,TR,,DT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+STRHET,Streblus heterophyllus (Blume) Corner,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree
+TRAFOR,Trachycarpus fortunei (Hook.) H.Wendl.,TR,,MT,P,P,,1,Phanerophyte,Phanerophyte,Growth.forms:Tree
+TUPANT,Tupeia antarctica (G.Forst.) Cham. & Schltdl.,TR,,DT,P,P,,1,NA,Phanerophyte,Growth.forms:Tree

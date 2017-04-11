@@ -1,0 +1,270 @@
+obs,spcode,name,date,rep,location,Hveg,Hrep,leaf sample?,comment
+1,MUECOM,Muehlenbeckia complexa,29-Nov,5,Hoon Hay,150,,photo,
+2,MUECOM,Muehlenbeckia complexa,29-Nov,6,Hoon Hay,70,,photo,
+3,MUECOM,Muehlenbeckia complexa,29-Nov,7,Hoon Hay,120,,photo,
+4,MUECOM,Muehlenbeckia complexa,29-Nov,8,Hoon Hay,80,,photo,
+5,MUECOM,Muehlenbeckia complexa,29-Nov,9,Hoon Hay,70,80,,
+6,MUECOM,Muehlenbeckia complexa,29-Nov,10,Hoon Hay,40,,photo,
+7,POLOCU,Polystichum oculatum,29-Nov,1,Dyers Pass,60,,,will be used for POLNEO
+8,POLOCU,Polystichum oculatum,29-Nov,2,Dyers Pass,90,,,will be used for POLNEO
+9,POLOCU,Polystichum oculatum,29-Nov,3,Hoon Hay,85,,,will be used for POLNEO
+10,POLOCU,Polystichum oculatum,29-Nov,4,Hoon Hay,40,,,will be used for POLNEO
+11,POLOCU,Polystichum oculatum,29-Nov,5,Hoon Hay,90,,photo,will be used for POLNEO
+12,ACANOV,Acaena novae-zelandiae,29-Nov,1,Dyers Pass,4.5,8,photo,
+13,ACANOV,Acaena novae-zelandiae,29-Nov,2,Dyers Pass,8.5,11,photo,
+14,ACANOV,Acaena novae-zelandiae,29-Nov,3,Hoon Hay,24,32,photo,
+15,ACANOV,Acaena novae-zelandiae,29-Nov,4,Hoon Hay,10,11,photo,originally noted as another number 3
+16,ACANOV,Acaena novae-zelandiae,29-Nov,5,Hoon Hay,8,13,,originally noted as number 4
+17,ACAANS,Acaena anserinifolia,29-Nov,1,Dyers Pass,12,16,photo,"probably more NZ : slightly downy upper leaf surface is confusing, but the spines on the burrs were bright purple, which should be NZ"
+18,ACAANS,Acaena anserinifolia,29-Nov,2,Hoon Hay,30,38,photo,"used to be #3. probably more NZ : slightly downy upper leaf surface is confusing, but the used to be #2. spines on the burrs were bright purple, which should be NZ"
+19,ACAANS,Acaena anserinifolia,29-Nov,3,Hoon Hay,14,20,photo,"used to be #2. probably more NZ : slightly downy upper leaf surface is confusing, but the spines on the burrs were bright purple, which should be NZ"
+20,ACAANS,Acaena anserinifolia,29-Nov,4,Hoon Hay,33,40,photo,"probably more NZ : slightly downy upper leaf surface is confusing, but the spines on the burrs were bright purple, which should be NZ"
+21,ASPFLB,Asplenium flabellifolium,29-Nov,1,Hoon Hay,40,,photo,
+22,PTEESC,Pteridium esculentum,29-Nov,1,Hoon Hay,70,,,
+23,PTEESC,Pteridium esculentum,29-Nov,2,Hoon Hay,65,,,
+24,POACIT,Poa cita,29-Nov,1,Dyers Pass,80,,no leaf,not necessary
+25,POACIT,Poa cita,29-Nov,2,Dyers Pass,73,,no leaf,not necessary
+26,POACIT,Poa cita,29-Nov,3,Dyers Pass,65,,no leaf,not necessary
+27,MUEAUS,Muehlenbeckia australis,29-Nov,1,Hoon Hay,57,26,no leaf,not necessary
+28,MUEAUS,Muehlenbeckia australis,29-Nov,2,Hoon Hay,87,52,no leaf,not necessary
+29,MUEAUS,Muehlenbeckia australis,29-Nov,3,Hoon Hay,60,60,no leaf,not necessary
+30,VITGRA,Vittadinia gracilis,30-Nov,1,Godley head,39,40,y,
+31,VITGRA,Vittadinia gracilis,30-Nov,2,Godley head,17,21,y,
+32,VITGRA,Vittadinia gracilis,30-Nov,3,Godley head,24,27,y,
+33,VITGRA,Vittadinia gracilis,30-Nov,4,Godley head,21,22,y,
+34,VITGRA,Vittadinia gracilis,30-Nov,5,Godley head,19,20,y,
+35,VITGRA,Vittadinia gracilis,30-Nov,6,Godley head,14,15,no leaf,
+36,VITGRA,Vittadinia gracilis,30-Nov,7,Godley head,24,29,y,
+37,SILMAR,Silybum marianum,30-Nov,1,Godley head,80,92,y,
+38,SILMAR,Silybum marianum,30-Nov,2,Godley head,160,175,y,
+39,SILMAR,Silybum marianum,30-Nov,3,Godley head,95,102,y,
+40,SILMAR,Silybum marianum,30-Nov,4,Godley head,70,90,y,
+41,SILMAR,Silybum marianum,30-Nov,5,Godley head,100,120,y,
+42,CONVER,Convolvulus waitaha,30-Nov,1,Godley head,30,,y,
+43,CONVER,Convolvulus waitaha,30-Nov,2,Godley head,22,,,
+44,CONVER,Convolvulus waitaha,30-Nov,3,Godley head,27,20,y,
+45,CONVER,Convolvulus waitaha,30-Nov,4,Godley head,30,29,y,
+46,CONVER,Convolvulus waitaha,30-Nov,5,Godley head,29,25,y,
+47,CONVER,Convolvulus waitaha,30-Nov,6,Godley head,24,23,,
+48,CONVER,Convolvulus waitaha,30-Nov,7,Godley head,23,20,,
+49,CONVER,Convolvulus waitaha,30-Nov,8,Godley head,17,14,y,
+50,ACANOV,Acaena novae-zelandiae,30-Nov,1,Godley head,20,26,y,
+51,ACANOV,Acaena novae-zelandiae,30-Nov,2,Godley head,16,21,y,
+52,ACANOV,Acaena novae-zelandiae,30-Nov,3,Godley head,14,18,y,
+53,ACANOV,Acaena novae-zelandiae,30-Nov,4,Godley head,9,14,y,
+54,ACAAGN,Acaena agnipila,30-Nov,1,Godley head,9,22,y,
+55,CARAUS,Carmichaelia australis,30-Nov,1,Godley head,,,y,"fallen shrub, but still alive and with flowers"
+56,ACAAGN,Acaena agnipila,4-Dec,1,Birdlings flat,8,25,y,
+57,ACAAGN,Acaena agnipila,4-Dec,2,Birdlings flat,3,,y,
+58,ACAAGN,Acaena agnipila,4-Dec,3,Birdlings flat,4,14,y,
+59,ACAAGN,Acaena agnipila,4-Dec,4,Birdlings flat,3,18,y,
+60,ACAAGN,Acaena agnipila,4-Dec,5,Birdlings flat,3,19,,
+61,ACAAGN,Acaena agnipila,4-Dec,6,Birdlings flat,4,14,,
+62,ACAAGN,Acaena agnipila,4-Dec,7,Birdlings flat,7,22,,
+63,ACAAGN,Acaena agnipila,4-Dec,8,Birdlings flat,7,25,,
+64,POLVES,Polystichum vestitum,4-Dec,1,Kennedys bush,120,,y,
+65,POLVES,Polystichum vestitum,4-Dec,2,Kennedys bush,100,,y,
+66,POLVES,Polystichum vestitum,4-Dec,3,Kennedys bush,100,,y,
+67,POLVES,Polystichum vestitum,4-Dec,4,Kennedys bush,80,,y,
+68,POLVES,Polystichum vestitum,4-Dec,5,Kennedys bush,80,,y,
+69,HELBEL,Anaphalioides bellidioides,4-Dec,1,Kennedys bush,8,18,y,written aciphylla on the paper bag
+70,HELBEL,Anaphalioides bellidioides,4-Dec,2,Kennedys bush,10,17,y,written aciphylla on the paper bag
+71,HELBEL,Anaphalioides bellidioides,4-Dec,3,Kennedys bush,11,21,y,written aciphylla on the paper bag
+72,HELBEL,Anaphalioides bellidioides,4-Dec,4,Kennedys bush,5,15,y,written aciphylla on the paper bag
+73,HELBEL,Anaphalioides bellidioides,4-Dec,5,Kennedys bush,8,18,y,written aciphylla on the paper bag
+74,CARAUS,Carmichaelia australis,5-Dec,1,Lyttleton scenic reserve,170,160,y,
+75,CARAUS,Carmichaelia australis,5-Dec,2,Mount Pleasant,75,62,y,
+76,CARAUS,Carmichaelia australis,5-Dec,3,Mount Pleasant,130,120,y,
+77,ACISUB,Aciphylla subflabellata,5-Dec,1,Mount Pleasant,35,60,Y,male
+78,ACISUB,Aciphylla subflabellata,5-Dec,2,Mount Pleasant,55,70,y,male
+79,ACISUB,Aciphylla subflabellata,5-Dec,3,Mount Pleasant,76,76,y,female
+80,ACISUB,Aciphylla subflabellata,5-Dec,4,Mount Pleasant,55,80,y,female
+81,ACISUB,Aciphylla subflabellata,5-Dec,5,Mount Pleasant,66,63,y,male
+82,ACISUB,Aciphylla subflabellata,5-Dec,6,Mount Pleasant,36,90,,male
+83,ACISUB,Aciphylla subflabellata,5-Dec,7,Mount Pleasant,30,,,male
+84,ASPFLB,Asplenium flabellifolium,5-Dec,1,Mount Pleasant,40,40,y,under rock (shade)
+85,ASPFLB,Asplenium flabellifolium,5-Dec,2,Mount Pleasant,9,9,y,"on a rock, in crack"
+86,ASPFLB,Asplenium flabellifolium,5-Dec,3,Mount Pleasant,17,17,y,
+87,ASPFLB,Asplenium flabellifolium,5-Dec,4,Mount Pleasant,15,15,y,
+88,ASPFLB,Asplenium flabellifolium,5-Dec,5,Mount Pleasant,16,16,y,
+89,GALPRO,Galium propinquum,5-Dec,1,Mount Pleasant,20,20,y,
+90,GALPRO,Galium propinquum,5-Dec,2,Mount Pleasant,15,15,y,
+91,GALPRO,Galium propinquum,5-Dec,3,Mount Pleasant,NA,,y,same individual as 1
+92,ASPHOO,Asplenium hookerianum,5-Dec,1,Mount Pleasant,8,8,y,
+93,PTEESC,Pteridium esculentum,5-Dec,1,Mount Pleasant,75,,y,one huge leaf in two plastic bags
+94,LEPMIN,Leptinella minor,5-Dec,1,Mount Pleasant,1.4,,y,
+95,LEPMIN,Leptinella minor,5-Dec,2,Mount Pleasant,3,,y,
+96,LEPMIN,Leptinella minor,5-Dec,3,Mount Pleasant,2,3.5,y,
+97,LEPMIN,Leptinella minor,5-Dec,4,Mount Pleasant,1.4,,y,
+98,LEPMIN,Leptinella minor,5-Dec,5,Mount Pleasant,4,3.5,y,
+99,LEPMIN,Leptinella minor,5-Dec,6,Mount Pleasant,1.9,2.4,,
+100,ASPHOO,Asplenium hookerianum,9-Dec,1,Sugarloaf,16,,y,
+101,ASPHOO,Asplenium hookerianum,9-Dec,2,Sugarloaf,12,,y,
+102,ASPHOO,Asplenium hookerianum,9-Dec,3,Sugarloaf,14,,y,
+103,ASPHOO,Asplenium hookerianum,9-Dec,4,Sugarloaf,7,,y,
+104,ASPHOO,Asplenium hookerianum,9-Dec,5,Sugarloaf,7,,,
+105,ASPHOO,Asplenium hookerianum,9-Dec,6,Sugarloaf,14,,,
+106,ASPHOO,Asplenium hookerianum,9-Dec,7,Sugarloaf,5,,,
+107,ASPHOO,Asplenium hookerianum,9-Dec,8,Sugarloaf,6.5,,,
+108,ASPFLB,Asplenium flabellifolium,9-Dec,1,Sugarloaf,21,,,
+109,ASPFLB,Asplenium flabellifolium,9-Dec,2,Sugarloaf,19,,,
+110,ASPFLB,Asplenium flabellifolium,9-Dec,3,Sugarloaf,14,,,
+111,ASPFLB,Asplenium flabellifolium,9-Dec,4,Sugarloaf,17,,,
+112,ASPFLB,Asplenium flabellifolium,9-Dec,5,Sugarloaf,13,,,
+113,ASPFLB,Asplenium flabellifolium,9-Dec,1,Sugarloaf,10,,y,
+114,POLOCU,Polystichum oculatum,9-Dec,1,Sugarloaf,78,,,
+115,POLOCU,Polystichum oculatum,9-Dec,2,Sugarloaf,61,,,
+116,POLOCU,Polystichum oculatum,9-Dec,3,Sugarloaf,45,,,
+117,POLOCU,Polystichum oculatum,9-Dec,4,Sugarloaf,82,,,
+118,POLOCU,Polystichum oculatum,9-Dec,5,Sugarloaf,60,,,
+119,JUNEDG,Juncus edgariae,9-Dec,1,Bowenvale park,140,125,y,
+120,JUNEDG,Juncus edgariae,9-Dec,2,Bowenvale park,125,115,y,
+121,JUNEDG,Juncus edgariae,9-Dec,3,Bowenvale park,147,130,y,
+122,JUNEDG,Juncus edgariae,9-Dec,4,Bowenvale park,110,95,y,
+123,JUNEDG,Juncus edgariae,9-Dec,5,Bowenvale park,150,140,y,
+124,ACAANS,Acaena anserinifolia,4-Dec,1,Kennedys bush,NA,NA,y,
+125,COPPAR,Coprosma dumosa,9-Dec,1,Bowenvale park,140,125,y,
+126,COPPAR,Coprosma dumosa,9-Dec,2,Bowenvale park,125,115,y,
+127,COPPAR,Coprosma dumosa,9-Dec,3,Bowenvale park,147,130,y,
+128,COPPAR,Coprosma dumosa,9-Dec,4,Bowenvale park,110,95,y,
+129,COPPAR,Coprosma dumosa,9-Dec,5,Bowenvale park,150,140,y,
+130,LEPDIO,Leptinella dioica,12-Dec,1,Birdlings flat,2,,y,
+131,LEPDIO,Leptinella dioica,12-Dec,2,Birdlings flat,3,,y,
+132,LEPDIO,Leptinella dioica,12-Dec,3,Birdlings flat,1,,y,
+133,LEPDIO,Leptinella dioica,12-Dec,4,Birdlings flat,1.5,,y,
+134,LEPDIO,Leptinella dioica,12-Dec,5,Birdlings flat,3,,y,
+135,LEPDIO,Leptinella dioica,12-Dec,6,Birdlings flat,2,,,
+136,LEPDIO,Leptinella dioica,12-Dec,7,Birdlings flat,1,,,
+137,LEPDIO,Leptinella dioica,12-Dec,8,Birdlings flat,2.5,,,
+138,LEPDIO,Leptinella dioica,12-Dec,9,Birdlings flat,3,,,
+139,LEPDIO,Leptinella dioica,12-Dec,10,Birdlings flat,3.5,,,
+140,RYTCAE,Rytidosperma caespitosum,12-Dec,1,Birdlings flat,36,48,y,
+141,RYTCAE,Rytidosperma caespitosum,12-Dec,2,Birdlings flat,19,26,y,
+142,RYTCAE,Rytidosperma caespitosum,12-Dec,3,Birdlings flat,21,42,y,
+143,RYTCAE,Rytidosperma caespitosum,12-Dec,5,Birdlings flat,30,52,y,
+144,RYTCAE,Rytidosperma caespitosum,12-Dec,6,Birdlings flat,26,38,y,
+145,RYTCAE,Rytidosperma caespitosum,12-Dec,7,Birdlings flat,28,34,,
+146,RYTCAE,Rytidosperma caespitosum,12-Dec,8,Birdlings flat,12,32,,
+147,RYTCAE,Rytidosperma caespitosum,12-Dec,9,Birdlings flat,31,51,,
+148,RYTCAE,Rytidosperma caespitosum,12-Dec,10,Birdlings flat,30,57,,
+149,CYNECH,Cynosurus echinatus,13-Dec,1,Kaituna valley track,,,y,
+150,CYNECH,Cynosurus echinatus,13-Dec,2,Kaituna valley track,,,y,
+151,CYNECH,Cynosurus echinatus,13-Dec,3,Kaituna valley track,,,y,
+152,CYNECH,Cynosurus echinatus,13-Dec,4,Kaituna valley track,,,y,
+153,CYNECH,Cynosurus echinatus,13-Dec,5,Kaituna valley track,,,y,
+154,GNAAUD,Euchiton audax,16-Dec,1,Hinewai,2,2,y,mowed lawn
+155,GNAAUD,Euchiton audax,16-Dec,2,Hinewai,9,5,y,mowed lawn
+156,GNAAUD,Euchiton audax,16-Dec,3,Hinewai,5,4,y,mowed lawn
+157,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,1,Hinewai,,,y,mowed lawn
+158,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,2,Hinewai,9,10,y,mowed lawn
+159,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,3,Hinewai,11,12,y,mowed lawn
+160,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,4,Hinewai,10,,y,mowed lawn
+161,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,5,summit road banks by hinewai,30,32,y,
+162,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,6,summit road banks by hinewai,10,,,immature
+163,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,7,summit road banks by hinewai,29,35,,
+164,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,8,summit road banks by hinewai,31,33,,
+165,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,9,summit road banks by hinewai,35,36,,
+166,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,10,summit road banks by hinewai,44,47,,
+167,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,11,summit road banks by hinewai,36,38,,
+168,EPIATR,Epilobium alsinoides subsp. Atriplicifolium,16-Dec,12,summit road banks by hinewai,29,30,,
+169,BLEPEN,Blechnum penna-marina,16-Dec,1,Hinewai,12,20,y,
+170,BLEPEN,Blechnum penna-marina,16-Dec,2,Hinewai,16,,y,
+171,BLEPEN,Blechnum penna-marina,16-Dec,3,Hinewai,20,24,y,
+172,BLEPEN,Blechnum penna-marina,16-Dec,4,Hinewai,16,,y,
+173,BLEPEN,Blechnum penna-marina,16-Dec,5,Hinewai,17,,,
+174,BLEPEN,Blechnum penna-marina,16-Dec,6,Hinewai,14,,y,
+175,BLEPEN,Blechnum penna-marina,16-Dec,7,Hinewai,16,24,,
+176,BLEPEN,Blechnum penna-marina,16-Dec,8,Hinewai,10,,,
+177,BLEPEN,Blechnum penna-marina,16-Dec,9,Hinewai,18,,,
+178,BLEPEN,Blechnum penna-marina,16-Dec,10,Hinewai,20,,,
+179,BLEPEN,Blechnum penna-marina,16-Dec,11,Hinewai,13,13,,
+180,HIERED,Hierochloe redolens,16-Dec,1,Hinewai,60,80,y,
+181,HIERED,Hierochloe redolens,16-Dec,2,Hinewai,60,97,y,
+182,HIERED,Hierochloe redolens,16-Dec,3,Hinewai,62,110,y,
+183,HIERED,Hierochloe redolens,16-Dec,4,Hinewai,80,120,y,
+184,HIERED,Hierochloe redolens,16-Dec,5,Hinewai,75,90,y,
+185,COPRIG,Coprosma rigida,16-Dec,1,Hinewai,112,,y,in Hugh Wilson's garden
+186,COPRIG,Coprosma rigida,16-Dec,2,Hinewai,,,y,same individual as 1
+187,COPRIG,Coprosma rigida,16-Dec,3,Hinewai,,,y,same individual as 1
+188,RYTGRA,Rytidosperma gracile,16-Dec,1,Hinewai,25,,y,immature
+189,RYTGRA,Rytidosperma gracile,16-Dec,2,Hinewai,10,,y,immature
+190,RYTGRA,Rytidosperma gracile,16-Dec,3,Hinewai,18,,y,immature
+191,RYTGRA,Rytidosperma gracile,16-Dec,4,Hinewai,13,,y,immature
+192,RYTGRA,Rytidosperma gracile,16-Dec,5,Hinewai,23,,y,immature
+193,UNCRUB,Uncinia rubra,16-Dec,1,Hinewai,30,15,y,potted plant in Hugh Wilson's garden
+194,CARAUS,Carmichaelia australis,16-Dec,1,Hinewai,300,300,y,by visitor center
+195,CARAUS,Carmichaelia australis,16-Dec,2,Hinewai,230,230,,by visitor center
+196,DICCRI,Dichelachne crinita,19-Dec,1,Birdlings flat,46,90,y,
+197,DICCRI,Dichelachne crinita,19-Dec,2,Birdlings flat,36,52,y,
+198,DICCRI,Dichelachne crinita,19-Dec,3,Birdlings flat,26,55,y,
+199,DICCRI,Dichelachne crinita,19-Dec,4,Birdlings flat,30,54,y,
+200,DICCRI,Dichelachne crinita,19-Dec,5,Birdlings flat,50,75,y,
+201,DICCRI,Dichelachne crinita,19-Dec,6,Birdlings flat,35,64,,
+202,DICCRI,Dichelachne crinita,19-Dec,7,Birdlings flat,30,60,,
+203,DICCRI,Dichelachne crinita,19-Dec,8,Birdlings flat,44,76,,
+204,LINBIE,Linum bienne,19-Dec,1,Birdlings flat,33,35,y,
+205,LINBIE,Linum bienne,19-Dec,2,Birdlings flat,24,27,y,
+206,LINBIE,Linum bienne,19-Dec,3,Birdlings flat,37,39,y,
+207,LINBIE,Linum bienne,19-Dec,4,Birdlings flat,42,46,y,
+208,LINBIE,Linum bienne,19-Dec,5,Birdlings flat,36,39,y,
+209,LINBIE,Linum bienne,19-Dec,6,Birdlings flat,38,41,,
+210,LINBIE,Linum bienne,19-Dec,7,Birdlings flat,29,31,,
+211,LINBIE,Linum bienne,19-Dec,8,Birdlings flat,34,36,,
+212,LINBIE,Linum bienne,19-Dec,9,Birdlings flat,27,29,,
+213,LINBIE,Linum bienne,19-Dec,10,Birdlings flat,34,38,,
+214,GNAGYM,Euchiton japonicus,21-Dec,1,Hinewai,21,23,y,
+215,GNAGYM,Euchiton japonicus,21-Dec,2,Hinewai,90,11,y,
+216,GNAGYM,Euchiton japonicus,21-Dec,3,Hinewai,18,21,y,
+217,GNAGYM,Euchiton japonicus,21-Dec,4,Hinewai,15,21,y,
+218,GNAGYM,Euchiton japonicus,21-Dec,5,Hinewai,20,27,y,
+219,GNAGYM,Euchiton japonicus,21-Dec,6,Hinewai,14,21,,
+220,GNAGYM,Euchiton japonicus,21-Dec,7,Hinewai,14,18,,
+221,GNAGYM,Euchiton japonicus,21-Dec,8,Hinewai,11,24,,
+222,GNAGYM,Euchiton japonicus,21-Dec,9,Hinewai,13,16,,
+223,GNAGYM,Euchiton japonicus,21-Dec,10,Hinewai,7,13,,
+224,GNAGYM,Euchiton japonicus,21-Dec,11,Hinewai,17,19,,
+225,GNAGYM,Euchiton japonicus,21-Dec,12,Hinewai,4,17,,
+226,GNAGYM,Euchiton japonicus,21-Dec,13,Hinewai,5,20,,
+227,GNAGYM,Euchiton japonicus,21-Dec,14,Hinewai,16,26,,
+228,RUMPUL,Rumex pulcher,21-Dec,1,Hinewai,11,30,y,
+229,RUMPUL,Rumex pulcher,21-Dec,2,Hinewai,12,37,y,
+230,RUMPUL,Rumex pulcher,21-Dec,3,Hinewai,8,36,y,
+231,RUMPUL,Rumex pulcher,21-Dec,4,Hinewai,9,33,y,
+232,RUMPUL,Rumex pulcher,21-Dec,5,Hinewai,13,34,y,
+233,RUMPUL,Rumex pulcher,21-Dec,6,Hinewai,11,36,,
+234,RUMPUL,Rumex pulcher,21-Dec,7,Hinewai,9,35,,
+235,RUMPUL,Rumex pulcher,21-Dec,8,Hinewai,10,39,,
+236,RUMPUL,Rumex pulcher,21-Dec,9,Hinewai,18,42,,
+237,RUMPUL,Rumex pulcher,21-Dec,10,Hinewai,16,37,,
+238,LEPDIO,Leptinella dioica,13-Dec,1,Kaituna valley track,,,y,
+239,MUECOM,Muehlenbeckia complexa,29-Nov,4,Hoon Hay,50,,Y,Iphone photo (not recorded at first)
+240,RYTUNA,Rytidosperma unarede,8-Feb,1,Hinewai,,,y,
+241,RYTUNA,Rytidosperma unarede,8-Feb,2,Hinewai,,,y,
+242,RYTUNA,Rytidosperma unarede,8-Feb,3,Hinewai,,,y,
+243,RYTUNA,Rytidosperma unarede,8-Feb,4,Hinewai,,,y,
+244,RYTUNA,Rytidosperma unarede,8-Feb,5,Hinewai,,,y,
+245,GNAAUD,Euchiton audax,8-Feb,1,Hinewai,9,10,y,
+246,GNAAUD,Euchiton audax,8-Feb,2,Hinewai,16,16,y,
+247,GNAAUD,Euchiton audax,8-Feb,3,Hinewai,22,22,,
+248,GNAAUD,Euchiton audax,8-Feb,4,Hinewai,12,12,,
+249,GNAAUD,Euchiton audax,8-Feb,5,Hinewai,12,12,,
+247,CENTEN,Centaurium tenuiflorum,9-Mar,1,Hinewai,47,49,y,
+248,CENTEN,Centaurium tenuiflorum,9-Mar,2,Hinewai,,,y,same indiv. as 1
+249,CENTEN,Centaurium tenuiflorum,9-Mar,3,Hinewai,18,21,y,
+250,CENTEN,Centaurium tenuiflorum,10-Mar,1,Godley head,17,18,y,
+251,CENTEN,Centaurium tenuiflorum,10-Mar,2,Godley head,19,21,y,
+252,CENTEN,Centaurium tenuiflorum,10-Mar,3,Godley head,14.5,16,,
+253,CENTEN,Centaurium tenuiflorum,10-Mar,4,Godley head,14,15.5,,
+254,CENTEN,Centaurium tenuiflorum,10-Mar,5,Godley head,9,10,,
+255,CENTEN,Centaurium tenuiflorum,10-Mar,6,Godley head,18,21.5,,
+256,COPRIG,Coprosma rigida,20-Dec,1,Hinewai east track,,,y,
+257,BROLIT,Bromus lithobius,17-Apr,1,Lincoln Uni,,,y,
+258,BROLIT,Bromus lithobius,17-Apr,2,Lincoln Uni,,,y,
+259,BROLIT,Bromus lithobius,17-Apr,3,Lincoln Uni,,,y,
+260,BROLIT,Bromus lithobius,17-Apr,4,Lincoln Uni,,,y,
+261,BROLIT,Bromus lithobius,17-Apr,5,Lincoln Uni,,,y,
+262,COTAUS,Cotula australis,17-Apr,1,Lincoln Uni,,,y,
+263,COTAUS,Cotula australis,17-Apr,2,Lincoln Uni,,,y,
+264,COTAUS,Cotula australis,17-Apr,3,Lincoln Uni,,,y,
+265,COTAUS,Cotula australis,17-Apr,4,Lincoln Uni,,,y,
+266,COTAUS,Cotula australis,17-Apr,5,Lincoln Uni,,,y,

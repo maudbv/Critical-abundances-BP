@@ -1,0 +1,11 @@
+ 	Label	Area
+1	IMG_1496.jpg (blue).jpg	133.556
+2	IMG_1496.jpg (blue).jpg	61.093
+3	IMG_1496.jpg (blue).jpg	115.784
+4	IMG_1496.jpg (blue).jpg	109.242
+5	IMG_1496.jpg (blue).jpg	126.417
+6	IMG_1496.jpg (blue).jpg	119.571
+7	IMG_1496.jpg (blue).jpg	57.719
+8	IMG_1496.jpg (blue).jpg	200.898
+9	IMG_1496.jpg (blue).jpg	105.304
+10	IMG_1496.jpg (blue).jpg	92.415

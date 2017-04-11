@@ -4,3 +4,13 @@
 Sambucus nigra.R
 simulations
 script.Rproj
+
+*.xlsx
+
+*.pdf
+
+*.Rdata
+
+*.eps
+
+*.png

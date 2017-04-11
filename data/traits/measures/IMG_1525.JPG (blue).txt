@@ -1,0 +1,15 @@
+ 	Label	Area
+1	IMG_1525.JPG (blue).jpg	209.394
+2	IMG_1525.JPG (blue).jpg	137.322
+3	IMG_1525.JPG (blue).jpg	272.381
+4	IMG_1525.JPG (blue).jpg	231.133
+5	IMG_1525.JPG (blue).jpg	34.633
+6	IMG_1525.JPG (blue).jpg	231.693
+7	IMG_1525.JPG (blue).jpg	226.131
+8	IMG_1525.JPG (blue).jpg	119.330
+9	IMG_1525.JPG (blue).jpg	17.493
+10	IMG_1525.JPG (blue).jpg	31.211
+11	IMG_1525.JPG (blue).jpg	44.564
+12	IMG_1525.JPG (blue).jpg	18.417
+13	IMG_1525.JPG (blue).jpg	8.996
+14	IMG_1525.JPG (blue).jpg	157.257

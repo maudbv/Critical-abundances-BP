@@ -1,0 +1,226 @@
+sample,Sp.code,Species,subsample,seed number,total weight(mg),comment,SM(mg)
+1,ACAANS,Acaena anserinifolia,1,49,37.3,,0.761
+1,ACAANS,Acaena anserinifolia,2,33,21.6,,0.655
+1,ACAANS,Acaena anserinifolia,3,30,23.9,,0.797
+1,ACAANS,Acaena anserinifolia,4,30,21.8,,0.727
+1,ACAANS,Acaena anserinifolia,5,30,22.4,,0.747
+1,ACAANS,Acaena anserinifolia,6,30,25.5,,0.85
+1,ACAANS,Acaena anserinifolia,7,30,25,,0.833
+1,ACAANS,Acaena anserinifolia,8,30,18.9,,0.63
+1,ACAANS,Acaena anserinifolia,9,30,23.2,,0.773
+1,ACAANS,Acaena anserinifolia,10,30,25.4,,0.847
+2,AUSNOD,Austrostipa nodosa,1,10,5.4,,0.54
+2,AUSNOD,Austrostipa nodosa,2,18,9.8,,0.544
+2,AUSNOD,Austrostipa nodosa,3,10,7.2,,0.72
+2,AUSNOD,Austrostipa nodosa,4,12,6.7,,0.558
+2,AUSNOD,Austrostipa nodosa,5,14,6.3,,0.45
+2,AUSNOD,Austrostipa nodosa,6,13,6.3,,0.485
+2,AUSNOD,Austrostipa nodosa,7,17,6.9,,0.406
+2,AUSNOD,Austrostipa nodosa,8,12,6.1,,0.508
+2,AUSNOD,Austrostipa nodosa,9,19,8.9,,0.468
+2,AUSNOD,Austrostipa nodosa,10,22,8.4,,0.382
+3,BROLIT,Bromus lithobius,1,12,65,,5.417
+3,BROLIT,Bromus lithobius,2,12,68.6,,5.717
+3,BROLIT,Bromus lithobius,3,12,63.1,,5.258
+3,BROLIT,Bromus lithobius,4,12,65.5,,5.458
+3,BROLIT,Bromus lithobius,5,12,67.8,,5.65
+3,BROLIT,Bromus lithobius,6,12,72.5,,6.042
+3,BROLIT,Bromus lithobius,7,12,64.6,,5.383
+3,BROLIT,Bromus lithobius,8,12,64.5,,5.375
+3,BROLIT,Bromus lithobius,9,12,77.4,,6.45
+3,BROLIT,Bromus lithobius,10,12,75.7,,6.308
+4,CALTUG,Calystegia tuguriorum,1,12,297.2,,24.767
+4,CALTUG,Calystegia tuguriorum,2,11,285.3,,25.936
+4,CALTUG,Calystegia tuguriorum,3,11,260.6,,23.691
+4,CALTUG,Calystegia tuguriorum,4,11,281,,25.545
+4,CALTUG,Calystegia tuguriorum,5,12,257.8,,21.483
+4,CALTUG,Calystegia tuguriorum,6,12,280.3,,23.358
+4,CALTUG,Calystegia tuguriorum,7,9,221.6,,24.622
+4,CALTUG,Calystegia tuguriorum,8,12,303,,25.25
+4,CALTUG,Calystegia tuguriorum,9,10,252.2,,25.22
+4,CALTUG,Calystegia tuguriorum,10,10,245.8,,24.58
+4,CALTUG,Calystegia tuguriorum,11,12,270.6,,22.55
+4,CALTUG,Calystegia tuguriorum,12,14,355.2,,25.371
+5,CARAUS,Carmichaelia australis,1,21,37.4,,1.781
+5,CARAUS,Carmichaelia australis,2,20,37.1,,1.855
+5,CARAUS,Carmichaelia australis,3,20,42.7,,2.135
+5,CARAUS,Carmichaelia australis,4,26,54.4,,2.092
+5,CARAUS,Carmichaelia australis,5,21,38.5,,1.833
+5,CARAUS,Carmichaelia australis,6,14,27.1,,1.936
+5,CARAUS,Carmichaelia australis,7,21,31.8,,1.514
+5,CARAUS,Carmichaelia australis,8,14,29.2,,2.086
+5,CARAUS,Carmichaelia australis,9,18,36.6,,2.033
+5,CARAUS,Carmichaelia australis,10,14,26.7,,1.907
+6,CONVER,Convolvulus waitaha,1,12,112.3,,9.358
+6,CONVER,Convolvulus waitaha,2,16,101.7,,6.356
+6,CONVER,Convolvulus waitaha,3,14,103.6,,7.4
+6,CONVER,Convolvulus waitaha,4,17,109.8,,6.459
+6,CONVER,Convolvulus waitaha,5,22,162,,7.364
+6,CONVER,Convolvulus waitaha,6,18,127.6,,7.089
+6,CONVER,Convolvulus waitaha,7,15,93.5,,6.233
+6,CONVER,Convolvulus waitaha,8,12,80.5,,6.708
+6,CONVER,Convolvulus waitaha,9,15,82.4,,5.493
+6,CONVER,Convolvulus waitaha,10,16,118.6,,7.413
+6,CONVER,Convolvulus waitaha,11,11,76.2,,6.927
+6,CONVER,Convolvulus waitaha,12,12,82.1,,6.842
+6,CONVER,Convolvulus waitaha,13,11,74.2,,6.745
+6,CONVER,Convolvulus waitaha,14,11,80.4,,7.309
+6,CONVER,Convolvulus waitaha,15,13,95.8,,7.369
+6,CONVER,Convolvulus waitaha,16,16,96.3,,6.019
+6,CONVER,Convolvulus waitaha,17,14,93.3,,6.664
+6,CONVER,Convolvulus waitaha,18,14,90.1,,6.436
+6,CONVER,Convolvulus waitaha,19,12,115.6,,9.633
+6,CONVER,Convolvulus waitaha,20,11,78.3,,7.118
+7,COPPAR,Coprosma dumosa,1,10,46.4,,4.64
+7,COPPAR,Coprosma dumosa,2,10,43,,4.3
+7,COPPAR,Coprosma dumosa,3,10,41.5,,4.15
+7,COPPAR,Coprosma dumosa,4,10,37.6,,3.76
+7,COPPAR,Coprosma dumosa,5,10,43.6,,4.36
+7,COPPAR,Coprosma dumosa,6,10,36.7,,3.67
+7,COPPAR,Coprosma dumosa,7,10,38.9,,3.89
+7,COPPAR,Coprosma dumosa,8,10,38.3,,3.83
+7,COPPAR,Coprosma dumosa,9,11,40.4,,3.673
+7,COPPAR,Coprosma dumosa,10,10,38.4,,4.04
+7,COPPAR,Coprosma dumosa,11,10,37.4,,3.74
+7,COPPAR,Coprosma dumosa,12,10,39.6,,3.96
+7,COPPAR,Coprosma dumosa,13,10,40.3,,4.03
+7,COPPAR,Coprosma dumosa,14,10,43.6,,4.36
+7,COPPAR,Coprosma dumosa,15,10,43.6,,3.99
+7,COPPAR,Coprosma dumosa,16,10,39.9,,5.03
+7,COPPAR,Coprosma dumosa,17,13,50.3,,3.138
+7,COPPAR,Coprosma dumosa,18,10,40.8,,5.33
+7,COPPAR,Coprosma dumosa,19,14,53.3,,3.293
+7,COPPAR,Coprosma dumosa,20,10,46.1,,4.61
+8,DICCRI,Dichelachne crinita,1,50,8,,0.16
+8,DICCRI,Dichelachne crinita,2,50,8.4,,0.168
+8,DICCRI,Dichelachne crinita,3,50,7.3,,0.146
+8,DICCRI,Dichelachne crinita,4,50,8.5,,0.17
+8,DICCRI,Dichelachne crinita,5,50,8.2,,0.164
+8,DICCRI,Dichelachne crinita,6,50,7.9,,0.158
+8,DICCRI,Dichelachne crinita,7,50,7.7,,0.154
+8,DICCRI,Dichelachne crinita,8,50,7.5,,0.15
+8,DICCRI,Dichelachne crinita,9,50,8.3,,0.166
+8,DICCRI,Dichelachne crinita,10,50,7.3,,0.146
+9,EPIATR,Epilobium alsinoides,1,100,4,,0.04
+9,EPIATR,Epilobium alsinoides,2,100,3.5,,0.035
+9,EPIATR,Epilobium alsinoides,3,100,4.6,,0.046
+9,EPIATR,Epilobium alsinoides,4,118,5.1,,0.043
+9,EPIATR,Epilobium alsinoides,5,100,4.4,,0.044
+9,EPIATR,Epilobium alsinoides,6,110,4.6,,0.042
+9,EPIATR,Epilobium alsinoides,7,100,4.3,,0.043
+9,EPIATR,Epilobium alsinoides,8,110,3.9,,0.035
+9,EPIATR,Epilobium alsinoides,9,100,4,,0.04
+9,EPIATR,Epilobium alsinoides,10,100,2.6,,0.026
+12,HYDMOS,Hydrocotyle moschata,1,50,6.9,,0.138
+12,HYDMOS,Hydrocotyle moschata,2,50,5.9,,0.118
+12,HYDMOS,Hydrocotyle moschata,3,60,6,,0.1
+12,HYDMOS,Hydrocotyle moschata,4,50,5.9,,0.118
+12,HYDMOS,Hydrocotyle moschata,5,50,5.5,,0.11
+12,HYDMOS,Hydrocotyle moschata,6,50,6.1,,0.122
+12,HYDMOS,Hydrocotyle moschata,7,50,6,,0.12
+12,HYDMOS,Hydrocotyle moschata,8,50,5.9,,0.118
+12,HYDMOS,Hydrocotyle moschata,9,50,6.4,,0.128
+12,HYDMOS,Hydrocotyle moschata,10,70,8.3,,0.119
+13,OXAEXI,Oxalis exilis,1,,,LOST SAMPLE,
+13,OXAEXI,Oxalis exilis,2,,,LOST SAMPLE,
+13,OXAEXI,Oxalis exilis,3,,,LOST SAMPLE,
+13,OXAEXI,Oxalis exilis,4,,,LOST SAMPLE,
+13,OXAEXI,Oxalis exilis,5,,,LOST SAMPLE,
+13,OXAEXI,Oxalis exilis,6,,,LOST SAMPLE,
+13,OXAEXI,Oxalis exilis,7,,,LOST SAMPLE,
+13,OXAEXI,Oxalis exilis,8,,,LOST SAMPLE,
+13,OXAEXI,Oxalis exilis,9,,,LOST SAMPLE,
+13,OXAEXI,Oxalis exilis,10,,,LOST SAMPLE,
+14,RYTGRA,Rytidosperma gracile,1,50,12.6,,0.252
+14,RYTGRA,Rytidosperma gracile,2,50,11.6,,0.232
+14,RYTGRA,Rytidosperma gracile,3,64,14.3,,0.223
+14,RYTGRA,Rytidosperma gracile,4,60,12.1,,0.202
+14,RYTGRA,Rytidosperma gracile,5,50,11.3,,0.226
+14,RYTGRA,Rytidosperma gracile,6,50,11.4,,0.228
+14,RYTGRA,Rytidosperma gracile,7,50,11.6,,0.219
+14,RYTGRA,Rytidosperma gracile,8,53,13.5,,0.27
+14,RYTGRA,Rytidosperma gracile,9,50,12.5,,0.25
+14,RYTGRA,Rytidosperma gracile,10,50,12.1,,0.242
+15,UNCRUB,Uncinia rubra,1,10,17.4,,1.74
+15,UNCRUB,Uncinia rubra,2,10,14.7,,1.47
+15,UNCRUB,Uncinia rubra,3,10,18.9,,1.89
+15,UNCRUB,Uncinia rubra,4,10,15.6,,1.56
+15,UNCRUB,Uncinia rubra,5,10,16.3,,1.63
+15,UNCRUB,Uncinia rubra,6,11,19,,1.727
+15,UNCRUB,Uncinia rubra,7,10,18.1,,1.81
+15,UNCRUB,Uncinia rubra,8,10,17.7,,1.77
+15,UNCRUB,Uncinia rubra,9,11,19.7,,1.791
+15,UNCRUB,Uncinia rubra,10,11,19.7,,1.791
+15,UNCRUB,Uncinia rubra,11,11,17.7,,1.609
+16,GALPRO,Galium propinquum,1,16,2.5,weirdly light sample : to be checked,0.156
+16,GALPRO,Galium propinquum,2,16,10.8,,0.675
+16,GALPRO,Galium propinquum,3,19,7,,0.368
+16,GALPRO,Galium propinquum,4,19,4.8,,0.253
+16,GALPRO,Galium propinquum,5,17,5.6,,0.329
+16,GALPRO,Galium propinquum,6,14,3.8,,0.271
+17,MUECOM,Muehlenbeckia complexa,1,12,33.5,,2.792
+17,MUECOM,Muehlenbeckia complexa,2,17,35.8,,2.106
+17,MUECOM,Muehlenbeckia complexa,3,11,16.2,,1.473
+17,MUECOM,Muehlenbeckia complexa,4,14,16.7,,1.193
+17,MUECOM,Muehlenbeckia complexa,5,10,13.5,,1.35
+17,MUECOM,Muehlenbeckia complexa,6,14,19.6,,1.4
+17,MUECOM,Muehlenbeckia complexa,7,22,32.7,,1.486
+17,MUECOM,Muehlenbeckia complexa,8,21,42.3,,2.014
+17,MUECOM,Muehlenbeckia complexa,9,18,32.7,,1.817
+17,MUECOM,Muehlenbeckia complexa,10,17,33.8,,1.988
+17,MUECOM,Muehlenbeckia complexa,11,11,21.3,,1.936
+17,MUECOM,Muehlenbeckia complexa,12,10,15.8,,1.58
+17,MUECOM,Muehlenbeckia complexa,13,17,31.7,,1.865
+17,MUECOM,Muehlenbeckia complexa,14,15,27.2,,1.813
+17,MUECOM,Muehlenbeckia complexa,15,19,23.7,,1.247
+18,ACAAGN,Acaena agnipila,1,67,2.2,too small seeds <0.1 mg ; BRENDA: hard to tell if some seeds are 1 or 2. OBS: pb ones with aborted second seed ,0.033
+18,ACAAGN,Acaena agnipila,2,65,1.2,too small seeds <0.1 mg,0.018
+18,ACAAGN,Acaena agnipila,3,82,1.5,too small seeds <0.1 mg,0.018
+18,ACAAGN,Acaena agnipila,4,62,1.4,too small seeds <0.1 mg,0.023
+18,ACAAGN,Acaena agnipila,5,61,1.3,too small seeds <0.1 mg,0.021
+18,ACAAGN,Acaena agnipila,6,67,1.5,too small seeds <0.1 mg,0.022
+18,ACAAGN,Acaena agnipila,7,86,2,too small seeds <0.1 mg,0.023
+18,ACAAGN,Acaena agnipila,8,93,2.4,too small seeds <0.1 mg,0.026
+18,ACAAGN,Acaena agnipila,9,80,1.8,too small seeds <0.1 mg,0.023
+18,ACAAGN,Acaena agnipila,10,70,1.8,too small seeds <0.1 mg,0.026
+19,RYTCAE,Rytidosperma caespitosum,1,50,35.7,,0.714
+19,RYTCAE,Rytidosperma caespitosum,2,57,40.7,,0.714
+19,RYTCAE,Rytidosperma caespitosum,3,50,38,,0.76
+19,RYTCAE,Rytidosperma caespitosum,4,50,31.3,,0.626
+19,RYTCAE,Rytidosperma caespitosum,5,25,15.6,,0.624
+19,RYTCAE,Rytidosperma caespitosum,6,25,18.5,,0.74
+19,RYTCAE,Rytidosperma caespitosum,7,25,19.7,,0.788
+19,RYTCAE,Rytidosperma caespitosum,8,41,33.3,,0.812
+19,RYTCAE,Rytidosperma caespitosum,9,25,19,,0.76
+19,RYTCAE,Rytidosperma caespitosum,10,35,26.3,,0.751
+20,POACIT,Poa cita,1,50,17.7,,0.354
+20,POACIT,Poa cita,2,50,18,,0.36
+20,POACIT,Poa cita,3,50,16.4,,0.328
+20,POACIT,Poa cita,4,50,17.5,,0.35
+20,POACIT,Poa cita,5,50,17.2,,0.344
+20,POACIT,Poa cita,6,50,16.2,,0.324
+20,POACIT,Poa cita,7,50,17.1,,0.342
+20,POACIT,Poa cita,8,50,17,,0.34
+20,POACIT,Poa cita,9,50,17.4,,0.348
+20,POACIT,Poa cita,10,50,17,,0.34
+21,RYTUNA,Rytidosperma unarede,1,50,22.6,,0.452
+21,RYTUNA,Rytidosperma unarede,2,50,23.3,,0.466
+21,RYTUNA,Rytidosperma unarede,3,50,24.2,,0.484
+21,RYTUNA,Rytidosperma unarede,4,50,22.2,,0.444
+21,RYTUNA,Rytidosperma unarede,5,50,24,,0.48
+21,RYTUNA,Rytidosperma unarede,6,50,23.6,,0.472
+21,RYTUNA,Rytidosperma unarede,7,50,23.9,,0.478
+21,RYTUNA,Rytidosperma unarede,8,50,24.7,,0.494
+21,RYTUNA,Rytidosperma unarede,9,30,12.6,brenda says: a few small seeds. ,0.42
+22,VITGRA,Vittadinia gracilis,1,50,23.2,,0.464
+22,VITGRA,Vittadinia gracilis,2,50,21.9,,0.438
+22,VITGRA,Vittadinia gracilis,3,50,22.6,,0.452
+22,VITGRA,Vittadinia gracilis,4,50,22.3,,0.446
+22,VITGRA,Vittadinia gracilis,5,50,20.2,,0.404
+22,VITGRA,Vittadinia gracilis,6,50,23.3,,0.466
+22,VITGRA,Vittadinia gracilis,7,50,22.1,,0.442
+22,VITGRA,Vittadinia gracilis,8,50,22.6,,0.452
+22,VITGRA,Vittadinia gracilis,9,50,21,,0.42
+22,VITGRA,Vittadinia gracilis,10,50,23,,0.46
+23,HELFIL,Helichrysum filicaule,1,250,7.4,too small seeds <0.1 mg,0.03
+,HELBEL,Anaphalioides bellidioides,1,235,7.35,too small seeds <0.1 mg,0.031

@@ -1,0 +1,4 @@
+ 	Label	Area
+1	_DSC8654.jpg	900.753
+2	_DSC8654.jpg	921.563
+3	_DSC8654.jpg	522.793

@@ -1,0 +1,17 @@
+ 	Label	Area
+1	IMG_1534.jpg (blue).jpg	313.685
+2	IMG_1534.jpg (blue).jpg	82.737
+3	IMG_1534.jpg (blue).jpg	317.016
+4	IMG_1534.jpg (blue).jpg	47.410
+5	IMG_1534.jpg (blue).jpg	189.563
+6	IMG_1534.jpg (blue).jpg	23.988
+7	IMG_1534.jpg (blue).jpg	5.910
+8	IMG_1534.jpg (blue).jpg	72.266
+9	IMG_1534.jpg (blue).jpg	308.240
+10	IMG_1534.jpg (blue).jpg	46.899
+11	IMG_1534.jpg (blue).jpg	167.009
+12	IMG_1534.jpg (blue).jpg	11.928
+13	IMG_1534.jpg (blue).jpg	271.681
+14	IMG_1534.jpg (blue).jpg	291.053
+15	IMG_1534.jpg (blue).jpg	151.936
+16	IMG_1534.jpg (blue).jpg	42.469
