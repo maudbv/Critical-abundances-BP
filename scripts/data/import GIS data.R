@@ -26,15 +26,15 @@ LUCAS <- crop(LUCAS, extent(study_area) +  c(-0.02, +0.02, -.02, +.02))
 region <- unionSpatialPolygons(LUCAS, IDs = rep(1,length(LUCAS)), threshold=1)
 
 
-## Map of study area
-plot(region, col = "grey50", border = NA)
-polygon(extent(region)[c(1,2,2,1)], extent(region)[c(3,3,4,4)], col ="lightblue", border = NA)
-plot(region, add= T, col = "grey70", border = NA)
-plot(study_area, add= T, col = "grey90", border = NA)
-plot(plots, add= T,  col ="goldenrod",bg ="goldenrod", pch = 22, cex = 0.7)
-detach("package:GISTools", unload=TRUE)
-library(maps)
-map.scale(ratio = FALSE)
+# ## Map of study area
+# plot(region, col = "grey50", border = NA)
+# polygon(extent(region)[c(1,2,2,1)], extent(region)[c(3,3,4,4)], col ="lightblue", border = NA)
+# plot(region, add= T, col = "grey70", border = NA)
+# plot(study_area, add= T, col = "grey90", border = NA)
+# plot(plots, add= T,  col ="goldenrod",bg ="goldenrod", pch = 22, cex = 0.7)
+# detach("package:GISTools", unload=TRUE)
+# library(maps)
+# map.scale(ratio = FALSE)
 
 
 ## colors for land uses

@@ -1,12 +1,11 @@
 ### Graphs and statistics for the paper on critical abundances
 
 
-
 #### __________________________________________DEFINE ELEMENTS__________________________________________ ####
 abclasses= c("Rare" ,"Occasional",  "Frequent", "Common", "Abundant","Dominant")
 threshold ="th.CI"
 sel <- impsp
-sel <- sel[c(1,10,11,2:9)]
+# sel <- sel[c(1,10,11,2:9)]
 
 # loss in gamma native richness
 # several different options of calculation but we choose the first one because it is a statistic on the difference (below - above) itself (like a z-statistic for two sample test) rather than a statistics on the mean above (= one sample test).
@@ -26,6 +25,11 @@ dg2<- table.div.part$GRc - table.div.part$GRnull
 da<- table.div.part$aRc -  table.div.part$aRo
 da1<- table.div.part$aRc -  table.div.part$aRnull
 
+# loss in alpha native richness
+db<- table.div.part$z.beta.diff
+
+
+
 #spatial distributions:
 spread <- table.div.part$n.plot.impact
 prevalence <- table.div.part$prevalence
@@ -34,11 +38,12 @@ dominance <- table.div.part$n.plot.dominant
 # critical abundance level
 critical.abun <- table.div.part$th.CI
 
+
 ####### Calculate correlations within table 1   #########
 library(corrplot)
-mat <- table1[, c(1:4, 7, 11)] 
+mat <- table1[-4, c(1:4, 7, 11, 13)] 
 
-# log option:
+# # log option:
 mat$Presence <- log(mat$Presence)
 mat$above.Acrit <- log (mat$above.Acrit)
 mat$dominance <- log (mat$dominance+1)
@@ -117,7 +122,7 @@ for (j in 1:2) {
 }
 
 #draw barplot
-par(mar=c(5,3,2,2), las=1)
+par(mar=c(5,3,4,3), las=1)
 S <- effects$SRnat[effects$SRnat$group == "ALIEN:1",]
 barplot(S$nb.sp, ylim=c(0,max(40, S$nb.sp)),col= "grey80",  border= NA, axes=F)
 par(new=T)
@@ -125,11 +130,14 @@ barplot(S$freq.negative.above, ylim=c(0,max(40, S$nb.sp)),col= "grey60",  border
 par(new=T)
 b <- barplot(S$freq.thr, col="black" , ylim=c(0,max(40, S$nb.sp)), border= NA, axes=F)
 axis(2, tcl = -0.3, cex.axis = 0.8, mgp = c(1,0.5,0), las = 1)
-text(y=-1.5, x = b, labels= abclasses[2:6],  cex=0.8, srt=45, adj=1, xpd = NA)
-legend(x=3.6, y=48, bty="n", bg="white",legend=c( "All species", "with negative effects","at critical abundance"),
-             fill=c( "grey80","grey60","black"), border= c("grey90","grey60","black"), cex=0.85, xpd=NA,y.intersp =1.5)
-mtext(text="number of target species", side=2, outer=F, line=2, las=0, cex=1)
+text(y=-1.5, x = b+0.3, labels= abclasses[2:6],  cex=0.8, srt=45, adj=1, xpd = NA)
+legend(x=0, y=60, bty="n", bg="white",legend=c( "All focal species",
+                                                  "Frequency of negative effects",
+                                                  "Frequency of critical abundances"),
+             fill=c( "grey80","grey60","black"), border= c("grey90","grey60","black"), cex=0.8, xpd=NA,y.intersp =1)
+mtext(text="number of species", side=2, outer=F, line=2, las=0, cex=1)
 mtext(text="Abundance class", side=1, outer=F, line=3.5)
+
 
 #### Figure 2: trends in alpha richness effect size ####
 
@@ -309,7 +317,22 @@ mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1, line= 0.5)
 mtext(1,text = expression(Delta*alpha*"-richness"), line=2 )
 mtext(2,text = expression(Delta*gamma*"-richness"["c"]), line=2 , las=0)
 
-### spread above critical abundance
+### spread above critical abundance - log transforming the spread of potential impact
+print(f <- cor.test(log(spread) ,dg))
+plot (spread,dg , pch = 20, col=cgam , ann=F, log = "x", xlim =c(2.5, 600), type ="p", axes =F)
+axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+axis(2, mgp=c(0,0.3,0),labels=F, tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+dg.lab <- dg
+dg.lab [ rownames(table.div.part) == "ANTODO"] <- -30
+dg.lab [ rownames(table.div.part) == "PHLPRA"] <- -5.5
+text(x = spread, y = dg.lab ,label = rownames(table.div.part) , col="grey", cex =0.6, pos = 4)
+points(x = spread, y = dg, pch = 20)
+box(bty="l")
+mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),adj = 1, cex=0.8, font = 3, line= 0.5)
+mtext(1,text = "Number of plots > critical abundance", line=2 )
+mtext(3, text = 'b)',adj = 0, cex=0.8, font = 1, line= 0.5)
+
+### spread above critical abundance - no log transformation #####
 print(f <- cor.test(spread ,dg, method = "pearson"))
 plot (spread,dg , pch = 20, col=cgam , ann=F, log = "", xlim =c(-5, 500), type ="n", axes =F)
 axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
@@ -323,6 +346,7 @@ box(bty="l")
 mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),adj = 1, cex=0.8, font = 3, line= 0.5)
 mtext(1,text = "Number of plots > critical abundance", line=2 )
 mtext(3, text = 'b)',adj = 0, cex=0.8, font = 1, line= 0.5)
+
 
 #### Figure 5: Maps of presence and impact ####
 
@@ -495,7 +519,9 @@ for (i in 1:12) {
 
 
 
-###______________________________________ EXTRA FIGURES AND STATS ______________________________________####
+
+
+###___________________________=___________ EXTRA FIGURES AND STATS ______________________________________####
 
 #### Figure 5 alternative: Maps of presence and impact of two selected species ####
 
@@ -568,6 +594,7 @@ legend(
   border = c("tan", "sienna2", "sienna4")
 ) 
 
+
 #### Compare 3 different metrics of spatial spread vs. gamma loss #####
 par(mfrow = c(1,3), mar=c(3,3,2,1), oma=c(1,2,0,0), las = 1)
 
@@ -608,6 +635,43 @@ mtext(3, text = substitute(r == est *" "*p, list(est = round(f$est,2), p=p2star(
 mtext(1,text = "Number of dominated plots", line=2)
 mtext(3, text = 'c)',adj = 0, cex=0.8, font = 1)
 
+
+#### Loss in beta vs. loss in gamma ####
+par(mfrow = c(1,2), mar=c(3,1,2,1), oma=c(1,2,0,0), las = 1, xpd = TRUE)
+plot(db, dg ,pch = 20, col=cgam , ann=F, type ="n", axes =F)
+axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+axis(2, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+text(x = db,y = dg,rownames(table.div.part) , col="grey", cex =0.6, pos = 4)
+points(x = db,y = dg, pch = 20)
+box(bty="l")
+ f <- cor.test(db ,dg, method = "pearson")
+ mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=F))),adj = 1, cex=0.8, font = 3, line= 0.5)
+# 
+# f <- cor.test(db[-10] ,dg[-10], method = "pearson")
+# mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=F))),adj = 1, cex=0.8, font = 3, line= 0.5)
+
+mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1, line= 0.5)
+mtext(1,text = expression(Delta*beta*"-diversity"), line=2 )
+mtext(2,text = expression(Delta*gamma*"-richness"["c"]), line=2 , las=0)
+
+plot(spread, db ,pch = 20, col=cgam , ann=F, type ="n", axes =F)
+axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+axis(2, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+text(x = spread,y = db,rownames(table.div.part) , col="grey", cex =0.6, pos = 4)
+points(x = spread,y = db, pch = 20)
+box(bty="l")
+f <- cor.test(db ,spread, method = "pearson")
+mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=F))),adj = 1, cex=0.8, font = 3, line= 0.5)
+
+# f <- cor.test(db[-10] ,spread[-10], method = "pearson")
+# mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=F))),adj = 1, cex=0.8, font = 3, line= 0.5)
+
+mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1, line= 0.5)
+mtext(2,text = expression(Delta*beta*"-diversity"), line=2, las = 0 )
+mtext(1,text = expression("Distribution of potential impact"), line=2 )
+
+
+
 #### Spatial distribution of species #####
 par(mfrow = c(1,2), mar=c(3,3,2,1), oma=c(1,2,0,0), las = 1)
 
@@ -633,6 +697,7 @@ box(bty="l")
 mtext(3, text = substitute(italic(rho == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),adj = 1, cex=0.8)
 mtext(1,text = "Plots (species = dominant)", line=2 )
 mtext(3, text = 'b)',adj = 0, cex=0.8, font = 1)
+
 
 #### Critical abundance levels vs. magnitude of impact #####
 par(mfrow = c(1,2), mar=c(3,2,2,1), oma=c(1,2,0,0), las = 1)
@@ -662,6 +727,8 @@ mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p
 mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1)
 mtext(2,text = expression(Delta*gamma*"-richness"["c"]), line= 2, las = 0)
 mtext(1,text = "Critical abundance", line=2 )
+
+
 
 #### Critical abundance levels vs. spatial spread #####
 par(mfrow = c(1,3), mar=c(3,2,2,1), oma=c(1,2,0,0), las = 1)
@@ -703,6 +770,7 @@ mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p
 mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1)
 mtext(2,text = "dominance", line=2, las = 0)
 mtext(1,text = "Critical abundance", line=2 )
+
 
 #######  Counting number of alien sp per plot  ########
 
@@ -755,3 +823,28 @@ mtext(side= 3, text =substitute(rho*" = "*r*p, list(r=round(f$estimate,2), p = p
 par(mfrow=c(1,2))
 plot(SR ~  jitter(presence,1), focal.frequency)
 plot(SR ~ jitter(above.critical, 1), focal.frequency)
+
+
+#### Figure 3: trends in BETA PROP ####
+quartz()
+par(mfrow = c(4,6), mar = c(0,0,2,0))
+sapply(aliens[aliens%in% rownames(beta.trend.nat$obs)], function(i) {
+  n <- na.omit(glmSRnat.overall$n.obs[i,])
+  x <- beta.trend.nat$obs[i,]
+  x[n < 5] <- NA
+  plot(1:length(x),x, type = "b", xlim = c(1,7), ylim = c(0,1), axes = F)
+  box(bty = "l")
+  mtext(1, at =  1:length(x),line = -1, text = na.omit(glmSRnat.overall$n.obs[i,]), cex = 0.6) 
+  mtext(3, text = i, cex = 0.4) 
+  })
+
+par(mfrow = c(4,6), mar = c(0,0,2,0))
+sapply(natives[natives %in% rownames(beta.trend.nat$obs)], function(i) {
+  n <- na.omit(glmSRnat.overall$n.obs[i,])
+  x <- beta.trend.nat$obs[i,]
+  x[n < 5] <- NA
+  plot(1:length(x),x, type = "b", xlim = c(1,7), ylim = c(0,1), axes = F)
+  box(bty = "l")
+  mtext(1, at =  1:length(x),line = -1, text = na.omit(glmSRnat.overall$n.obs[i,]), cex = 0.6) 
+  mtext(3, text = i, cex = 0.4) 
+})

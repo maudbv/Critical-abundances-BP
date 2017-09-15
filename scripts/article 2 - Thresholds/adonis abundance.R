@@ -9,17 +9,27 @@
 coltreat <-  colorRampPalette(c("palegoldenrod", "firebrick"))(7)
 coltreat.tr <- paste(coltreat, "50", sep="")
 
-dbrda.species<- list() adonis.species <- list() betadisper.species <- list()
+dbrda.species<- list() 
+adonis.species <- list() 
+betadisper.species <- list()
 
-for (i in 1:length(impsp)) { sp=impsp[i] community <-
-comm[which((rownames(comm) %in% realgrasslands) & (comm[,sp]>0) ),-grep(sp,
-names(comm))] community <- community[,-which(colSums(community) == 0)] var <-
-comm[which((rownames(comm) %in% realgrasslands) & (comm[,sp]>0) ),sp]
+for (i in 1:length(impsp)) { 
+  sp=impsp[i] 
+community <-comm[which((rownames(comm) %in% realgrasslands) & (comm[,sp]>0) ),-grep(sp,
+names(comm))] 
+
+community <- community[,-which(colSums(community) == 0)] 
+
+var <- comm[which((rownames(comm) %in% realgrasslands) & (comm[,sp]>0) ),sp]
 
 dbrda.species[[i]]  <- capscale(community ~ var,  distance = "bray")
 adonis.species[[i]] <- adonis(community ~ var, method = "bray")
 betadisper.species [[i]]<- betadisper(vegdist(community, method = "bray"),
-group = var,type ="centroid") print(paste(i, ":", sp)) }
+group = var,type ="centroid") 
+
+print(paste(i, ":", sp)) 
+}
+
 save(dbrda.species,adonis.species,betadisper.species, file = "saved
 Rdata/article 2 - threshold/dbRDA_bray.Rdata" )
 
