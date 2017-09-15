@@ -5,7 +5,7 @@
 abclasses= c("Rare" ,"Occasional",  "Frequent", "Common", "Abundant","Dominant")
 threshold ="th.CI"
 sel <- impsp
-# sel <- sel[c(1,10,11,2:9)]
+ sel <- sel[c(1,9, 10,2:8)]
 
 # loss in gamma native richness
 # several different options of calculation but we choose the first one because it is a statistic on the difference (below - above) itself (like a z-statistic for two sample test) rather than a statistics on the mean above (= one sample test).
@@ -112,18 +112,12 @@ cgam <- "black"
 #### Figure 1: barplot of frequencies:    #########
 
 # extract frequency table:
-effects =list(SRnat = glmSRnat.sum$class.summary,SRali = glmSRali.sum$class.summary )
-n <- length(unique(effects[[1]]$group))
-for (j in 1:2) {
-  sum.df = effects[[j]]
-  for (i in 1:n) {
-    S <- as.data.frame(sum.df[sum.df$group == unique(sum.df$group)[i],])
-    }
-}
+effects <- glmSRnat.sum$class.summary
+n <- length(unique(effects$group))
 
 #draw barplot
 par(mar=c(5,3,4,3), las=1)
-S <- effects$SRnat[effects$SRnat$group == "ALIEN:1",]
+S <- effects[effects$group == "ALIEN:1",]
 barplot(S$nb.sp, ylim=c(0,max(40, S$nb.sp)),col= "grey80",  border= NA, axes=F)
 par(new=T)
 barplot(S$freq.negative.above, ylim=c(0,max(40, S$nb.sp)),col= "grey60",  border= NA, axes=F)
@@ -437,7 +431,7 @@ par(
   oma = c(2, 0, 0, 0)
 )
 
-for (i in 1:12) {
+for (i in 1:11) {
   if (i ==12) {
     plot(region, border = NA)
     legend(
