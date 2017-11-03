@@ -20,7 +20,7 @@
 
 ## REwrite of div part funciton with all abundance threshold explorations
 alpha.trend <-
-  function(spnames = impsp, group = natives, null.model = "permute.rare", nreps = 99) {
+  function(spnames = impsp, group = natives, plots.select = unimprovedgrasslands, null.model = "permute.rare", nreps = 99) {
     # initiating output
     tmp <- as.data.frame(matrix(
       NA, nrow = length(spnames), ncol = 6,
@@ -36,7 +36,7 @@ alpha.trend <-
     # looping on each of the target species
     for (sp in spnames) {
       community <-
-        comm[which((rownames(comm) %in% realgrasslands) & (comm[,sp] > 0)),]
+        comm[which((rownames(comm) %in% plots.select) & (comm[,sp] > 0)),]
       community <- community[,colSums(community) > 0]
       community <- community[,colnames(community) %in% group]
       community <- ceiling(community > 0)
@@ -127,7 +127,7 @@ alpha.trend <-
 
 ## REwrite of div part funciton with all abundance threshold explorations
 gamma.trend <-
-  function(spnames = impsp, group = natives, bootstrapped = TRUE, null.model = "permute.rare",breps= 99, nreps = 99) {
+  function(spnames = impsp, group = natives, plots.select = unimprovedgrasslands, bootstrapped = TRUE, null.model = "permute.rare",breps= 99, nreps = 99) {
 
      # initiating output
     tmp <- as.data.frame(matrix(
@@ -146,7 +146,7 @@ gamma.trend <-
 
     # looping on each of the target species
     for (sp in spnames) {
-      community <-comm[which((rownames(comm) %in% realgrasslands) & (comm[,sp] > 0)),]
+      community <-comm[which((rownames(comm) %in% plots.select) & (comm[,sp] > 0)),]
       community <- community[,colSums(community) > 0]
       community <- community[,colnames(community) %in% group]
       community <- ceiling(community > 0)
@@ -354,7 +354,7 @@ gamma.trend <-
 
 ## REwrite of div part funciton with all abundance threshold explorations
 beta.trend <-
-  function(spnames = impsp, group = natives, null.model = "permute.rare", nreps = 99) {
+  function(spnames = impsp, group = natives, plots.select = unimprovedgrasslands, null.model = "permute.rare", nreps = 99) {
     # initiating output
     tmp <- as.data.frame(matrix(
       NA, nrow = length(spnames), ncol = 6,
@@ -370,7 +370,7 @@ beta.trend <-
     # looping on each of the target species
     for (sp in spnames) {
       community <-
-        comm[which((rownames(comm) %in% realgrasslands) & (comm[,sp] > 0)),]
+        comm[which((rownames(comm) %in% plots.select) & (comm[,sp] > 0)),]
       community <- community[,colSums(community) > 0]
       community <- community[,colnames(community) %in% group]
       community <- ceiling(community > 0)

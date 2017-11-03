@@ -3,13 +3,14 @@
 
 ###-----------Calculating GLMs, critical values and impact size for bootstrapped samples + elevation as co-variable
 
-glm.overallboot<- function(db=databp[databp$PlotName %in% unimprovedgrasslands,], covar = 'DEM_10',
-                           boot.ind  = boot.indices , sp.target = NA,
-                           variable='SR', min.occur =5,  min.class = 2, nreps = 9) {
+
+glm.overallboot<- function(db=databp[databp$PlotName %in% unimprovedgrasslands,], covar = c( 'DEM_10', "SLOPE",'Northern', 'SRali'),
+                           boot.ind  = boot.indices , 
+                           variable='SRnat', min.occur =5,  min.class = 2, nreps = 9) {
 
   library(doParallel)
-  cl<-makeCluster(6)
-  registerDoParallel(cl)
+  # cl<-makeCluster(6)
+  # registerDoParallel(cl)
 
   ### Check that boot.output is the right one
   stopifnot(min.occur == boot.ind$min.occur,
@@ -44,9 +45,11 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% unimprovedgrasslands,]
   n.obs <- mean.values <- data.frame(matrix(NA, nrow=length(sp.names), ncol= 6,
                                             dimnames=list(sp.names,c("C1","c2", "c3", "c4", "c5", "c6"))))
 
-  glms <-data.frame(matrix(NA, nrow=length(sp.names), ncol= 3,
-                           dimnames=list(sp.names, c( "df", "resid.dev","dev.ratio"))))
-
+  # glms <-data.frame(matrix(NA, nrow=length(sp.names), ncol= 3,
+  #                          dimnames=list(sp.names, c( "df", "resid.dev","dev.ratio"))))
+  glms <-data.frame(matrix(NA, nrow=length(sp.names), ncol= 9,
+                           dimnames=list(sp.names, c( "df", "resid.dev","dev.ratio", "aic.null", "aic.DEM10",  "aic.SLOPE", "aic.Northern", "aic.SRali", "aic.abun"))))
+  
   spear <-data.frame(matrix(NA, nrow=length(sp.names), ncol= 2,
                             dimnames=list(sp.names, c("rho" ,"p.val"))))
 
@@ -60,8 +63,17 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% unimprovedgrasslands,]
 
   bootCI.low <-bootCI.hi <- boot.mean <- boot.sd <-  init
 
-  covar.tab <- data.frame(matrix(NA, nrow=length(sp.names), ncol= 6,
-                         dimnames=list(sp.names,c("coef.glm", "P.coef", "mean", "sd", "lowCI", "hiCI"))))
+  covar.tab <- list()
+  for (k in 1:length(covar)) covar.tab[[k]] <- data.frame(matrix(NA, nrow=length(sp.names), ncol= 6,
+                                                             dimnames=list(sp.names,c("coef.glm", "P.coef", "mean", "sd", "lowCI", "hiCI"))))
+  names(covar.tab) = covar
+                     
+  SLOPE.tab <- data.frame(matrix(NA, nrow=length(sp.names), ncol= 6,
+                               dimnames=list(sp.names,c("coef.glm", "P.coef", "mean", "sd", "lowCI", "hiCI"))))
+  north.tab <- data.frame(matrix(NA, nrow=length(sp.names), ncol= 6,
+                                 dimnames=list(sp.names,c("coef.glm", "P.coef", "mean", "sd", "lowCI", "hiCI"))))
+  SRali.tab <- data.frame(matrix(NA, nrow=length(sp.names), ncol= 6,
+                                 dimnames=list(sp.names,c("coef.glm", "P.coef", "mean", "sd", "lowCI", "hiCI"))))
   
 
   # looping on species
@@ -72,7 +84,7 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% unimprovedgrasslands,]
 
     ### FIRST : calculate GLM for observed dataset :
     sp.dat <- db.modif[as.character(db.modif$SpeciesCode)==sp,c("abun",variable,'PlotName', covar)] # select occurrences of the species
-    names(sp.dat) <- c('abun','var','PlotName','covar')[1:dim(sp.dat)[2]]
+    names(sp.dat) <- c('abun','var','PlotName',covar)[1:dim(sp.dat)[2]]
       
     abun <- sort(as.numeric(as.character(na.omit(unique(sp.dat$abun))))) ## list of abundance classes for species i
     n.obs[i,] <- sapply(1:6, FUN=function(j) length(sp.dat[which(sp.dat$abun==j),"var"]))
@@ -85,68 +97,104 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% unimprovedgrasslands,]
     s <- cor.test(sp.dat$var,sp.dat$abun, method="spearman")
     spear[i,] <-  c(s$estimate, s$p.value)
 
-    # GLM test
-    f <-  glm(sp.dat$var ~ as.numeric(sp.dat$covar) + as.factor(sp.dat$abun), family=poisson(log))
-    glms[i,] <-  c(df= f$df.resid, resid.dev= f$dev, dev.ratio= (f$null.deviance -f$dev)/f$null.deviance )
+    # # GLM test
+    # f <-  glm(as.formula(paste("var ~", paste(covar, collapse = " + "),"+ as.factor(abun)")), data = sp.dat,  family=poisson(log))
+    # glms[i,] <-  c(df= f$df.resid, resid.dev= f$dev, dev.ratio= (f$null.deviance -f$dev)/f$null.deviance )
+    # n <- (abun-1)[-1]
+    # est[i,n] <- summary(f)$coef [-(1:4), 1]
+    # z[i,n] <- summary(f)$coef [-(1:4), 3]
+    # P[i,n] <- summary(f)$coef [-(1:4), 4]
+
+    # GLM test with AIC 
+    f0 <-  glm(as.formula(paste("var ~ 1")), data = sp.dat,  family=poisson(log))
+    f1 <-  glm(as.formula(paste("var ~", paste(covar[1], collapse = " + "))), data = sp.dat,  family=poisson(log))
+    f2 <-  glm(as.formula(paste("var ~", paste(covar[1:2], collapse = " + "))), data = sp.dat,  family=poisson(log))
+    f3 <-  glm(as.formula(paste("var ~", paste(covar[1:3], collapse = " + "))), data = sp.dat,  family=poisson(log))
+    f4 <-  glm(as.formula(paste("var ~", paste(covar[1:4], collapse = " + "))), data = sp.dat,  family=poisson(log))
+    f5 <-  glm(as.formula(paste("var ~", paste(covar[1:4], collapse = " + "),"+ as.factor(abun)")), data = sp.dat,  family=poisson(log))
+    
+    ## Selecting variables
+    aics <- AIC(f0,f1, f2, f3, f4, f5)
+    sel.var <- c(covar[which((aics$AIC[2:(length(covar)+1)] - aics$AIC[1:length(covar)]) < -2)]) 
+    f <-  glm(as.formula(paste("var ~",paste(sel.var, collapse = " + ")," + as.factor(abun)")), data = sp.dat,  family=poisson(log))
+    
+    glms[i,] <-  c(df= f$df.resid, resid.dev= f$dev, dev.ratio= (f$null.deviance -f$dev)/f$null.deviance, aics$AIC)
     n <- (abun-1)[-1]
-    est[i,n] <- summary(f)$coef [-(1:2), 1]
-    z[i,n] <- summary(f)$coef [-(1:2), 3]
-    P[i,n] <- summary(f)$coef [-(1:2), 4]
-
-
-    ## SECOND : recalculate coefs for each of the *nreps* bootstrapped datasets:
-
-    #extract the observed coefs for species i
+  
+    #extract the observed coefs for species i:
     obs.coef <- rep(NA,5)
-    for (j  in abun[-1])  obs.coef[j-1]  <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
+    for (j  in abun[-1])  {
+      obs.coef[j-1]  <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
+      z[i,j-1]  <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )),3]
+      P[i,j-1]  <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )),4]
+    }
     names(obs.coef) <- c("c2", "c3", "c4", "c5", "c6")
-
-    # observed GLM values for the covariable
-    covar.tab$coef.glm [i] <- summary(f)$coef [2, 1]
-    covar.tab$P.coef [i] <- summary(f)$coef [2,4]
+    est[i,] <- obs.coef
+ 
+    # observed GLM values for the covariables
+    for ( k in sel.var) {
+      covar.tab[[k]]$coef.glm [i] <- summary(f)$coef [grep(k, rownames(summary(f)$coef )), 1]
+      covar.tab[[k]]$P.coef [i] <- summary(f)$coef [grep(k, rownames(summary(f)$coef )), 4]
+    }
+    
+    
+    ## SECOND : recalculate coefs for each of the *nreps* bootstrapped datasets:
     
     # bootstrapping of coefficients nreps times
-    boot.coef <-  foreach(r=1:nreps, .combine='rbind') %dopar%  {
+     boot.coef <-  foreach(r=1:nreps, .combine='rbind') %dopar%  {
 
       ## extract new datasets from original dataset using the bootstrapped line numbers:
       boot.db <- db.modif [boot.ind$index[boot.ind$index$nrep == r, "ind" ], c("SpeciesCode", "abun",variable,'PlotName', covar)]
 
       # print(paste(r, ":","(",Sys.time(),")"))
       dat <- boot.db[as.character( boot.db$SpeciesCode)==sp, ] # select occurrences of the species
-      names(dat) <- c("sp",'abun','var','PlotName', 'covar')[1:dim(dat)[2]]
+      names(dat) <- c("sp",'abun','var','PlotName', covar)[1:dim(dat)[2]]
       rm(boot.db)
       abun <- sort(as.numeric(as.character(na.omit(unique(dat$abun))))) ## list of abundance classes for species i
-
+      
+      covar.coefs <- rep(NA,  length(covar))
+      names(covar.coefs) = covar
+      
       ### Calculate GLM model if possible (sufficient abundance classes)
       if ("1" %in% abun & length(abun) >1 )
       {
-        f <-  glm(dat$var ~ dat$covar + as.factor(dat$abun), family=poisson(log))
-
-        # ## store coefficients for each bootstrapped sample k
+        f <-  glm(as.formula(paste("var ~",paste(sel.var, collapse = " + ")," + as.factor(abun)")), data = dat,  family=poisson(log))
+        
+        ### store coefficients for each bootstrapped sample k
+        for (k in sel.var) covar.coefs[k] <- summary(f)$coef [grep(k, rownames(summary(f)$coef )), 1] 
+        
         coef.string <- rep(NA,5)
-        coef.covar <- summary(f)$coef [2, 1]
-        for(j  in abun[-1]) coef.string[j-1] <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
-
-        if (!all(na.omit(coef.string) > -10)) coef.string <- rep(NA,5)
-        print(paste(i, ":",r, ":", "(",Sys.time(),")"))
+        for (j  in abun[-1]) {
+          if (length(grep(paste(j), rownames(summary(f)$coef )))>0){
+            coef.string[j-1] <- summary(f)$coef [grep(paste(j), rownames(summary(f)$coef )), 1]
+          }
+        }
+        if (all(!is.na(coef.string))) coef.string <- rep(NA,5)
       }
-       return(c(coef.covar, coef.string))
+        return(c(covar.coefs, coef.string))
     }
 
     # assemble observed and bootstrapped coefs
-    coefs <- rbind(c(covar.tab$coef.glm [i], obs.coef), boot.coef)
-    covar.coefs <- coefs[,1]
-    coefs <- coefs[,2:6]
+     coefs <- rbind(obs = c(sapply(covar,FUN=function(k) covar.tab[[k]]$coef.glm [i]),obs.coef),
+                    boot.coef)
 
+     
+    
+    
     #### THIRD: statistics for species i
     
-    # Bootstrapped coefs for the covariable
-    covar.tab$mean[i] <- mean(covar.coefs, na.rm = T)
-    covar.tab$sd[i] <- sd(covar.coefs, na.rm = T)
-    covar.tab$lowCI[i] <-quantile(covar.coefs , probs = 0.025,na.rm =T)
-    covar.tab$hiCI[i] <-quantile(covar.coefs , probs = 0.975,na.rm =T)
-
+     # Statistics for covariables:
+    for ( k in sel.var) {
+      covar.tab[[k]]$mean[i] <- mean(coefs[,k], na.rm = T)
+      covar.tab[[k]]$sd[i] <- sd(coefs[,k], na.rm = T)
+      covar.tab[[k]]$lowCI[i] <-quantile(coefs[,k] , probs = 0.025,na.rm =T)
+      covar.tab[[k]]$hiCI[i] <-quantile(coefs[,k] , probs = 0.975,na.rm =T)
+    }
+    
     # detect minimal critical value (simple start of negative trend)
+    
+    coefs <- coefs[,-which(colnames(coefs) %in% covar)]
+    
     crit.vals[i,] <- sapply(1:(nreps+1), function(x, n.obs) {
       crit <- NA
       co <-coefs [x,]
@@ -200,10 +248,10 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% unimprovedgrasslands,]
     
   }
 
-  stopCluster(cl)
+  # stopCluster(cl)
 
   return(list(glms=glms,boot.mean = boot.mean, boot.sd=boot.sd, CIlow = bootCI.low, CIhi = bootCI.hi,
-              covar.tab = covar.tab,
+              covar.tab,
               crit.vals = crit.vals, spearman=spear, n.obs = n.obs,
               mean.values = mean.values,
               dif = dif,est= est, z=z,P= P))

@@ -12,6 +12,7 @@ output<- data.frame(matrix(NA, nrow= dim(M$dif), ncol =10))
 names(output)<- c("th","th.CI.weak","th.CI", "pth" , "pth.CI.weak","pth.CI",
                   "prevalence", "n.plot.impact","n.plot.dominant", "prop.plot.impact")
 rownames(output) <- row.names(M$dif)
+
 for (i in 1:length(sp.names)) {
 
   sp <- sp.names[i]  # select species name

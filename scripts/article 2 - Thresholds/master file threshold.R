@@ -33,7 +33,7 @@ source('scripts/article 2 - Thresholds/Beta turnover and nestedness.R')
 source('scripts/article 2 - Thresholds/gamma.trend.R')
 source('scripts/article 2 - Thresholds/div partitioning.R')
 
-
+source('~/Documents/Work/Postdoc lincoln local /R/R_critical abundances analyses/scripts/article 2 - Thresholds/overall bootstrapped GLM_with elevation.R')
 
 
 ### Import and modify data from scratch:  ############
@@ -83,7 +83,15 @@ species$grassland.occur <- tmp[match(rownames(species), names(tmp))]
 tmp <- colSums(comm[which(rownames(comm) %in% as.character(unimprovedgrasslands)),]>0, na.rm=T)
 species$unimproved_grassland.occur <- tmp[match(rownames(species), names(tmp))]
 
+## Transform ASPECT into northern orientation (cosinus) and Eatern (sinus):
 
+envplot@data$Northern <- cospi(envplot@data$ASPECT/180)
+envplot@data$NWestern <- cospi(envplot@data$ASPECT/180 - (1/4))
+envplot@data$Eastern <- sinpi(envplot@data$ASPECT/180)
+
+databp$Northern <-  cospi(databp$ASPECT/180)
+databp$NWestern <- cospi(databp$ASPECT/180 - (1/4))
+databp$Eastern <- sinpi(databp$ASPECT/180)
 
 ##### threshold analysis using GLMs  ########
 
@@ -122,15 +130,15 @@ min.class <- 2
 
 # calculate glms on bootstraps
 # system.time(glmSR.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SR', min.occur= min.occur, min.class = min.class, nreps=nreps))
- system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.ind =boot.indices, sp.target = sp.target, variable = 'SRnat',covar = "DEM_10", min.occur= min.occur, min.class = min.class, nreps=nreps))
+ system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.ind =boot.indices, variable = 'SRnat',covar = c("DEM_10","SLOPE", "Northern", "SRali"), min.occur= min.occur, min.class = min.class, nreps=nreps))
  # system.time(glmSRali.overall <- glm.overallboot(db = db,boot.indices=boot.indices, sp.target = sp.target, variable = 'SRali', min.occur= min.occur, min.class = min.class, nreps=nreps))
 #
-save( glmSRnat.overall,file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.3.with elevation.Rdata")
+  save( glmSRnat.overall,file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.4.with elevation+northern+srali.Rdata")
 
 # load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.1.Rdata") # robin's landcover grasslands
 # load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.1.Rdata") # all lucas grasslands
 # load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.2.Rdata") # unimproved grasslands only
-# load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.3.with elevation.Rdata") # unimproved grasslands only + elevation as cofactor
+# load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.4.with elevation+aspect+srali.Rdata") # unimproved grasslands only + elevation as cofactor
 
 ### Modify impact.spread calculations when necessary
 # glmSR.overall <- correct.impact.spread(M = glmSR.overall, variable= "SR")
@@ -169,7 +177,7 @@ impsp <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$i
 
 ##### gamma trends ###############
 # # permute rare
-# gamma.trend.nat <- gamma.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.rare", nreps = 999)
+ # `gamma.trend.nat <- gamma.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.rare", nreps = 999)
 #
 # # permute all
 # gamma.trend.nat.permute.all <- gamma.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.all", nreps = 999)
@@ -190,9 +198,11 @@ impsp <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$i
 #   save(gamma.trend.nat, alpha.trend.nat,gamma.trend.nat.permute.all,gamma.trend.nat.beta,
 #   file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.Rdata")
 
+# save(gamma.trend.nat,   file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.2.Rdata")
+
 # load(file = "saved Rdata/article 2 - threshold/gamma.trends.Rdata")
 # load(file = "saved Rdata/article 2 - threshold/gamma.trends.2.Rdata")
-load(file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.Rdata")
+load(file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.2.Rdata")
 
 
 ##### Gamma above/below #######
@@ -468,9 +478,9 @@ table1 <- data.frame(Acrit = table.div.part$th.CI,
                      gamma.below = table.div.part$GRo,
                      gamma.above = table.div.part$GRc,
                      delta.gamma.c = round(table.div.part$deltagamma - table.div.part$delta.null.permute.all,2),
-                     delta.gamma.P = round(table.div.part$GRP.permute.all, 4),
-                     delta.beta.z = table.turnover[rownames(table.div.part),"z.diff"],
-                     delta.beta.P = table.turnover[rownames(table.div.part),"p.diff"]
+                     delta.gamma.P = round(table.div.part$GRP.permute.all, 4)
+                     # delta.beta.z = table.turnover[rownames(table.div.part),"z.diff"],
+                     # delta.beta.P = table.turnover[rownames(table.div.part),"p.diff"]
                      
 )
 rownames(table1) <- table.div.part$species
@@ -482,5 +492,5 @@ write.csv(table1, file= "table1.csv", row.names = row.names(table1))
 
 
 # save results   ############
-# save.image("saved Rdata/article 2 - threshold/article threshold 1.3.2.Rdata")
+# save.image("saved Rdata/article 2 - threshold/article threshold 1.3.3.Rdata")
 

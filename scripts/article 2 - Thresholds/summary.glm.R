@@ -21,8 +21,15 @@ summary.glmtest <- function(M = glmSR.overall,data=species, group="ALIEN",
     i<-1
     G<-length(unique(data[,group]))
     for (g in sort(unique(data[,group]))) {
-      sub[[i]]<-lapply(M, FUN= function(x) x[rownames(x) %in% rownames(data)[data[,group]==g],] )
-      i<-i+1
+      sub[[i]] <- lapply(M,function(x) {   ## We subset each element of M by alien vs native
+        if (!all(!rownames(x) %in% rownames(data)[data[,group]==g]) & !is.null(rownames(x))) 
+        {
+          y <-  x[rownames(x) %in% rownames(data)[data[,group]==g],] 
+        }
+        else y = NA
+        return(y)
+      })
+            i<-i+1
     }
     group.names<-paste(group, ":",sort(unique(data[,group])), sep="")
   }
