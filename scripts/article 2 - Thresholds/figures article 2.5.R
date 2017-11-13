@@ -10,38 +10,70 @@ sel <- impsp
 # loss in gamma native richness
 # several different options of calculation but we choose the first one because it is a statistic on the difference (below - above) itself (like a z-statistic for two sample test) rather than a statistics on the mean above (= one sample test).
 dg <- table.div.part$deltagamma - table.div.part$delta.null.permute.all # observed difference in means minus the expected difference in means (= sort of z statistics for comparing means of above and below gamma) ?
-
+dg2 <- table.div.part$delta.z.permute.all # observed difference in means 
 dg0<- table.div.part$gamma.loss  ### Difference between observed and expected mean above crit.
-cor.test(-dg, dg0)
+cor.test(dg, dg0)
 plot(-dg, dg0, xlab = "delta.gamma.c", type = "n", ylab = "gamma.above.c", ylim = c(0,60), xlim = c(0,60))
 abline(0,1)
 text(-dg, dg0, labels = rownames(table.div.part), cex = 0.7)
 
 dg1<- table.div.part$deltagamma - table.div.part$delta.null.beta
 dg1<- table.div.part$delta.z.beta
-dg2<- table.div.part$GRc - table.div.part$GRnull
+
 
 # loss in alpha native richness
 da<- table.div.part$aRc -  table.div.part$aRo
 da1<- table.div.part$aRc -  table.div.part$aRnull
+da2 <- table.div.part$deltaalpha.z.permute.all
+
+plot(da, da2)
+abline(0,1)
 
 # loss in alpha native richness
-db<- table.div.part$z.beta.diff
-
+dbeta<- table.div.part$z.beta.diff
 
 
 #spatial distributions:
 spread <- table.div.part$n.plot.impact
 prevalence <- table.div.part$prevalence
 dominance <- table.div.part$n.plot.dominant
+prop.impact <- spread/prevalence
 
 # critical abundance level
 critical.abun <- table.div.part$th.CI
 
+# library(FactoMineR)
+# tmp <- PCA(data.frame(cbind(dg0, dg1,dg, da,da1, dbeta), row.names= impsp ) )
+# plot(tmp, choix = "ind")
+# plot(tmp, choix = "var")
+# plot(tmp, choix = "var", axes = c(1,3))
+
+### Looking at GLM results across species and covariables
+names(glmSRnat.overall)[6] <- "covar.tab"
+# Distribution of GLM coefs
+boxplot(cbind(Elevation = glmSRnat.overall$covar.tab$DEM_10$coef.glm,
+              Slope = glmSRnat.overall$covar.tab$SLOPE$coef.glm, 
+              Northness = glmSRnat.overall$covar.tab$Northern$coef.glm,
+              SRali = glmSRnat.overall$covar.tab$SRali$coef.glm, 
+              FocalSpecies = rowMeans(glmSRnat.overall$est)),
+        outline = FALSE, ylab = "GLM coefficients")
+abline(h = 0, col = "lightgrey")
+
+# Frequency of significance for each factor:
+
+barplot(cbind(Elevation = table(glmSRnat.overall$covar.tab$DEM_10$P.coef<0.05),
+              Slope =  table(glmSRnat.overall$covar.tab$SLOPE$P.coef<0.05), 
+              Northness =  table(glmSRnat.overall$covar.tab$Northern$P.coef<0.05),
+              SRali =  table(glmSRnat.overall$covar.tab$SRali$P.coef<0.05) ),
+        ylab = "GLM signif")
+
+
+
+
 
 ####### Calculate correlations within table 1   #########
 library(corrplot)
-mat <- table1[-4, c(1:4, 7, 11, 13)] 
+mat <- table2[-4, c(1:4, 7, 11, 13)] 
 
 # # log option:
 mat$Presence <- log(mat$Presence)
@@ -136,19 +168,22 @@ mtext(text="Abundance class", side=1, outer=F, line=3.5)
 
 #### Figure 2: trends in alpha richness effect size ####
 
-par(mfrow = c(3,5), mar=c(0,0,2,2), oma=c(7,6,2,3))
+par(mfrow = c(2,4), mar=c(0,0,2,1), oma=c(7,7,1,1))
 
 M <- glmSRnat.overall
-ylim=c(-3,3)
+ylim=c(0,150)
 ### Loop on selected species
 for (i in 1:length(sel))  {
    # if (i ==4 | i == 7) plot.new()
   sp <- sel[i]
   es <- as.numeric(M$est[sp,])
+  es <- exp(as.numeric(M$est[sp,]))*100
   n <- as.numeric(M$n.obs[sp,])[2:6]
   
   low <- as.numeric(M$CIlow[sp,])
   hi <- as.numeric(M$CIhi[sp,])
+  low <- exp(as.numeric(M$CIlow[sp,]))*100
+  hi <- exp(as.numeric(M$CIhi[sp,]))*100
   
   ## correct for small sample sizes
   small <- es
@@ -157,19 +192,20 @@ for (i in 1:length(sel))  {
   low[n<5] <- NA
   hi[n<5] <- NA
   
-  if ( !all(is.na(c(hi, low)))) lims <-  max(c(abs(low),abs(hi)), na.rm=T) +0.02
-  if ( all(is.na(c(hi, low)))) lims <-  max(c(abs(es)), na.rm=T) +0.02
+  # if ( !all(is.na(c(hi, low)))) lims <-  max(c(abs(low),abs(hi)), na.rm=T) +0.02
+  # if ( all(is.na(c(hi, low)))) lims <-  max(c(abs(es)), na.rm=T) +0.02
   
   col <- rep("white",6)
   col[(1:6)>= as.numeric( M$impact.spread[sp,threshold])] <- "black"  # above threshold
-  col[(2:6)[hi>0]] <- NA  # robust negative coef
+  col[(2:6)[hi>100]] <- NA  # robust negative coef
   col[(2:6)[n<5]] <- NA  # sufficient data points
   
   # plot background
   plot(1:5,  rep(0,5), ylim=ylim, xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F, bty = "n")
   
   #dotted line
-  abline(h=0,lty="dotted")
+  # abline(h=0,lty="dotted")
+  abline(h=exp(0)*100,lty="dotted")
   
   # draw small sample sizes
   # if (!all(is.na(small))) points(1:5, small, pch=21, cex = 0.6)
@@ -194,18 +230,15 @@ for (i in 1:length(sel))  {
   
   # X axis labels
   axis(1,at = 1:5, labels = F, tcl= 0.1,mgp=c(1,0.5,0),las=1, lwd = 0, lwd.ticks = 1)
-  # if (i %in% c(8:11)) text(y=-3.6, x = 1:5, labels= abclasses[2:6],  cex=1, srt=45, adj=1, xpd = NA)
-  if (i %in% c(5:8)) text(y=-3.6, x = 1:5, labels= abclasses[2:6],  cex=1, srt=45, adj=1, xpd = NA)
-  
+  if (i %in% c(5:8)) text(y=-15, x = 1:5, labels= abclasses[2:6],  cex=1, srt=45, adj=1, xpd = NA)
+
   # Y axis
   axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1, labels = F, lwd = 0, lwd.ticks = 1)
-  # if ( i %in% c(1,4,8)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1, lwd=0)
-  if ( i %in% c(1,5)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1, lwd=0)
+   if ( i %in% c(1,5)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1, lwd=0)
   
    # Y axis name
-  # if ( i %in% c(1,4,8)) {
-  if ( i %in% c(1,5)) {
-    mtext(2, text="GLM coefficient", adj=0.5, cex=0.8, line=1.5, las = 0)
+   if ( i %in% c(1,5)) {
+    mtext(2, text=substitute("% SRnat"[a], list(a = "[rare]")), adj=0.5, cex=0.8, line=2, las = 0)
   }
   
   box(bty = "o", lwd = 1)
@@ -213,11 +246,11 @@ for (i in 1:length(sel))  {
 }
 
 mtext(1, text=c("Abundance class"), adj=0.5, line=5, las = 1, outer=T)
-mtext(2, text=expression(paste("Effect size for native ", alpha,"-richness")), adj=0.5, line=4, las = 0, outer=T)
+mtext(2, text=expression(paste("Effect size on native ", alpha,"-richness")), adj=0.5, line=5, las = 0, outer=T)
 
 #### Figure 3: trends in gamma richness effect size ####
 
-par(mfrow = c(2,4), mar=c(0,0,2,2), oma=c(7,6,2,3))
+par(mfrow = c(2,4), mar=c(0,0,2,1), oma=c(7,6,1,1))
 ylim = c(-45,35)
 xlim = c(0.5, 5.5)
 
@@ -299,57 +332,397 @@ for (i in 1 : length(sel)){
 }
 
 mtext(1, text=c("Abundance class"), adj=0.5, line=5, las = 1, outer=T)
-mtext(2, text=expression(paste("Effect size for native ", gamma,"-richness")), adj=0.5, line=3, las = 0, outer=T)
+mtext(2, text=expression(paste("Effect size on native ", gamma,"-richness")), adj=0.5, line=3, las = 0, outer=T)
 
 
-#### Figure 4: correlation of deltagamma with delta alpha and with spread  ######
+#### Figure 4: Maps of presence and impact  WITH LAND AND OCEAN ####
+db = databp[databp$PlotName %in% unimprovedgrasslands, ]
+targets <- sel
 
-#loss in alpha vs. loss in gamma
-par(mfrow = c(1,2), mar=c(3,1,2,1), oma=c(1,2,0,0), las = 1, xpd = TRUE)
-plot(da, dg ,pch = 20, col=cgam , ann=F, xlim= c(-4,0), type ="n", axes =F)
+par(
+  mfrow = c(3,4),
+  mar = c(0, 0, 1, 0),
+  oma = c(2, 0, 0, 0)
+)
+
+
+
+for (i in 1:11) {
+  if (i ==10) {
+    plot(region, border = NA)
+    legend(
+      'topleft',
+      legend = c("< critical abundance", "> critical abundance", "dominant"),
+      fill = c("tan", "sienna2", "sienna4"),
+      xpd = NA,
+      bty = "n",
+      border = c("tan", "sienna2", "sienna4")
+    ) 
+  }
+  if (i ==9) {
+    plot(region, border = NA)
+    addnortharrow(pos = "topright", padin = c(0.40, 0), scale = 0.5,
+                             lwd = 1, border = "black", cols = c("white", "black"),
+                             text.col = "black")
+  }
+  if (i ==11) {
+    plot(region, border = NA)
+    map.scale(x = extent(region)[1]+0.1, y = extent(region)[3] + 0.35, ratio = F, relwidth = 0.40) 
+  }
+  
+  if (i <9) {
+    sp=targets[i]
+    plot.alien = as.character(db[which(db$abun %in% c(1, 2, 3, 4, 5, 6) &
+                                         db$vegtype == "G" & db$SpeciesCode == sp), "PlotName"])
+    th = glmSRnat.overall$impact.spread[sp, "th.CI"]
+    es <- as.numeric(glmSRnat.overall$est[sp, ])
+    n <- as.numeric(glmSRnat.overall$n.obs[sp, ])[2:6]
+    es[which(n < 5)] <- NA
+    es = which(!is.na(es)) + 1
+    m <- max(es, na.rm = T)
+    max.impact = as.character(db[which(db$abun >= 6 &
+                                         db$vegtype == "G" & db$SpeciesCode == sp), "PlotName"])
+    th.impact = as.character(db[which(db$abun >= th &
+                                        db$vegtype == "G" & db$SpeciesCode == sp), "PlotName"])
+     
+    
+    plot(region, col = "grey50", border = NA)
+    polygon(extent(region)[c(1,2,2,1)], extent(region)[c(3,3,4,4)], col ="lightblue", border = NA)
+    plot(region, add= T, col = "grey70", border = NA)
+    plot(study_area, add= T, col = "grey90", border = NA)
+    plot(region, add= T, border = "grey70")
+    
+    plot(
+      envplot[plot.alien,],
+      pch = 22,
+      cex = 0.5,
+      col = "tan",
+      bg = "tan",
+      add = T
+    )
+    plot(
+      envplot[th.impact,],
+      pch = 22,
+      cex = 0.5,
+      col = "sienna2",
+      bg = "sienna2",
+      add = T
+    )
+    plot(
+      envplot[max.impact,],
+      pch = 22,
+      cex = 0.5,
+      col = "sienna4",
+      bg = "sienna4",
+      add = T
+    )
+    
+    mtext(
+      3,
+      text = paste(letters[i],") ",sub("_", " ", species[sp, "tip"]), sep = ""),
+      adj = 0.1,
+      line = -0.5,
+      font = 3,
+      cex = 0.6
+    )
+  }
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Figure 5: correlation of deltagamma with delta alpha and with spread  ######
+
+#loss in alpha vs. loss in gamma (lg transformed pearson corr)   
+par(mfrow = c(1,2), mar=c(3,1,2,1), oma=c(1,2,0,1), las = 1, xpd = TRUE)
+plot(da, dg ,pch = 20, col=cgam , ann=F,type ="n", axes =F, log = '', xlim = c(-3.5,0.5))
 axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
 axis(2, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
 text(x = da,y = dg,rownames(table.div.part) , col="grey", cex =0.6, pos = 4)
 points(x = da,y = dg, pch = 20)
 box(bty="l")
 f <- cor.test(da ,dg, method = "spearman")
-mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=F))),adj = 1, cex=0.8, font = 3, line= 0.5)
+mtext(3, text = substitute(italic(rho == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=F))),adj = 1, cex=0.8, font = 3, line= 0.5)
 mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1, line= 0.5)
 mtext(1,text = expression(Delta*alpha*"-richness"), line=2 )
 mtext(2,text = expression(Delta*gamma*"-richness"["c"]), line=2 , las=0)
 
 ### spread above critical abundance - log transforming the spread of potential impact
 print(f <- cor.test(log(spread) ,dg, method = "spearman"))
-plot (spread,dg , pch = 20, col=cgam , ann=F, log = "x", xlim =c(2.5, 600), type ="p", axes =F)
+plot (spread,dg , pch = 20, col=cgam , ann=F, log = "x", xlim =c(5, 650), type ="p", axes =F)
 axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
 axis(2, mgp=c(0,0.3,0),labels=F, tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
 dg.lab <- dg
-dg.lab [ rownames(table.div.part) == "ANTODO"] <- -30
-dg.lab [ rownames(table.div.part) == "PHLPRA"] <- -5.5
 text(x = spread, y = dg.lab ,label = rownames(table.div.part) , col="grey", cex =0.6, pos = 4)
 points(x = spread, y = dg, pch = 20)
 box(bty="l")
-mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),adj = 1, cex=0.8, font = 3, line= 0.5)
-mtext(1,text = "Number of plots > critical abundance", line=2 )
-mtext(3, text = 'b)',adj = 0, cex=0.8, font = 1, line= 0.5)
-
-### spread above critical abundance - no log transformation #####
-print(f <- cor.test(spread ,dg, method = "pearson"))
-plot (spread,dg , pch = 20, col=cgam , ann=F, log = "", xlim =c(-5, 500), type ="n", axes =F)
-axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
-axis(2, mgp=c(0,0.3,0),labels=F, tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
-dg.lab <- dg
-dg.lab [ rownames(table.div.part) == "ANTODO"] <- -30
-dg.lab [ rownames(table.div.part) == "PHLPRA"] <- -5.5
-text(x = spread, y = dg.lab ,label = rownames(table.div.part) , col="grey", cex =0.6, pos = 4)
-points(x = spread, y = dg, pch = 20)
-box(bty="l")
-mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),adj = 1, cex=0.8, font = 3, line= 0.5)
+mtext(3, text = substitute(italic(rho == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),adj = 1, cex=0.8, font = 3, line= 0.5)
 mtext(1,text = "Number of plots > critical abundance", line=2 )
 mtext(3, text = 'b)',adj = 0, cex=0.8, font = 1, line= 0.5)
 
 
-# #### Figure 5: Maps of presence and impact ####
+
+
+
+
+## Fig 5 alternative #########
+#loss in alpha vs. loss in gamma (lg transformed pearson corr)   
+par(mfrow = c(1,1), mar=c(3,1,2,1), oma=c(1,2,0,0), las = 1, xpd = TRUE)
+plot(da, dg ,pch = 20, col=cgam , ann=F,type ="n", axes =F, log = '', xlim = c(-4,0))
+axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+axis(2, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+text(x = da,y = dg,rownames(table.div.part) , col="grey", cex =0.6, pos = 4)
+points(x = da,y = dg, pch = 20)
+box(bty="l")
+f <- cor.test(da ,dg, method = "pearson")
+mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=F))),adj = 1, cex=0.8, font = 3, line= 0.5)
+mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1, line= 0.5)
+mtext(1,text = expression(Delta*alpha*"-richness"), line=2 )
+mtext(2,text = expression(Delta*gamma*"-richness"["c"]), line=2 , las=0)
+
+
+
+#### Figure 4 alternative: Maps + correlations in one figure  #######
+db = databp[databp$PlotName %in% unimprovedgrasslands, ]
+targets <- sel
+
+par(
+  mfrow = c(4,3),
+  mar = c(0, 0, 1, 0),
+  oma = c(2, 2, 0, 0)
+)
+
+
+
+for (i in 1:9) {
+    if (i ==9) {
+      plot(region, border = NA)
+      legend(
+        'center',
+        legend = c("< critical abundance", "> critical abundance", "dominant"),
+        fill = c("tan", "sienna2", "sienna4"),
+        xpd = NA,
+        bty = "n",
+        border = c("tan", "sienna2", "sienna4")
+      )
+      addnortharrow(pos = "topright", padin = c(0.40, 0), scale = 0.5,
+                    lwd = 1, border = "black", cols = c("white", "black"),
+                    text.col = "black")
+    map.scale(x = extent(region)[1]+0.1, y = extent(region)[3] + 0.08, ratio = F, relwidth = 0.40)
+    }
+
+  if (i <9) {
+    sp=targets[i]
+    plot.alien = as.character(db[which(db$abun %in% c(1, 2, 3, 4, 5, 6) &
+                                         db$vegtype == "G" & db$SpeciesCode == sp), "PlotName"])
+    th = glmSRnat.overall$impact.spread[sp, "th.CI"]
+    es <- as.numeric(glmSRnat.overall$est[sp, ])
+    n <- as.numeric(glmSRnat.overall$n.obs[sp, ])[2:6]
+    es[which(n < 5)] <- NA
+    es = which(!is.na(es)) + 1
+    m <- max(es, na.rm = T)
+    max.impact = as.character(db[which(db$abun >= 6 &
+                                         db$vegtype == "G" & db$SpeciesCode == sp), "PlotName"])
+    th.impact = as.character(db[which(db$abun >= th &
+                                        db$vegtype == "G" & db$SpeciesCode == sp), "PlotName"])
+    
+    
+    plot(region, col = "grey50", border = NA)
+    polygon(extent(region)[c(1,2,2,1)], extent(region)[c(3,3,4,4)], col ="lightblue", border = NA)
+    plot(region, add= T, col = "grey70", border = NA)
+    plot(study_area, add= T, col = "grey90", border = NA)
+    plot(region, add= T, border = "grey70")
+    
+    plot(
+      envplot[plot.alien,],
+      pch = 22,
+      cex = 0.5,
+      col = "tan",
+      bg = "tan",
+      add = T
+    )
+    plot(
+      envplot[th.impact,],
+      pch = 22,
+      cex = 0.5,
+      col = "sienna2",
+      bg = "sienna2",
+      add = T
+    )
+    plot(
+      envplot[max.impact,],
+      pch = 22,
+      cex = 0.5,
+      col = "sienna4",
+      bg = "sienna4",
+      add = T
+    )
+    
+    mtext(
+      3,
+      text = paste(letters[i],") ",sub("_", " ", species[sp, "tip"]), sep = ""),
+      adj = 0.1,
+      line = -0.5,
+      font = 3,
+      cex = 0.6
+    )
+  }
+  
+}
+
+## underneath: add the correlations with gamma loss
+dg.lab = dg
+dg.lab [ rownames(table.div.part) == "ANTODO"] <- -23
+dg.lab [ rownames(table.div.part) == "DACGLO"] <- -26
+# 
+par( mar=c(2,1,3,1),  las = 1)
+### Prevalence
+print(f <- cor.test(log(prevalence),dg, method = "spearman"))
+# print(f <- cor.test(prevalence[-c(1,8)],dg[-c(1,8)]))
+plot (prevalence,dg , pch = 20, ann=F, log = "x", xlim =c(150,850), type= "p", axes=F)
+ text(x = prevalence, y = dg.lab, rownames(table.div.part) , col="tan", cex =0.7, pos =4)
+ points(x = prevalence,y = dg, pch = 20, col="tan")
+ box(bty="l")
+axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+axis(2, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+box(bty="l")
+mtext(3, text = substitute(rho == est *" "*p, list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),
+      adj = 1, cex=0.7,line = 0.5)
+mtext(1,text = "Presence", line=1.5, cex = 0.7, font =3)
+mtext(2,text = expression(Delta*gamma*"-richness"["c"]), line=1.5, las=0, cex = 0.8)
+mtext(3, text = 'i)', adj = 0,
+      line = 0.5,
+      font = 3,
+      cex = 0.6)
+
+
+
+### spread above critical abundance
+print(f <- cor.test(log(spread), dg, method = "spearman"))
+plot (spread, dg , pch = 20, ann=F, log = "x", xlim =c(5, 2000), type ="p", axes =F)
+axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+axis(2, mgp=c(0,0.3,0),labels=F, tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+text(x = spread, y = dg, rownames(table.div.part) , col="sienna2", cex =0.7, pos = 4)
+points(x = spread,y = dg, pch = 20, col="sienna2")
+box(bty="l")
+mtext(3, text = substitute(italic(rho == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),adj = 1, cex=0.7,line = 0.5)
+mtext(1,text = "> critical abundance", line=1.5 , cex = 0.7, padj = 0, font =3)
+mtext(3, text = 'j)', adj = 0,
+      line = 0.5,
+      font = 3,
+      cex = 0.6)
+
+
+
+### dominance
+print(f <- cor.test(dominance,dg, method= "spearman"))
+plot (dominance+1, dg , pch = 20, ann=F, log = "x", type= "p",axes =F, xlim = c(1,100))
+text(x = dominance+1, y = dg.lab, rownames(table.div.part) , col="sienna4", cex =0.7, pos = 4)
+points(x = dominance+1,y = dg, pch = 20, col="sienna4")
+axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+axis(2, mgp=c(0,0.3,0),labels=F, tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+box(bty="l")
+mtext(3, text = substitute(rho == est *" "*p, list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),
+      adj = 1, cex=0.7,line = 0.5)
+mtext(1,text = "Dominance", line=1.5, cex = 0.7, font =3)
+mtext(3, text = 'k)', adj = 0,
+      line = 0.5,
+      font = 3,
+      cex = 0.6)
+
+mtext(1,text = "Number of plots", line=1, cex = 0.8, outer =TRUE)
+
+
+
+
+
+###___________________________=___________ EXTRA FIGURES AND STATS ______________________________________####
+
+#### Figure 6 alternative: Maps of presence and impact of two selected species ####
+
+db = databp[databp$PlotName %in% unimprovedgrasslands, ]
+targets <- c('ACHMIL', 'ANTODO')
+
+par(
+  mfrow = c(1, 3),
+  mar = c(0, 0, 0, 0),
+  oma = c(2, 0, 0, 0)
+)
+
+for (i in targets) {
+  plot.alien = as.character(db[which(db$abun %in% c(1, 2, 3, 4, 5, 6) &
+                                       db$vegtype == "G" & db$SpeciesCode == i), "PlotName"])
+  th = glmSRnat.overall$impact.spread[i, "th.CI"]
+  es <- as.numeric(glmSRnat.overall$est[i, ])
+  n <- as.numeric(glmSRnat.overall$n.obs[i, ])[2:6]
+  es[which(n < 5)] <- NA
+  es = which(!is.na(es)) + 1
+  m <- max(es, na.rm = T)
+  max.impact = as.character(db[which(db$abun >= 6 &
+                                       db$vegtype == "G" & db$SpeciesCode == i), "PlotName"])
+  th.impact = as.character(db[which(db$abun >= th &
+                                      db$vegtype == "G" & db$SpeciesCode == i), "PlotName"])
+  
+  plot(study_area, col = "white", border = "grey60")
+  plot(
+    envplot[plot.alien,],
+    pch = 22,
+    cex = 0.5,
+    col = "tan",
+    bg = "tan",
+    add = T
+  )
+  plot(
+    envplot[th.impact,],
+    pch = 22,
+    cex = 0.5,
+    col = "sienna2",
+    bg = "sienna2",
+    add = T
+  )
+  plot(
+    envplot[max.impact,],
+    pch = 22,
+    cex = 0.5,
+    col = "sienna4",
+    bg = "sienna4",
+    add = T
+  )
+  
+  mtext(
+    3,
+    text = sub("_", " ", species[i, "tip"]),
+    adj = 0.1,
+    line = -1.5,
+    font = 3,
+    cex = 0.7
+  )
+}
+
+plot.new()
+legend(
+  'center',
+  legend = c("< critical abundance", ">critical abundance", "Dominant"),
+  fill = c("tan", "sienna2", "sienna4"),
+  xpd = NA,
+  bty = "n",
+  border = c("tan", "sienna2", "sienna4")
+) 
+
+
+# #### OLD Figure 6: Maps of presence and impact ####
 # 
 # db = databp[databp$PlotName %in% unimprovedgrasslands, ]
 # targets <- sel
@@ -428,184 +801,32 @@ mtext(3, text = 'b)',adj = 0, cex=0.8, font = 1, line= 0.5)
 # }
 # 
 
-#### Figure 5bis: Maps of presence and impact  WITH LAND AND OCEAN ####
-db = databp[databp$PlotName %in% unimprovedgrasslands, ]
-targets <- sel
-
-par(
-  mfrow = c(2, 4),
-  mar = c(0, 0, 1, 0),
-  oma = c(2, 0, 0, 0)
-)
-
-for (i in 1:8) {
-  if (i ==11) {
-    plot(region, border = NA)
-    legend(
-      'center',
-      legend = c("< critical abundance", "> critical abundance", "dominant"),
-      fill = c("tan", "sienna2", "sienna4"),
-      xpd = NA,
-      bty = "n",
-      border = c("tan", "sienna2", "sienna4")
-    ) 
-    map.scale(x = extent(region)[1]+0.2, y = extent(region)[3] + 0.05, ratio = F) 
-    addnortharrow(pos = "topright", padin = c(0.15, 0.15), scale = 0.5,
-                  lwd = 1, border = "black", cols = c("white", "black"),
-                  text.col = "black")
-  }
-  if (i <11) {
-    sp=targets[i]
-    plot.alien = as.character(db[which(db$abun %in% c(1, 2, 3, 4, 5, 6) &
-                                         db$vegtype == "G" & db$SpeciesCode == sp), "PlotName"])
-    th = glmSRnat.overall$impact.spread[sp, "th.CI"]
-    es <- as.numeric(glmSRnat.overall$est[sp, ])
-    n <- as.numeric(glmSRnat.overall$n.obs[sp, ])[2:6]
-    es[which(n < 5)] <- NA
-    es = which(!is.na(es)) + 1
-    m <- max(es, na.rm = T)
-    max.impact = as.character(db[which(db$abun >= 6 &
-                                         db$vegtype == "G" & db$SpeciesCode == sp), "PlotName"])
-    th.impact = as.character(db[which(db$abun >= th &
-                                        db$vegtype == "G" & db$SpeciesCode == sp), "PlotName"])
-     
-    
-    plot(region, col = "grey50", border = NA)
-    polygon(extent(region)[c(1,2,2,1)], extent(region)[c(3,3,4,4)], col ="lightblue", border = NA)
-    plot(region, add= T, col = "grey70", border = NA)
-    plot(study_area, add= T, col = "grey90", border = NA)
-    plot(region, add= T, border = "grey70")
-    
-    plot(
-      envplot[plot.alien,],
-      pch = 22,
-      cex = 0.5,
-      col = "tan",
-      bg = "tan",
-      add = T
-    )
-    plot(
-      envplot[th.impact,],
-      pch = 22,
-      cex = 0.5,
-      col = "sienna2",
-      bg = "sienna2",
-      add = T
-    )
-    plot(
-      envplot[max.impact,],
-      pch = 22,
-      cex = 0.5,
-      col = "sienna4",
-      bg = "sienna4",
-      add = T
-    )
-    
-    mtext(
-      3,
-      text = paste(letters[i],") ",sub("_", " ", species[sp, "tip"]), sep = ""),
-      adj = 0.1,
-      line = 0,
-      font = 3,
-      cex = 0.6
-    )
-  }
-    
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###___________________________=___________ EXTRA FIGURES AND STATS ______________________________________####
-
-#### Figure 5 alternative: Maps of presence and impact of two selected species ####
-
-db = databp[databp$PlotName %in% unimprovedgrasslands, ]
-targets <- c('ACHMIL', 'ANTODO')
-
-par(
-  mfrow = c(1, 3),
-  mar = c(0, 0, 0, 0),
-  oma = c(2, 0, 0, 0)
-)
-
-for (i in targets) {
-  plot.alien = as.character(db[which(db$abun %in% c(1, 2, 3, 4, 5, 6) &
-                                       db$vegtype == "G" & db$SpeciesCode == i), "PlotName"])
-  th = glmSRnat.overall$impact.spread[i, "th.CI"]
-  es <- as.numeric(glmSRnat.overall$est[i, ])
-  n <- as.numeric(glmSRnat.overall$n.obs[i, ])[2:6]
-  es[which(n < 5)] <- NA
-  es = which(!is.na(es)) + 1
-  m <- max(es, na.rm = T)
-  max.impact = as.character(db[which(db$abun >= 6 &
-                                       db$vegtype == "G" & db$SpeciesCode == i), "PlotName"])
-  th.impact = as.character(db[which(db$abun >= th &
-                                      db$vegtype == "G" & db$SpeciesCode == i), "PlotName"])
-  
-  plot(study_area, col = "white", border = "grey60")
-  plot(
-    envplot[plot.alien,],
-    pch = 22,
-    cex = 0.5,
-    col = "tan",
-    bg = "tan",
-    add = T
-  )
-  plot(
-    envplot[th.impact,],
-    pch = 22,
-    cex = 0.5,
-    col = "sienna2",
-    bg = "sienna2",
-    add = T
-  )
-  plot(
-    envplot[max.impact,],
-    pch = 22,
-    cex = 0.5,
-    col = "sienna4",
-    bg = "sienna4",
-    add = T
-  )
-  
-  mtext(
-    3,
-    text = sub("_", " ", species[i, "tip"]),
-    adj = 0.1,
-    line = -1.5,
-    font = 3,
-    cex = 0.7
-  )
-}
-
-plot.new()
-legend(
-  'center',
-  legend = c("< critical abundance", ">critical abundance", "Dominant"),
-  fill = c("tan", "sienna2", "sienna4"),
-  xpd = NA,
-  bty = "n",
-  border = c("tan", "sienna2", "sienna4")
-) 
-
 
 #### Compare 3 different metrics of spatial spread vs. gamma loss #####
-par(mfrow = c(1,3), mar=c(3,3,2,1), oma=c(1,2,0,0), las = 1)
 
+#GLM model for explaining deltagamma => not better
+summary(f1 <- glm((-dg) ~ prevalence, family = quasipoisson(link = "log") ))
+summary(f2 <- glm((-dg) ~ spread, family = quasipoisson(link = "log") ))
+summary(f3 <- glm((-dg) ~ dominance, family = quasipoisson(link = "log") ))
+summary( glm( -dg ~ da , family = quasipoisson(link = "log") ))
+summary( glm( -dg ~ da*spread , family = quasipoisson(link = "log") ))
+summary( glm( -dg ~ da , family = quasipoisson(link = "log") ))
+
+
+#GLM model for explaining gamma.corrected
+print(f <- cor.test(prevalence,dg1))
+plot(prevalence,dg1)
+print(f <- cor.test(spread,dg1))
+plot(spread, dg1)
+print(f <- cor.test(dominance,dg1))
+
+
+par(mfrow = c(1,3), mar=c(3,3,2,1), oma=c(1,2,0,0), las = 1)
 ### Prevalence
-print(f <- cor.test(prevalence,dg))
+print(f <- cor.test(prevalence,dg, method = "spearman"))
+# print(f <- cor.test(prevalence[-c(1,8)],dg[-c(1,8)]))
 plot (prevalence,dg , pch = 20, ann=F, log = "", xlim =c(100, 600), type= "p", axes=F)
+text(prevalence,dg, label = impsp)
 # text(x = prevalence, y = dg,label = rownames(table.div.part),  col=cgam ,cex=0.7)
 axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
 axis(2, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
@@ -617,8 +838,8 @@ mtext(2,text = expression(Delta*gamma*"-richness"["c"]), line=2 , las=0)
 mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1)
 
 ### spread above critical abundance
-print(f <- cor.test(spread ,dg))
-plot (spread,dg , pch = 20, col=cgam , ann=F, log = "", xlim =c(2.5, 600), type ="p", axes =F)
+print(f <- cor.test(spread ,log(-dg)))
+plot (spread, dg , pch = 20, ann=F, log = "", xlim =c(2.5, 600), type ="p", axes =F)
 axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
 axis(2, mgp=c(0,0.3,0),labels=F, tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
 # text(x = spread, y = dg,label = rownames(table.div.part),col=cgam, cex=0.7)
@@ -627,6 +848,19 @@ box(bty="l")
 mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),adj = 1, cex=0.8)
 mtext(1,text = "Number of plots > critical abundance", line=2 )
 mtext(3, text = 'b)',adj = 0, cex=0.8, font = 1)
+
+
+### proportion of spread above critical abundance
+print(f <- cor.test(prop.impact ,dg))
+plot (prop.impact, dg , pch = 20, ann=F, log = "",  type ="p", axes =F)
+axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+axis(2, mgp=c(0,0.3,0),labels=F, tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+# text(x = spread, y = dg,label = rownames(table.div.part),col=cgam, cex=0.7)
+
+box(bty="l")
+mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),adj = 1, cex=0.8)
+mtext(1,text = "% of plots > critical abundance", line=2 )
+mtext(3, text = 'c)',adj = 0, cex=0.8, font = 1)
 
 ### dominance
 print(f <- cor.test(dominance,dg))
@@ -665,7 +899,7 @@ axis(2, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
 text(x = spread,y = db,rownames(table.div.part) , col="grey", cex =0.6, pos = 4)
 points(x = spread,y = db, pch = 20)
 box(bty="l")
-f <- cor.test(db ,spread, method = "pearson")
+f <- cor.test(db ,spread, method = "spearman")
 mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=F))),adj = 1, cex=0.8, font = 3, line= 0.5)
 
 # f <- cor.test(db[-10] ,spread[-10], method = "pearson")
@@ -675,6 +909,24 @@ mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1, line= 0.5)
 mtext(2,text = expression(Delta*beta*"-diversity"), line=2, las = 0 )
 mtext(1,text = expression("Distribution of potential impact"), line=2 )
 
+
+#### Loss in alpha corrected vs. loss in gamma corrected by NM ####
+par(mfrow = c(1,2), mar=c(3,1,2,1), oma=c(1,2,0,0), las = 1, xpd = TRUE)
+plot(da2, dg ,pch = 20,ann=F, type ="n", axes =F)
+axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+axis(2, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
+text(x = da2,y = dg,rownames(table.div.part) , col="grey", cex =0.6, pos = 4)
+points(x = da2,y = dg, pch = 20)
+box(bty="l")
+f <- cor.test(da2 ,dg, method = "pearson")
+mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=F))),adj = 1, cex=0.8, font = 3, line= 0.5)
+# 
+# f <- cor.test(db[-10] ,dg[-10], method = "pearson")
+# mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=F))),adj = 1, cex=0.8, font = 3, line= 0.5)
+
+mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1, line= 0.5)
+mtext(1,text = expression(Delta*beta*"-diversity"), line=2 )
+mtext(2,text = expression(Delta*gamma*"-richness"["c"]), line=2 , las=0)
 
 
 #### Spatial distribution of species #####
@@ -709,11 +961,11 @@ par(mfrow = c(1,2), mar=c(3,2,2,1), oma=c(1,2,0,0), las = 1)
 
 #loss in alpha vs. critical abun
 
-plot(critical.abun, da ,pch = 20, col=cgam , ann=F,type ="n", axes =F)
+plot(critical.abun, da2 ,pch = 20, col=cgam , ann=F,type ="n", axes =F)
 axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
 axis(2, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
-text(x =critical.abun ,y = da,label = rownames(table.div.part) , col=cgam, cex =0.7)
-f <- cor.test(da ,critical.abun)
+text(x =critical.abun ,y = da2,label = rownames(table.div.part) , col=cgam, cex =0.7)
+f <- cor.test(da2 ,critical.abun)
 box(bty="o")
 mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),adj = 1, cex=0.8, font = 3)
 mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1)
@@ -752,11 +1004,11 @@ mtext(1,text = "Critical abundance", line=2 )
 
 
 # Spread of potential impact vs. critical abun
-plot(critical.abun, spread ,pch = 20, col=cgam , ann=F,type ="n", axes =F)
+plot(critical.abun, spread ,pch = 20, col=cgam , ann=F,type ="n", log = "y", axes =F)
 axis(1, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
 axis(2, mgp=c(0,0.3,0), tcl=0.2 ,cex.axis = 0.9, lwd = 0, lwd.ticks = 1)
 text(x =critical.abun ,y = spread,label = rownames(table.div.part) , col=cgam, cex =0.7)
-f <- cor.test(spread ,critical.abun)
+f <- cor.test(log(spread) ,critical.abun)
 box(bty="o")
 mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p=p2star(f$p.val, marginal=T))),adj = 1, cex=0.8, font = 3)
 mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1)
@@ -778,12 +1030,12 @@ mtext(1,text = "Critical abundance", line=2 )
 
 
 #######  Counting number of alien sp per plot  ########
-
+library(ape)
 db<- databp[databp$PlotName %in% unimprovedgrasslands,]
 
 focal.com <- table(db[db$SpeciesCode %in% sel,c('SpeciesCode','PlotName')])
 focal.com <- focal.com[,colSums(focal.com) >0]
-as.phylo(dist(focal.com))
+
 plot(hclust(dist(focal.com)))
 heatmap(focal.com)
 

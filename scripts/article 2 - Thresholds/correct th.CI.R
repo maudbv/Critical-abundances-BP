@@ -8,8 +8,8 @@ db.modif <- db[which(db$SpeciesCode %in% a),]
 # list of species =to be targeted in analysis :
 sp.names <- a
 
-output<- data.frame(matrix(NA, nrow= dim(M$dif), ncol =10))
-names(output)<- c("th","th.CI.weak","th.CI", "pth" , "pth.CI.weak","pth.CI",
+output<- data.frame(matrix(NA, nrow= dim(M$dif), ncol =11))
+names(output)<- c("th","th.CI.weak","th.CI","th.CI.custom", "pth" , "pth.CI.weak","pth.CI",
                   "prevalence", "n.plot.impact","n.plot.dominant", "prop.plot.impact")
 rownames(output) <- row.names(M$dif)
 
@@ -65,6 +65,34 @@ if (length(sig)>=1) {   # if there is at least  1 significant negative coef
   if (length(y)>=1) th.CI <- min( y, na.rm=T)
 }
 
+th.CI.custom<- NA
+if (length(sig)>=1) {   # if there is at least  1 significant negative coef
+  y <- sig [sapply(sig, FUN= function(l) { # for all significant coefs
+    c1 <- ( 
+      if (l <= max(ab)) 
+      {
+        r1 = (all(l:max(ab) %in% neg))  
+        # all higher classes have negative coefficients
+        
+        r2 = all(((l):max(ab.freq)) %in% sig)
+        # all higher classes have significantly significant (95% bootstrap CI) negative coefficients
+        
+        r3 = mean(as.numeric(M$est[i,l:max(ab)-1]), na.rm = T) <= M$est[i,l-1]
+      # on average, native richness in higher classes are lower or equal than at the critical abundance
+        
+    c1 = r1 & (r2 | r3) # all negative coefficients AND significant OR on at least on average lower than the critical abundance
+      }
+            else 
+              {
+                c1 = FALSE
+                }
+      )
+    return(c1)
+  })]
+  if (length(y)>=1) th.CI.custom <- min( y, na.rm=T)
+}
+
+
 ### positive effects : detect minimal critical value using bootstrap CI
 pos <- which(co>0) +1
 # select coefficients whose CI are above or below zero :
@@ -80,6 +108,7 @@ if (length(pos)>=1) {
   })]
   if (length(y)>=1) pth <- min( y, na.rm=T)
 }
+
 
 
 pth.CI.weak<- NA
@@ -111,6 +140,12 @@ if (threshold.type == "weak") {
   pth.CI <-pth.CI.weak
 }
 
+
+if (threshold.type == "custom") {
+  th.CI <- th.CI.custom
+  pth.CI <-pth.CI.weak
+}
+
 # Calculate impact spread
 
 prevalence <- dim(sp.dat)[1]
@@ -118,7 +153,7 @@ nb.plot.impact<- sum(sp.dat$abun >=  th.CI, na.rm=T)
 nb.plot.domin<- sum(sp.dat$abun >=  6, na.rm=T)
 prop.plot.impact <- nb.plot.impact/prevalence
 
-output [i, ] <- c(th, th.CI.weak, th.CI, pth, pth.CI.weak, pth.CI,
+output [i, ] <- c(th, th.CI.weak, th.CI,th.CI.custom, pth, pth.CI.weak, pth.CI, 
                   prevalence,nb.plot.impact, nb.plot.domin, prop.plot.impact)
 }
 

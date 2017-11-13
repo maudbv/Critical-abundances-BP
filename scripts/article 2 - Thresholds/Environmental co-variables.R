@@ -42,12 +42,13 @@ AIC(f0,f1,f2,f3,f3ni,f3_ExN, f4,f4ni, f4_simp)
  summary(f3) 
  summary(f3ni) 
  summary(f3_ExN) # best model has interactions between elevation and the two others.
-
+ 
  summary(f4) #best model including SRali has all interactions
  summary(f4ni) 
  summary(f4_simp) 
  
  plot(f4) 
+ Anova(f4ni)
  
  #For SRali
  f0<- glm( SRali ~ 1, data = tmp, family = poisson)
@@ -57,6 +58,7 @@ AIC(f0,f1,f2,f3,f3ni,f3_ExN, f4,f4ni, f4_simp)
  f3<- glm( SRali ~ DEM_10 * SLOPE * Northern, data = tmp, family = poisson)
 
 AIC(f0,f1,f2,f3,f3b) 
+anova(f3ni)
 summary(f3ni) # best model has no interactions
 
 ###  Creating a table ENVIR.COVAR summarizing all linear correlations between factors:
@@ -263,7 +265,9 @@ rownames(spDst) <- colnames(spDst) <-rownames(coordinates(envplot))
 
 ###### Testing ABUN s a factor + elevation and aspect + SRALI  as a covariable for the glm #####
 glms.covar <- data.frame(matrix(NA, length(focal.aliens), 13),row.names = focal.aliens)
-colnames(glms.covar) <- c("df", "P.abun.alone","DeltaAIC", "P.elev", "P.asp", "P.srali","P.abun", "est.abun", "P.c2", "P.c3", "P.c4", "P.c5", "P.c6")
+colnames(glms.covar) <- c("df", "P.abun.alone","DeltaAIC", 
+                          "P.elev", "P.asp", "P.srali","P.abun", "est.abun", 
+                          "P.c2", "P.c3", "P.c4", "P.c5", "P.c6")
 
 # par(mfcol = c(1,2), mar = c(2,2,1,1), oma= c(1,1,3,1))
 for (i in 1:length(focal.aliens)) {
@@ -283,12 +287,17 @@ for (i in 1:length(focal.aliens)) {
   fit1 <- glm( SRnat ~ elev + aspect  + SRali + as.factor(abun), family = poisson) ## abun as factor
   fit2 <- glm( SRnat ~ elev + aspect  + SRali + as.numeric(abun), family = poisson) ## abun as numeric
   fit3 <- glm( SRnat ~ as.numeric(abun), family = poisson)
+  
+  
   glms.covar[i,1:(7 + range(abun)[2]-1)] <- c(fit2$df.residual, 
                                               summary(fit3)$coef[2,4],
                                               AIC(fit0) - AIC(fit2), 
                                               summary(fit2)$coeff[2:5,4],
                                               summary(fit2)$coeff[5,1],
                                               summary(fit1)$coeff[5:length(coef(fit1)), 4])
+  
+  
+  
   } # RYTRAC, CRIMUR, PHLPRA become non significant when adding altitude.
 
 

@@ -1,8 +1,8 @@
-### Comparing Gamma pools at different abundance classes
+  ### Comparing Gamma pools at different abundance classes
 
 ### Main method : Species accumulation curves with model fitting for extrapolation
-
-est.gamma.loss <- function(com.mat = comm, plotID = realgrasslands, spnames = impsp,
+library(vegan)
+est.gamma.loss <- function(com.mat = comm, plotID = unimprovedgrasslands, impsp = impsp,
                            group=natives, threshold="th.CI", plot.graph=FALSE) {
 
    if (plot.graph) {
@@ -17,7 +17,7 @@ community<- ceiling(community>0)
 
 list.gammas= list()
 
-for (sp in spnames) {
+for (sp in impsp) {
 var <- com.mat[rownames(community),sp]
 k <- glmSRnat.overall$impact.spread[sp, threshold]
 obs <- specpool(community, var)
@@ -80,18 +80,18 @@ return(list.gammas)
 gamma.loss <- est.gamma.loss(plot.graph=FALSE)
 
 # plot quantile results:
-x11()
+quartz()
 par(mfrow=c(3,4), mar=c(1,1,1,1), oma=c(2,2,1,1), las=1)
-for (sp in spnames) {
+for (sp in impsp) {
   plot(gamma.loss[[sp]]$quantile, ylim=c(0,1))
   abline(h=0.5, lty="dotted")
 }
 
 
 # plot quantile results:
-x11()
-par(mfrow=c(3,4), mar=c(1,1,1,1), oma=c(2,2,1,1), las=1)
-for (sp in spnames) {
+quartz()
+par(mfrow=c(2,4), mar=c(1,1,1,1), oma=c(2,2,1,1), las=1)
+for (sp in impsp) {
   tmp <- gamma.loss[[sp]]
   tmp <- tmp[-1,]
   tmp <- tmp[tmp$n>4,]
@@ -99,9 +99,9 @@ for (sp in spnames) {
   abline(h=0.5, lty="dotted")
 }
 
-x11()
+quartz()
 par(mfrow=c(3,4), mar=c(2,2,2,1), oma=c(2,3,1,1), las=1)
-for (sp in spnames) {
+for (sp in impsp) {
   tmp <- gamma.loss[[sp]][-1,]
   tmp <- tmp[tmp$n>5,]
   es <- (tmp$Species - tmp$mean.null)
@@ -114,17 +114,16 @@ for (sp in spnames) {
 mtext(2, text = "Gamma loss vs. accum.curve(rare)", las=0, outer=T, line=1)
 
 # ## accumulation curve of natives for all plots where species is present:
-# sp1 <- specaccum(community)
-# sp2 <- specaccum(community,"random" )
-# plot(sp1, ci.type="poly", col="blue", lwd=2, ci.lty=0, ci.col="lightblue")
-# boxplot(sp2, col="yellow", add=TRUE, pch="+")
-# points(obs$n, obs$Species, pch = "*")
-# points(obs$n[(k+1):length(obs$n)], obs$Species[(k+1):length(obs$n)], pch = "+", col="red")
+community <- comm[unimprovedgrasslands,colnames(comm) %in% natives]
+sp1 <- specaccum(community)
+sp2 <- specaccum(community,"random" )
+plot(sp1, ci.type="poly", col="blue", lwd=2, ci.lty=0, ci.col="lightblue")
+boxplot(sp2, col="yellow", add=TRUE, pch="+")
+points(obs$n, obs$Species, pch = "*")
+points(obs$n[(k+1):length(obs$n)], obs$Species[(k+1):length(obs$n)], pch = "+", col="red")
 
-# obs <- sapply(0:6, FUN = function(k){
-#   if(sum(var==k)>0)  specpool(community[var<=k,]) else rep(NA, 9)
-# }))
-# obs.cum <- gamma.above.nat$gamma.above[sp,]
+
+obs.cum <- gamma.above.nat$gamma.above[sp,]
 
 ## POOLACCUM = Accumulation model => should be able to compare and even predict accumulation asymptot ?
 #= = similar to specaccum, but estimate extrapolated richness indices of specpool
@@ -153,13 +152,13 @@ mtext(2, text = "Gamma loss vs. accum.curve(rare)", las=0, outer=T, line=1)
 
 # estimating gamma pools sith Chao estimators
 
-chao.gamma.nat <- function(spnames = impsp, group = natives) {
+chao.gamma.nat <- function(com = comm , spp = impsp, group = natives) {
   require(vegan)
 
   list.gammas = list()
-  for (sp in spnames) {
+  for (sp in spp) {
 
-    community <- comm[which((rownames(comm) %in% realgrasslands) & (comm[,sp]>0) ),]
+    community <- comm[which((rownames(comm) %in% unimprovedgrasslands) & (comm[,sp]>0) ),]
     community <- community[,colSums(community)>0]
     community<- community[,colnames(community) %in% group]
     community<- ceiling(community>0)
@@ -171,3 +170,12 @@ chao.gamma.nat <- function(spnames = impsp, group = natives) {
   return(list.gammas)
 }
 
+chao.gammas <- chao.gamma.nat()
+
+par(mfrow=c(2,4))
+sapply(names(chao.gammas), FUN = function(x) {
+  plot(chao.gammas[[x]]$chao, type = "b", main = x)
+  segments(1:length(chao.gammas[[x]]$chao), chao.gammas[[x]]$chao +chao.gammas[[x]]$chao.se,
+           1:length(chao.gammas[[x]]$chao), chao.gammas[[x]]$chao -chao.gammas[[x]]$chao.se)
+})
+       

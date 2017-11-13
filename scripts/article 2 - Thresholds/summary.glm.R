@@ -1,7 +1,7 @@
 # summarizing results of GLM models and bootstraps on thresholds per group of species
 
 
-summary.glmtest <- function(M = glmSR.overall,data=species, group="ALIEN",
+summary.glmtest <- function(M = glmSRnat.overall,data=species, group="ALIEN",
                             type =c("glm", "boot", "overall.boot"),threshold= "th.CI") {
 
   ### select onlys species in the model
