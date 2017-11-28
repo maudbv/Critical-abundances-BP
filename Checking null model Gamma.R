@@ -12,8 +12,8 @@ factorial(10)/(factorial(5) * factorial(5)) # only 252
 # number of unique combinations of 6 plots from a pool of 52 plots:(Achillea millefolium)
 factorial(52)/(factorial(6) * factorial(52-6)) # 2598960
 
-# number of unique combinations of 6 plots from a pool of 82 plots:(Anthoxanthum odoratum)
-factorial(82)/(factorial(5) * factorial(82-5)) # 27285336
+# number of unique combinations of 9 plots from a pool of 91 plots:(Anthoxanthum odoratum)
+factorial(91)/(factorial(9) * factorial(91-9)) # 783768050065
 
 
 # Present histograms of null expectations
@@ -26,7 +26,7 @@ nreps = 999
 
   # looping on each of the target species
 sp <-  spnames[1]
-sp <- "POACIT"
+sp <- "ANTODO"
     community <-comm[which((rownames(comm) %in% unimprovedgrasslands) & (comm[,sp] > 0)),]
     community <- community[,colSums(community) > 0]
     community <- community[,colnames(community) %in% group]

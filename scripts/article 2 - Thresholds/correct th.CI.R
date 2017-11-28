@@ -27,6 +27,7 @@ for (i in 1:length(sp.names)) {
   co <-M$est [i,]
   ab = which(!is.na(co))+1
   ab.freq <- which(!is.na(co)& M$n.obs[i,2:6] >= min.occur) +1  ## with enough observations
+  
   neg <-   which(co<0) +1
 
   th<- NA
@@ -71,8 +72,9 @@ if (length(sig)>=1) {   # if there is at least  1 significant negative coef
     c1 <- ( 
       if (l <= max(ab)) 
       {
-        r1 = (all(l:max(ab) %in% neg))  
-        # all higher classes have negative coefficients
+        # r1 = (all((l:max(ab)) %in% neg))  # all higher classes have negative coefficients, regardless of nobs.
+        r1 = (all((l:max(ab))[which(l:max(ab) %in% ab.freq)] %in% neg))  
+        # all higher classes with sufficient nobs have negative coefficients
         
         r2 = all(((l):max(ab.freq)) %in% sig)
         # all higher classes have significantly significant (95% bootstrap CI) negative coefficients

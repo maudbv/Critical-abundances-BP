@@ -73,12 +73,11 @@ barplot(cbind(Elevation = table(glmSRnat.overall$covar.tab$DEM_10$P.coef<0.05),
 
 ####### Calculate correlations within table 1   #########
 library(corrplot)
-mat <- table2[-4, c(1:4, 7, 11, 13)] 
-
+mat <- table2[, c(1:4, 9, 13, 15)] 
 # # log option:
-mat$Presence <- log(mat$Presence)
-mat$above.Acrit <- log (mat$above.Acrit)
-mat$dominance <- log (mat$dominance+1)
+# mat$Presence <- log(mat$Presence)
+# mat$above.Acrit <- log (mat$above.Acrit)
+# mat$dominance <- log (mat$dominance+1)
 
 cor.mtest <- function(mat, conf.level = 0.95, method = "pearson"){
   mat <- as.matrix(mat)
@@ -110,7 +109,7 @@ title(main = "Spearman")
 
 pearson.mat <- NULL
 for (i in 1: length(names(mat))) {
-  tmp <- rbind(coef = round(res1[[1]][i,], 2),
+  tmp <- rbind(coef = round(res1[[1]][i,], 4),
                P.val = round(res1[[3]][i,], 4),
                df = res1[[2]][i,])
   pearson.mat = rbind(pearson.mat, tmp)
@@ -119,7 +118,7 @@ colnames(pearson.mat) = names(mat)
 
 spearman.mat <- NULL
 for (i in 1: length(names(mat))) {
-  tmp <- rbind(coef = round(res2[[1]][i,], 2),
+  tmp <- rbind(coef = round(res2[[1]][i,],4),
                P.val = round(res2[[3]][i,], 4),
                df = res2[[2]][i,])
   spearman.mat = rbind(spearman.mat, tmp)
@@ -477,6 +476,7 @@ mtext(3, text = 'b)',adj = 0, cex=0.8, font = 1, line= 0.5)
 
 
 
+
 ## Fig 5 alternative #########
 #loss in alpha vs. loss in gamma (lg transformed pearson corr)   
 par(mfrow = c(1,1), mar=c(3,1,2,1), oma=c(1,2,0,0), las = 1, xpd = TRUE)
@@ -491,6 +491,7 @@ mtext(3, text = substitute(italic(r == est *" "*p), list(est = round(f$est,2), p
 mtext(3, text = 'a)',adj = 0, cex=0.8, font = 1, line= 0.5)
 mtext(1,text = expression(Delta*alpha*"-richness"), line=2 )
 mtext(2,text = expression(Delta*gamma*"-richness"["c"]), line=2 , las=0)
+
 
 
 
@@ -648,7 +649,179 @@ mtext(1,text = "Number of plots", line=1, cex = 0.8, outer =TRUE)
 
 
 
+
 ###___________________________=___________ EXTRA FIGURES AND STATS ______________________________________####
+
+## Extra figure for reviewers showing no longer significant 3 species :
+
+par(mfrow = c(1,3), mar=c(0,0,2,1), oma=c(7,7,1,1))
+
+M <- glmSRnat.overall
+nonsigsp <- impsp.nocovar[which(! impsp.nocovar %in% impsp)]
+threshold = "th.CI"
+ylim=c(0,200)
+### Loop on selected species
+for (i in 1:length(nonsigsp))  {
+  # if (i ==4 | i == 7) plot.new()
+  sp <- nonsigsp[i]
+  es <- as.numeric(M$est[sp,])
+  es <- exp(as.numeric(M$est[sp,]))*100
+  n <- as.numeric(M$n.obs[sp,])[2:6]
+  
+  low <- as.numeric(M$CIlow[sp,])
+  hi <- as.numeric(M$CIhi[sp,])
+  low <- exp(as.numeric(M$CIlow[sp,]))*100
+  hi <- exp(as.numeric(M$CIhi[sp,]))*100
+  
+  ## correct for small sample sizes
+  small <- es
+  small[which(n>=5)] <- NA
+  es[which(n<5)] <- NA
+  low[n<5] <- NA
+  hi[n<5] <- NA
+  
+  # if ( !all(is.na(c(hi, low)))) lims <-  max(c(abs(low),abs(hi)), na.rm=T) +0.02
+  # if ( all(is.na(c(hi, low)))) lims <-  max(c(abs(es)), na.rm=T) +0.02
+  
+  col <- rep("white",6)
+  col[(1:6)>= as.numeric( M$impact.spread[sp,threshold])] <- "black"  # above threshold
+  col[(2:6)[hi>100]] <- NA  # robust negative coef
+  col[(2:6)[n<5]] <- NA  # sufficient data points
+  
+  # plot background
+  plot(1:5,  rep(0,5), ylim=ylim, xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F, bty = "n")
+  
+  #dotted line
+  # abline(h=0,lty="dotted")
+  abline(h=exp(0)*100,lty="dotted")
+  
+  # draw small sample sizes
+  # if (!all(is.na(small))) points(1:5, small, pch=21, cex = 0.6)
+  
+  ## Add bootstrapped CI
+  if ( !all(is.na(c(hi, low)))) {
+    arrows(1:5,low,   1:5,hi, lwd=1, code =3, length=0.05, angle=90)
+  }
+  
+  # draw the points and lines
+  par(new=T)
+  plot(1:5,es, bg = col[2:6], pch=21, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F, bty = "n")
+  
+  #threshold line
+  abline(v = M$impact.spread[sp,threshold]-1, lty="dashed")
+  # th <-M$impact.spread[sp,threshold]
+  # arrows(x0 =th-1, y0 = 2 ,x1 =th-1, y1 =1, length = 0.07, col = "grey60", lwd = 2, code = 2)
+  
+  # Add species name
+  mtext(3, text=paste(letters[i],") ", species[sp, "Genus"]," ", species[sp, "Species"], sep="") ,
+        font = 3, outer= F,adj=0.1, cex=0.7, line=0.2, las = 1)
+  
+  # X axis labels
+  axis(1,at = 1:5, labels = F, tcl= 0.1,mgp=c(1,0.5,0),las=1, lwd = 0, lwd.ticks = 1)
+  text(y=-15, x = 1:5, labels= abclasses[2:6],  cex=1, srt=60, adj=1, xpd = NA)
+  
+  # Y axis
+  axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1, labels = F, lwd = 0, lwd.ticks = 1)
+  if ( i %in% c(1)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1, lwd=0)
+  
+  # Y axis name
+  if ( i %in% c(1)) {
+    mtext(2, text=substitute("% SRnat"[a], list(a = "[rare]")), adj=0.5, cex=0.8, line=2, las = 0)
+  }
+  
+  box(bty = "o", lwd = 1)
+  
+}
+
+mtext(1, text=c("Abundance class"), adj=0.5, line=5, las = 1, outer=T)
+mtext(2, text=expression(paste("Effect size on native ", alpha,"-richness")), adj=0.5, line=5, las = 0, outer=T)
+
+
+
+## figure S2:  trends in alpha richness effect size without covar ####
+
+par(mfrow = c(3,4), mar=c(0,0,2,1), oma=c(7,7,1,1))
+
+M <- glmSRnat.overall.nocovar
+ylim=c(0,250)
+### Loop on selected species
+for (i in 1:length(impsp.nocovar))  {
+  # if (i ==4 | i == 7) plot.new()
+  sp <- impsp.nocovar[i]
+  es <- as.numeric(M$est[sp,])
+  es <- exp(as.numeric(M$est[sp,]))*100
+  n <- as.numeric(M$n.obs[sp,])[2:6]
+  
+  low <- as.numeric(M$CIlow[sp,])
+  hi <- as.numeric(M$CIhi[sp,])
+  low <- exp(as.numeric(M$CIlow[sp,]))*100
+  hi <- exp(as.numeric(M$CIhi[sp,]))*100
+  
+  ## correct for small sample sizes
+  small <- es
+  small[which(n>=5)] <- NA
+  es[which(n<5)] <- NA
+  low[n<5] <- NA
+  hi[n<5] <- NA
+  
+  # if ( !all(is.na(c(hi, low)))) lims <-  max(c(abs(low),abs(hi)), na.rm=T) +0.02
+  # if ( all(is.na(c(hi, low)))) lims <-  max(c(abs(es)), na.rm=T) +0.02
+  
+  col <- rep("white",6)
+  col[(1:6)>= as.numeric( M$impact.spread[sp,threshold])] <- "black"  # above threshold
+  col[(2:6)[hi>100]] <- NA  # robust negative coef
+  col[(2:6)[n<5]] <- NA  # sufficient data points
+  
+  # plot background
+  plot(1:5,  rep(0,5), ylim=ylim, xlim = c(0.5, 5.5), type= "n", xaxt = "n", yaxt="n", ann=F, bty = "n")
+  
+  #dotted line
+  # abline(h=0,lty="dotted")
+  abline(h=exp(0)*100,lty="dotted")
+  
+  # draw small sample sizes
+  # if (!all(is.na(small))) points(1:5, small, pch=21, cex = 0.6)
+  
+  ## Add bootstrapped CI
+  if ( !all(is.na(c(hi, low)))) {
+    arrows(1:5,low,   1:5,hi, lwd=1, code =3, length=0.05, angle=90)
+  }
+  
+  # draw the points and lines
+  par(new=T)
+  plot(1:5,es, bg = col[2:6], pch=21, type = "b",ylim=ylim, xlim = c(0.5, 5.5), xaxt = "n", yaxt="n", ann=F, bty = "n")
+  
+  #threshold line
+  abline(v = M$impact.spread[sp,threshold]-1, lty="dashed")
+  # th <-M$impact.spread[sp,threshold]
+  # arrows(x0 =th-1, y0 = 2 ,x1 =th-1, y1 =1, length = 0.07, col = "grey60", lwd = 2, code = 2)
+  
+  # Add species name
+  mtext(3, text=paste(letters[i],") ", species[sp, "Genus"]," ", species[sp, "Species"], sep="") ,
+        font = 3, outer= F,adj=0.1, cex=0.7, line=0.2, las = 1)
+  
+  # X axis labels
+  axis(1,at = 1:5, labels = F, tcl= 0.1,mgp=c(1,0.5,0),las=1, lwd = 0, lwd.ticks = 1)
+  if (i %in% c(8:11)) text(y=-15, x = 1:5, labels= abclasses[2:6],  cex=1, srt=90, adj=1, xpd = NA)
+  
+  # Y axis
+  axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1, labels = F, lwd = 0, lwd.ticks = 1)
+  if ( i %in% c(1,5,9)) axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1, lwd=0)
+  
+  # Y axis name
+  if ( i %in% c(1,5,9)) {
+    mtext(2, text=substitute("% SRnat"[a], list(a = "[rare]")), adj=0.5, cex=0.8, line=2, las = 0)
+  }
+  
+  box(bty = "o", lwd = 1)
+  
+}
+
+mtext(1, text=c("Abundance class"), adj=0.5, line=5, las = 1, outer=T)
+mtext(2, text=expression(paste("Effect size on native ", alpha,"-richness")), adj=0.5, line=5, las = 0, outer=T)
+
+
+
 
 #### Figure 6 alternative: Maps of presence and impact of two selected species ####
 
