@@ -167,7 +167,7 @@ mtext(text="Abundance class", side=1, outer=F, line=3.5)
 
 #### Figure 2: trends in alpha richness effect size ####
 
-par(mfrow = c(2,4), mar=c(0,0,2,1), oma=c(7,7,1,1))
+par(mfrow = c(4,4), mar=c(0,0,2,1), oma=c(7,7,1,1))
 
 M <- glmSRnat.overall
 ylim=c(0,150)

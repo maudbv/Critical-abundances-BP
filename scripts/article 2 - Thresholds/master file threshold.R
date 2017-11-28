@@ -108,7 +108,7 @@ min.class <- 2
   # glmSRali <- glm.test(db = db,var="SRali",bootstrap = T, nreps=nreps, CI=0.95, drastic =F,min.occur =min.occur,  min.class = min.occur)
 
 # save(glmSR,glmSRnat,glmSRali, file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
-load(file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
+# load(file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
 
 #####  Overall bootstrapping :
 
