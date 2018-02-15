@@ -1,11 +1,11 @@
 ---
-title: "Notes on Critical abundance paper"
+title: "Critical abundance paper"
 output: html_notebook
 ---
 
 Analyses of the critical abundances for the impact of non-native plants on native grassland plant communities of Banks peninsula.
 
-```{r, echo=FALSE}
+```{r setup, echo=FALSE}
 
 setwd("/Users/maud/Documents/Work/Postdoc lincoln local /R/R_critical abundances analyses")
 
@@ -21,9 +21,12 @@ require(maps)
 library(raster)
 library(prettymapr)
 
-load("saved Rdata/article 2 - threshold/article threshold 1.3.4.Rdata") 
+# load("saved Rdata/article 2 - threshold/article threshold 1.3.4.Rdata") 
+
+```
 
 
+```{r data import, echo=FALSE, error=TRUE, results='hide', tidy=TRUE}
 ### Import and modify data from scratch:  ############
 source('scripts/data/import BP species and environment data.R', encoding = "native.enc")
 # source('script/data/import trait data.R', encoding = "native.enc")
@@ -31,56 +34,22 @@ source('scripts/data/import BP species and environment data.R', encoding = "nati
 # import GIS data
 source('scripts/data/import GIS data.R', echo=FALSE)
 
-# modify envplot for GIS analysis:
-coordinates(envplot) <- c("POINTX", "POINTY")
-proj4string(envplot) <- original.CRS
-envplot <- spTransform(envplot, CRS("+proj=longlat +datum=WGS84"))
-envplot.grid <- points2grid(envplot, tolerance = 0.63, round=1)
-grid <- SpatialGrid(envplot.grid, proj4string = proj4string(study_area))
+# update envplot
+source('~/Documents/Work/Postdoc lincoln local /R/R_critical abundances analyses/scripts/article 2 - Thresholds/modify envplot.R')
 
-# Extract landuse for point data in envplot
-o = over(envplot,LUCAS)
-envplot@data = cbind(envplot@data,o)
-envplot$landuse <- envplot$PREV_LUC_N
+```
 
-## realgrasslands with landuse = lucasgrasslands  ( different from previous landcover data)
-## dominant species
-envplot$first.rank <-NA
-firstranksp <- databp[databp$DominanceRank == 1 , c("SpeciesCode", "PlotName")]
-firstranksp$ALIEN <- 0
-firstranksp$ALIEN[firstranksp$SpeciesCode %in% aliens] <- 1
-envplot$first.rank <-firstranksp$SpeciesCode[match(envplot$PLOTID,firstranksp$PlotName)]
+We selected `r length(unimprovedgrasslands)` plots of unimproved grasslands.
 
-herbaceouslands <- rownames(envplot@data)[which(
-  envplot$first.rank %in% rownames(species)[species$Growth.forms %in% c('GR','HR')] )]
+```{r map, echo = FALSE}
 
-lucasgrasslands <- rownames(envplot@data)[which(
-    (as.character(envplot$landuse) %in% c("Grassland - High producing",
-                                          "Grassland - Low producing","Grassland - With woody biomass")))]
-
-unimproved_lucasgrasslands <- rownames(envplot@data)[which(
-  (as.character(envplot$landuse) %in% c("Grassland - Low producing","Grassland - With woody biomass")))]
-
-realgrasslands <- lucasgrasslands[lucasgrasslands %in% herbaceouslands]
-unimprovedgrasslands <- unimproved_lucasgrasslands[unimproved_lucasgrasslands %in% herbaceouslands]
-
-#count occurrences of species
-tmp <- colSums(comm[which(rownames(comm) %in% as.character(lucasgrasslands)),]>0, na.rm=T)
-species$grassland.occur <- tmp[match(rownames(species), names(tmp))]
-
-tmp <- colSums(comm[which(rownames(comm) %in% as.character(unimprovedgrasslands)),]>0, na.rm=T)
-species$unimproved_grassland.occur <- tmp[match(rownames(species), names(tmp))]
-
-## Transform ASPECT into northern orientation (cosinus) and Eatern (sinus):
-
-envplot@data$Northern <- cospi(envplot@data$ASPECT/180)
-envplot@data$NWestern <- cospi(envplot@data$ASPECT/180 - (1/4))
-envplot@data$Eastern <- sinpi(envplot@data$ASPECT/180)
-
-databp$Northern <-  cospi(databp$ASPECT/180)
-databp$NWestern <- cospi(databp$ASPECT/180 - (1/4))
-databp$Eastern <- sinpi(databp$ASPECT/180)
-
+# Map of land use and selected plots
+par(mar=c(0,0,2,2))
+plot(region, col = "grey50", border = NA)
+polygon(extent(region)[c(1,2,2,1)], extent(region)[c(3,3,4,4)], col ="lightblue", border = NA)
+plot(region, add= T, col = "grey70", border = NA)
+plot(study_area, add= T, col = "grey90", border = NA)
+plot(envplot[envplot$PLOTID %in% unimprovedgrasslands,], add= T,  col ="goldenrod",bg ="goldenrod", pch = 22, cex = 0.7)
 ```
 
 
