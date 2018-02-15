@@ -335,6 +335,49 @@ for (i in 1:length(focal.aliens)) {
 
 write.csv(tableS1.focalsp, file= "table S1 for focal species.csv")
 
+### TABLES1 WITH LOGIT Function for focal species abundance correlation with covariables #####
+
+library(MASS)
+tableS1.focalsp <- data.frame(matrix(NA, length(focal.aliens), 14),row.names = focal.aliens)
+colnames(tableS1.focalsp) <- c("species", "resid.df","%dev.best","DeltaAIC.best", "P.best", "best",
+                               "elev.OR","slope.OR","north.OR","SRali.OR",
+                               "elev.P","slope.P","north.P","SRali.P")
+
+options(contrasts = c("contr.treatment", "contr.poly"))
+
+for (i in 1:length(focal.aliens)) {
+  sp <- focal.aliens[i] 
+  abun <- tmp.comm[, sp]
+  abun[abun == 0] <- NA
+  elev <- tmp.envplot$DEM_10[!is.na(abun)]
+  slope <- tmp.envplot$SLOPE[!is.na(abun)]
+  SRali <- tmp.envplot$SRali[!is.na(abun)]
+  SRnat <- tmp.envplot$SRnat[!is.na(abun)]
+  north <- tmp.envplot$Northern[!is.na(abun)]
+  abun <- na.omit(abun)
+
+  fit0 <- polr(as.factor(abun) ~ 1,  Hess=TRUE)
+  fit4 <- polr(as.factor(abun) ~elev  + slope +  north + SRali ,  Hess=TRUE)
+  fit4.2 <- stepAIC(fit4, ~.^2, scope = list(upper = ~ elev  + slope +  north + SRali, lower = ~1))
+  AOV <- anova(fit0,fit4.2, fit4)
+ n.var = length(summary(fit4.2)$term)
+ if (n.var = 4) AOV = anova(fit0, fit4)
+ #coeffs
+ (ctable <- coef(summary(fit4)))
+ #Odds ratio = exp(coef) for a logit function
+ OR <- exp(ctable)[1:4, 1]
+ ## calculate and store p values
+ p <- (pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2)[1:4]
+
+ #output
+ tableS1.focalsp[i, ] <- c(species[sp, "SpeciesName"],
+                           fit4.2$df.residual,(AOV[1,3] - AOV[2,3])/AOV[1,3] ,AIC(fit0) - AIC(fit4.2),
+                           AOV[2,7],paste(unlist(fit4.2$terms), collapse = " "),
+                            OR,p)
+}
+
+
+write.csv(tableS1.focalsp, file= "table S1 for focal species.csv")
 
 
 ###### TABLES2 Testing ABUN s a factor + elevation+ SLOPE + aspect + SRALI  as a covariable for the glm #####
