@@ -135,7 +135,7 @@ min.class <- 2
 #
  # save( glmSRnat.overall,file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.5.with elevation+northern+srali.Rdata")
 
-  system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.ind =boot.indices, variable = 'SRnat',covar = c("DEM_10","SLOPE", "Northern", "SRali"), min.occur= min.occur, min.class = min.class, nreps=nreps))
+# system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.ind =boot.indices, variable = 'SRnat',covar = c("DEM_10","SLOPE", "Northern", "SRali"), min.occur= min.occur, min.class = min.class, nreps=nreps))
  
 # load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.1.Rdata") # robin's landcover grasslands
 # load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.1.Rdata") # all lucas grasslands
