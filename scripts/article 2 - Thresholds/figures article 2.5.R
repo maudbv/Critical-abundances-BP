@@ -54,6 +54,7 @@ boxplot(cbind(Elevation = glmSRnat.overall$covar.tab$DEM_10$coef.glm,
               Slope = glmSRnat.overall$covar.tab$SLOPE$coef.glm, 
               Northness = glmSRnat.overall$covar.tab$Northern$coef.glm,
               SRali = glmSRnat.overall$covar.tab$SRali$coef.glm, 
+              Built_areas = glmSRnat.overall$covar.tab$BLDG_DIST$coef.glm, 
               FocalSpecies = rowMeans(glmSRnat.overall$est)),
         outline = FALSE, ylab = "GLM coefficients")
 abline(h = 0, col = "lightgrey")
@@ -63,7 +64,9 @@ abline(h = 0, col = "lightgrey")
 barplot(cbind(Elevation = table(glmSRnat.overall$covar.tab$DEM_10$P.coef<0.05),
               Slope =  table(glmSRnat.overall$covar.tab$SLOPE$P.coef<0.05), 
               Northness =  table(glmSRnat.overall$covar.tab$Northern$P.coef<0.05),
-              SRali =  table(glmSRnat.overall$covar.tab$SRali$P.coef<0.05) ),
+              SRali =  table(glmSRnat.overall$covar.tab$SRali$P.coef<0.05),
+              Built_areas = table(glmSRnat.overall$covar.tab$BLDG_DIST$P.coef<0.05),
+              FocalSpecies = table(rowSums(glmSRnat.overall$P<0.05, na.rm = T)>=1)),
         ylab = "GLM signif")
 
 
@@ -167,7 +170,7 @@ mtext(text="Abundance class", side=1, outer=F, line=3.5)
 
 #### Figure 2: trends in alpha richness effect size ####
 
-par(mfrow = c(4,4), mar=c(0,0,2,1), oma=c(7,7,1,1))
+par(mfrow = c(2,4), mar=c(0,0,2,1), oma=c(7,7,1,1))
 
 M <- glmSRnat.overall
 ylim=c(0,150)
