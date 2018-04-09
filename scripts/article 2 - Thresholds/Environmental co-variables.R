@@ -6,20 +6,31 @@ tmp.comm <- comm[unimprovedgrasslands,]
 tmp.envplot <- envplot[unimprovedgrasslands,]
 
 
+# map environmental variables?
+
+
+#### CHoose a subset of environmental variables for analyses:
+tmp=envplot@data[,c(  "PANN0080","PSUM0080", "PWIN0080",  "AVTEMP0080","MINTEM0080", "MAXTEM0080","GDD","SOLRADR","MOISTR","UR1991_DNS","BLDG_DIST","DIST_HWSLD","DIST_METAL","DIST_PRIV","DIST_SRIV", "DEM_10","ASPECT","SLOPE","PH_MID")]
+tmp$dist_built = apply(tmp[, c("BLDG_DIST","DIST_HWSLD")], 1, min)
+# tmp=tmp-colMeans(tmp)/ apply(tmp, 2, sd, na.rm=T)    
+tmp=cbind(tmp,envplot@data[,c("Northern", "Eastern", "NWestern","SR","SRnat","SRali", "vegtype")])
+tmp$logSRnat <- log(tmp$SRnat)
+tmp$logSRnat[which(is.infinite(tmp$logSRnat))] <- NA
+
+
 ## PCA on environmental variables #####
 
 library(FactoMineR)
-tmp=envplot@data[,c(  "PANN0080","PSUM0080", "PWIN0080",  "AVTEMP0080","MINTEM0080", "MAXTEM0080","GDD","SOLRADR","MOISTR","UR1991_DNS","BLDG_DIST","DIST_HWSLD","DIST_METAL","DIST_PRIV","DIST_SRIV", "DEM_10","ASPECT","SLOPE","PH_MID")]
-tmp=tmp-colMeans(tmp)/ apply(tmp, 2, sd, na.rm=T)    
-tmp=cbind(tmp,envplot@data[,c("Northern", "Eastern", "NWestern","SR","SRnat","SRali", "vegtype")])
+
                           
 ## PCA on envir variables
-bb=PCA(tmp[,c( "PANN0080", "AVTEMP0080","SOLRADR","MOISTR","DEM_10","PH_MID",
-               "Northern", "Eastern", "SLOPE","SRnat","SRali", "vegtype")],
-       quanti.sup=c(10,11), quali.sup=12)
+bb=PCA(tmp[,c( "vegtype","SRnat","SRali",
+               "PANN0080", "AVTEMP0080","SOLRADR","MOISTR","DEM_10",
+               "PH_MID","BLDG_DIST","DIST_HWSLD","Northern", "Eastern", "SLOPE")],
+       quanti.sup=c(2,3), quali.sup=1)
 
 b=PCA(tmp[,c( "SRnat" ,"SRali", "PANN0080", "AVTEMP0080","DEM_10",
-              "Northern", "SLOPE")],quanti.sup=c(1:4))
+              "Northern","BLDG_DIST","DIST_HWSLD", "SLOPE")],quanti.sup=c(1:4))
 quartz()
 par(mfrow=c(1,2))
 plot(b, axes = c(1,2), choix= "var")
@@ -28,6 +39,38 @@ plot(b, axes = c(1,3), choix= "var")
 plot( Northern ~ ASPECT, tmp)
 plot( Eastern ~ ASPECT, tmp)
 plot( Eastern ~ Northern, tmp)
+
+plot( SRali  ~ DIST_HWSLD, tmp)
+plot( SRnat  ~ DIST_HWSLD, tmp)
+plot( SRnat  ~ BLDG_DIST, tmp)
+
+
+plot( BLDG_DIST  ~ DIST_HWSLD, tmp)   ### Very correlated
+cor.test(tmp$BLDG_DIST, tmp$DIST_HWSLD)
+
+plot( SRnat  ~ DIST_HWSLD, tmp)   ### R2 = 12%
+cor.test(tmp$SRnat, tmp$DIST_HWSLD)
+
+plot( SRnat  ~ BLDG_DIST , tmp)   ### R2 = 19%
+cor.test(tmp$SRnat, tmp$BLDG_DIST )
+
+plot( logSRnat ~ dist_built, tmp)   ### Very correlated
+
+
+
+## Variable selection 
+library(leaps)
+
+leaps<-regsubsets( logSRnat ~ DEM_10 + SLOPE + Northern + dist_built + SRali, data = tmp, nbest=10)
+# view results
+summary(leaps)
+# plot a table of models showing variables in each model.
+# models are ordered by the selection statistic.
+plot(leaps,scale="r2")
+# plot statistic by subset size
+library(car)
+subsets(leaps, statistic="rsq") 
+
 
 
 
@@ -43,7 +86,7 @@ plot( Eastern ~ Northern, tmp)
  f4ni<- glm( SRnat ~ DEM_10 +  SLOPE   + Northern+ SRali, data = tmp, family = poisson)
  f4_simp<- glm( SRnat ~  DEM_10 + SLOPE + SRali + DEM_10:Northern + DEM_10:SLOPE + DEM_10:SRali, data = tmp, family = poisson)
  f4_supersimp<- glm( SRnat ~  DEM_10 + SLOPE + SRali + Northern + DEM_10:SRali, data = tmp, family = poisson)
- 
+  
  
 AIC(f0,f1,f2,f3,f3ni,f3_ExN, f4,f4ni, f4_simp, f4_supersimp)
  summary(f3) 
@@ -61,14 +104,19 @@ AIC(f0,f1,f2,f3,f3ni,f3_ExN, f4,f4ni, f4_simp, f4_supersimp)
  f1<- glm( SRnat ~ DEM_10, data = tmp, family = poisson)
  f2<- glm( SRnat ~ DEM_10 + SLOPE, data = tmp, family = poisson)
  f3<- glm( SRnat ~ DEM_10 + SLOPE + Northern, data = tmp, family = poisson)
-f4<- glm( SRnat ~ DEM_10 + SLOPE + Northern + SRali, data = tmp, family = poisson)
-f4_supersimp<- glm( SRnat ~  DEM_10 + SLOPE +  Northern + SRali + DEM_10:SRali, data = tmp, family = poisson)
-  
- AIC(f0,f1,f2,f3,f4, f4_supersimp)
- plot(f4) 
- anova(f4_supersimp)
- summary(f4_supersimp)
- 
+f4<- glm( SRnat ~ DEM_10 + SLOPE + Northern + DIST_HWSLD , data = tmp, family = poisson)
+f5<- glm( SRnat ~ DEM_10 + SLOPE + Northern + DIST_HWSLD +  BLDG_DIST, data = tmp, family = poisson)
+f6<- glm( SRnat ~ DEM_10 + SLOPE + Northern + DIST_HWSLD +  BLDG_DIST + SRali, data = tmp, family = poisson)
+
+f4simp<- glm( SRnat ~ DEM_10 + SLOPE + Northern + SRali , data = tmp, family = poisson)
+anova(f4simp)
+
+
+AIC(f0,f1,f2,f3,f4,f4simp, f5,f6)
+anova(f3,f4,f5,f6)
+
+
+
  #For SRali
  f0<- glm( SRali ~ 1, data = tmp, family = poisson)
  f1<- glm( SRali ~ DEM_10, data = tmp, family = poisson)
