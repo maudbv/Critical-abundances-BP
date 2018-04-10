@@ -67,9 +67,7 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% unimprovedgrasslands,]
   sp.names <- unique(db.modif$SpeciesCode)
   
   
-  #### Calculating GLM for observed and bootstrap datasets for each species
-  
-  # initiate result dataframes :
+  # initiate result dataframes : #######
   crit.vals <- crit.vals.P  <- crit.vals.CI <-  data.frame(matrix(NA,
                                                                   nrow=length(sp.names),
                                                                   ncol= nreps +1,
@@ -119,7 +117,7 @@ glm.overallboot<- function(db=databp[databp$PlotName %in% unimprovedgrasslands,]
   names(covar.tab) = covar
   
   
-  ## Calculations looping on all focal species:
+  ## Calculations looping on all focal species: ########
 
   for (i in 1:length(sp.names) ) {
     

@@ -72,8 +72,8 @@ if (length(sig)>=1) {   # if there is at least  1 significant negative coef
     c1 <- ( 
       if (l <= max(ab)) 
       {
-        # r1 = (all((l:max(ab)) %in% neg))  # all higher classes have negative coefficients, regardless of nobs.
-        r1 = (all((l:max(ab))[which(l:max(ab) %in% ab.freq)] %in% neg))  
+         r1 = (all((l:max(ab)) %in% neg))  # all higher classes have negative coefficients, regardless of nobs.
+        #r1 = (all((l:max(ab))[which(l:max(ab) %in% ab.freq)] %in% neg))  
         # all higher classes with sufficient nobs have negative coefficients
         
         r2 = all(((l):max(ab.freq)) %in% sig)

@@ -151,7 +151,7 @@ effects <- glmSRnat.sum$class.summary
 n <- length(unique(effects$group))
 
 #draw barplot
-par(mar=c(5,3,4,3), las=1)
+par(mfrow = c(1,1), mar=c(5,3,4,3), las=1)
 S <- effects[effects$group == "ALIEN:1",]
 barplot(S$nb.sp, ylim=c(0,max(40, S$nb.sp)),col= "grey80",  border= NA, axes=F)
 par(new=T)
@@ -171,21 +171,21 @@ mtext(text="Abundance class", side=1, outer=F, line=3.5)
 #### Figure 2: trends in alpha richness effect size ####
 
 par(mfrow = c(2,4), mar=c(0,0,2,1), oma=c(7,7,1,1))
-
+sel = impsp
 M <- glmSRnat.overall
-ylim=c(0,150)
+ylim=c(-100,50)
 ### Loop on selected species
 for (i in 1:length(sel))  {
    # if (i ==4 | i == 7) plot.new()
   sp <- sel[i]
   es <- as.numeric(M$est[sp,])
-  es <- exp(as.numeric(M$est[sp,]))*100
+  es <- exp(as.numeric(M$est[sp,]))*100-100
   n <- as.numeric(M$n.obs[sp,])[2:6]
   
   low <- as.numeric(M$CIlow[sp,])
   hi <- as.numeric(M$CIhi[sp,])
-  low <- exp(as.numeric(M$CIlow[sp,]))*100
-  hi <- exp(as.numeric(M$CIhi[sp,]))*100
+  low <- exp(as.numeric(M$CIlow[sp,]))*100-100
+  hi <- exp(as.numeric(M$CIhi[sp,]))*100-100
   
   ## correct for small sample sizes
   small <- es
@@ -207,7 +207,7 @@ for (i in 1:length(sel))  {
   
   #dotted line
   # abline(h=0,lty="dotted")
-  abline(h=exp(0)*100,lty="dotted")
+  abline(h=0,lty="dotted")
   
   # draw small sample sizes
   # if (!all(is.na(small))) points(1:5, small, pch=21, cex = 0.6)
@@ -232,7 +232,7 @@ for (i in 1:length(sel))  {
   
   # X axis labels
   axis(1,at = 1:5, labels = F, tcl= 0.1,mgp=c(1,0.5,0),las=1, lwd = 0, lwd.ticks = 1)
-  if (i %in% c(5:8)) text(y=-15, x = 1:5, labels= abclasses[2:6],  cex=1, srt=45, adj=1, xpd = NA)
+  if (i %in% c(5:8)) text(y=-115, x = 1:5, labels= abclasses[2:6],  cex=1, srt=45, adj=1, xpd = NA)
 
   # Y axis
   axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1, labels = F, lwd = 0, lwd.ticks = 1)
