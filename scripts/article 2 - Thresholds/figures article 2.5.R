@@ -151,7 +151,7 @@ effects <- glmSRnat.sum$class.summary
 n <- length(unique(effects$group))
 
 #draw barplot
-par(mfrow = c(1,1), mar=c(5,3,4,3), las=1)
+par(mfrow = c(1,1), mar=c(5,3,5,3), las=1)
 S <- effects[effects$group == "ALIEN:1",]
 barplot(S$nb.sp, ylim=c(0,max(40, S$nb.sp)),col= "grey80",  border= NA, axes=F)
 par(new=T)
@@ -160,12 +160,14 @@ par(new=T)
 b <- barplot(S$freq.thr, col="black" , ylim=c(0,max(40, S$nb.sp)), border= NA, axes=F)
 axis(2, tcl = -0.3, cex.axis = 0.8, mgp = c(1,0.5,0), las = 1)
 text(y=-1.5, x = b+0.3, labels= abclasses[2:6],  cex=0.8, srt=45, adj=1, xpd = NA)
-legend(x=0, y=60, bty="n", bg="white",legend=c( "All focal species",
-                                                  "Frequency of negative effects",
-                                                  "Frequency of critical abundances"),
-             fill=c( "grey80","grey60","black"), border= c("grey90","grey60","black"), cex=0.8, xpd=NA,y.intersp =1)
+legend(x=0, y=60, bty="n", bg="white", 
+       legend=c( "Total number of focal species",
+                 "Number of negative effects",
+                 "Number of critical abundances"),
+       fill=c( "grey80","grey60","black"), border= c("grey90","grey60","black"), cex=0.8, xpd=NA,y.intersp =1)
 mtext(text="number of species", side=2, outer=F, line=2, las=0, cex=1)
 mtext(text="Abundance class", side=1, outer=F, line=3.5)
+
 
 
 #### Figure 2: trends in alpha richness effect size ####

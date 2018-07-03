@@ -1,6 +1,5 @@
 # modify envplot for GIS analysis:
 
-
 coordinates(envplot) <- c("POINTX", "POINTY")
 proj4string(envplot) <- original.CRS
 envplot <- spTransform(envplot, CRS("+proj=longlat +datum=WGS84"))
@@ -49,4 +48,3 @@ envplot@data$Eastern <- sinpi(envplot@data$ASPECT/180)
 databp$Northern <-  cospi(databp$ASPECT/180)
 databp$NWestern <- cospi(databp$ASPECT/180 - (1/4))
 databp$Eastern <- sinpi(databp$ASPECT/180)
-

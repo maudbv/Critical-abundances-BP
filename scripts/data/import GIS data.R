@@ -1,12 +1,5 @@
 
 #############       Import GIS data and update envplot object with land use data
-require(rgdal)
-require(rgeos)
-require(raster)
-require(sp)
-require(maps)
-library(raster)
-require (maptools)
 
 # import Federico data
 study_area <- readOGR(dsn = "data/GIS", layer ="Banks_Peninsula_study_area")
@@ -26,18 +19,18 @@ plots <-  spTransform(plots, CRS("+proj=longlat +datum=WGS84"))
 LUCAS <- readOGR(dsn = "data/GIS", layer ="lucas-bp")
 LUCAS <-  spTransform(LUCAS, CRS("+proj=longlat +datum=WGS84"))
 LUCAS <- crop(LUCAS, extent(study_area) +  c(-0.02, +0.02, -.02, +.02))
-region <- unionSpatialPolygons(LUCAS, IDs = rep(1,length(LUCAS)), threshold=1)
+# region <- unionSpatialPolygons(LUCAS, IDs = rep(1,length(LUCAS)), threshold=1)
 
 
 ## Map of study area
-plot(region, col = "grey50", border = NA)
-polygon(extent(region)[c(1,2,2,1)], extent(region)[c(3,3,4,4)], col ="lightblue", border = NA)
-plot(region, add= T, col = "grey70", border = NA)
-plot(study_area, add= T, col = "grey90", border = NA)
-plot(plots, add= T,  col ="goldenrod",bg ="goldenrod", pch = 22, cex = 0.7)
-detach("package:GISTools", unload=TRUE)
-library(maps)
-map.scale(ratio = FALSE)
+# plot(region, col = "grey50", border = NA)
+# polygon(extent(region)[c(1,2,2,1)], extent(region)[c(3,3,4,4)], col ="lightblue", border = NA)
+# plot(region, add= T, col = "grey70", border = NA)
+# plot(study_area, add= T, col = "grey90", border = NA)
+# plot(plots, add= T,  col ="goldenrod",bg ="goldenrod", pch = 22, cex = 0.7)
+# detach("package:GISTools", unload=TRUE)
+# library(maps)
+# map.scale(ratio = FALSE)
 
 
 # ## colors for land uses
@@ -69,3 +62,4 @@ map.scale(ratio = FALSE)
 # text(  tmp$x,tmp$y+3250,label= "N")
 
 
+save(LUCAS,  plots,  study_area, original.CRS, file = "saved Rdata/GIS data.Rdata")

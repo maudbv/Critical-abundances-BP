@@ -4,14 +4,13 @@ setwd("/Users/maud/Documents/Work/Postdoc lincoln local /R/R_critical abundances
 # load packages 
 library(doBy)
 library(vegan)
-library(markdown)
-require(rgdal)
-require(rgeos)
-require(raster)
-require(sp)
-require(maps)
+library(rgdal)
+library(rgeos)
 library(raster)
-library(prettymapr)
+library(sp)
+library(maps)
+library(raster)
+
 
 
 # load functions   #############
@@ -24,7 +23,7 @@ source('scripts/article 2 - Thresholds/bootstrapping dataset.R')
 source('scripts/article 2 - Thresholds/overall bootstrapped GLM_with covariables.R')
 source('scripts/article 2 - Thresholds/impact.size.R')
 source('scripts/article 2 - Thresholds/summary.glm.R')
-source('scripts/article 2 - Thresholds/correct th.CI.R')
+source('scripts/article 2 - Thresholds/correct th.CI.with positives.R')
 source('scripts/article 2 - Thresholds/myraupcrick.R')
 source('scripts/article 2 - Thresholds/dissim.nm.R')
 source('scripts/functions/SMsim.R')
@@ -37,15 +36,19 @@ source('scripts/article 2 - Thresholds/div partitioning.R')
 # load("saved Rdata/article 2 - threshold/article threshold 1.3.5.Rdata") 
 
 #### Import and modify data from scratch:  ############
-source('scripts/data/import BP species and environment data.R', encoding = "native.enc")
+# source('scripts/data/import BP species and environment data.R', encoding = "native.enc")
+load('saved Rdata/Banks_Peninsula_data.Rdata')
+
 # source('script/data/import trait data.R', encoding = "native.enc")
 
 # import GIS data
-source('scripts/data/import GIS data.R', echo=FALSE)
+# source('scripts/data/import GIS data.R', echo=FALSE)
+load('saved Rdata/GIS data.Rdata')
 
 # update envplot
-source('~/Documents/Work/Postdoc lincoln local /R/R_critical abundances analyses/scripts/article 2 - Thresholds/modify envplot.R')
+source('scripts/article 2 - Thresholds/modify envplot.R')
 
+#save.image(file = "saved Rdata/Critical_abundance_base_data.Rdata")
 
 #### Threshold analysis using GLMs  ########
 
@@ -108,8 +111,8 @@ rm (glmSRnat.overall)
 # system.time(glmSRali.bldg <- glm.overallboot(db = db,boot.ind =boot.indices, variable = 'SRnat',
 #                                                 covar = c("DEM_10","SLOPE", "Northern","BLDG_DIST", "SRali"),
 #                                                 min.occur= min.occur, min.class = min.class, nreps=nreps))
-# save( glmSRnat.bldg, glmSRali.bldg,
-#       file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.8_with distance to roads.Rdata")
+ # save( glmSRnat.bldg,
+ #      file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.8_with distance to roads.Rdata")
   load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.8_with distance to roads.Rdata")
 
   
@@ -141,6 +144,7 @@ glmSRnat.sum <- summary.glmtest(M=glmSRnat.overall,   group="ALIEN", type="overa
 glmSRali.sum <- summary.glmtest(M=glmSRali.overall, group="ALIEN", type="overall.boot")
 
 glmSRnat.nocovar.sum <- summary.glmtest(M=glmSRnat.overall.nocovar,   group="ALIEN", type="overall.boot")
+glmSRnat.bldg.sum <- summary.glmtest(M=glmSRnat.overall.withbldg,   group="ALIEN", type="overall.boot")
 
 
 ## overall bootstrap impact size
@@ -576,7 +580,7 @@ db<- databp[databp$PlotName %in% unimprovedgrasslands,]
 min.occur <- 5
 min.class <- 2
 
-glms_NR_output <- glmSRnat.overall.nobldg 
+glms_NR_output <- glmSRnat.overall
 
 # data set to publish:
 dataset = db[, c( "SurveyName",  "SurveyStartYear","SurveyEndYear",
@@ -591,7 +595,7 @@ dataset <- dataset[which(dataset$SpeciesCode %in% a),]
 
 
 save( dataset = dataset,
-      glms_NR_output = glmSRnat.overall.nobldg,
+      glms_NR_output = glmSRnat.overall,
       boot.output = boot.output,
       boot.indices = boot.indices,
       file = "Bernard-Verdier&Hulme_JEcol2018_data.Rdata"

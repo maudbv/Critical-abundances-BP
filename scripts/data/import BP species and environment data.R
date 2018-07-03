@@ -295,4 +295,5 @@ rm(d, importBPdata)
 # species$preferredtip <- sapply(species$preferredname,FUN=function(x) paste(strsplit(x, " " )[[1]][c(1,2)],collapse="_" ))
 # species$preferredtip[species$preferredtip %in% c("NA_NA", "")] <- species$tip[species$preferredtip %in% c("NA_NA", "")]
 
-
+ save(comm, databp, envplot, occur, species, aliens, grasslands, highlands, lowlands, 
+      natives, realgrasslands, woodlands, file = "saved Rdata/Banks_Peninsula_data.Rdata")
