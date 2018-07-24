@@ -175,7 +175,7 @@ if (threshold.type == "custom") {
 # Calculate impact spread
 
 prevalence <- dim(sp.dat)[1]
-nb.plot.impact<- sum(sp.dat$abun >=  th.CI, na.rm=T)
+nb.plot.impact<- sum( (sp.dat$abun >=  th.CI | sp.dat$abun >=  pth.CI ) , na.rm=T)
 nb.plot.domin<- sum(sp.dat$abun >=  6, na.rm=T)
 prop.plot.impact <- nb.plot.impact/prevalence
 

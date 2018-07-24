@@ -151,6 +151,9 @@ glmSRnat.bldg.sum <- summary.glmtest(M=glmSRnat.overall.withbldg,   group="ALIEN
 impact.SRnat <- impact.size (glmSRnat.overall)
 impact.SRali <- impact.size (glmSRali.overall)
 
+impact.SRnat.nocovar <- impact.size (glmSRnat.overall.nocovar)
+
+
  write.csv(impact.SRnat, "impact.SRnat.csv" )
  write.csv(impact.SRali, "impact.SRali.csv" )
 
@@ -163,6 +166,10 @@ impsp.nocovar <- rownames(glmSRnat.overall.nocovar$impact.spread[which(!is.na(gl
  
 impsp.ali <- rownames(glmSRali.overall$impact.spread[which(!is.na(glmSRali.overall$impact.spread$th.CI)),])
 
+# important positives
+
+impsp.pos <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$pth.CI) & (rownames(glmSRnat.overall$impact.spread) %in% aliens)),])
+
 ####  alpha and beta trends
 #  alpha.trend.nat <- alpha.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.rare", nreps = 999)
 #  beta.trend.nat <- beta.trend(spnames = rownames(glmSRnat.overall$mean),null.model="permute.rare", nreps = 9)
@@ -171,13 +178,14 @@ impsp.ali <- rownames(glmSRali.overall$impact.spread[which(!is.na(glmSRali.overa
 #### Gamma richness trends ###############
 # # permute rare
 # gamma.trend.nat <- gamma.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.rare", nreps = 999)
-#
 # # permute all
 # gamma.trend.nat.permute.all <- gamma.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.all", nreps = 999)
 
 # # resample beta all
 # gamma.trend.nat.beta <- gamma.trend(spnames = impsp, bootstrapped =TRUE, breps = 999,
                                                 # null.model="resample.beta", nreps = 999)
+
+
  # # resample beta rare
 # gamma.trend.nat.betarare <- gamma.trend(spnames = impsp, bootstrapped =TRUE, breps = 999,
 #                                     null.model="resample.beta.inrare", nreps = 999)
@@ -190,7 +198,6 @@ impsp.ali <- rownames(glmSRali.overall$impact.spread[which(!is.na(glmSRali.overa
 #  file = "saved Rdata/article 2 - threshold/gamma.trends.2.Rdata")
 #   save(gamma.trend.nat, alpha.trend.nat,gamma.trend.nat.permute.all,gamma.trend.nat.beta,
 #   file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.Rdata")
-
 # save(gamma.trend.nat,   file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.2.1.Rdata")
 
 # load(file = "saved Rdata/article 2 - threshold/gamma.trends.Rdata")
@@ -213,8 +220,8 @@ load(file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.2.1.Rdata
 #      gamma.above.nat.permute.all,gamma.above.nat.beta,
 #      file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.with cofactors+bldg.Rdata")
 
-# load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.with cofactors+bldg.Rdata") # unimproved grasslands + cofactors including building distance
 
+# load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.with cofactors+bldg.Rdata") # unimproved grasslands + cofactors including building distance
 # Previous versions:
 # load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata") # all lucas grasslands
 # load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.Rdata") # Unimproved without cofactors

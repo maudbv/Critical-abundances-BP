@@ -79,7 +79,11 @@ summary.glmtest <- function(M = glmSRnat.overall,data=species, group="ALIEN",
     # number of negative effects above thresholds per class
     n.negative.above<-apply( (S$z<0 & !is.na(S$dif) & above.thr), 2, sum, na.rm=T)
 
-       # proportion of signifi negative effects per class
+    # number of negative effects above thresholds per class
+    n.positive.above<-apply( (S$z>0 & !is.na(S$dif) & above.pthr), 2, sum, na.rm=T)
+    
+    
+    # proportion of signifi negative effects per class
     p.negative<-n.negative/ n.sp
     p.negative.sig <- n.negative.sig/ n.sp
     
@@ -105,6 +109,7 @@ summary.glmtest <- function(M = glmSRnat.overall,data=species, group="ALIEN",
                                freq.negative = n.negative, freq.positive =n.positive,
                                freq.negative.sig = n.negative.sig, freq.positive.sig =n.positive.sig,
                                freq.negative.above = n.negative.above,
+                               freq.positive.above =  n.positive.above,
                                prop.negative = p.negative,prop.negative.sig = p.negative.sig,
                                freq.thr=freq.thr, prop.thr=prop.thr, perc.thr=perc.thr,
                                freq.pthr=freq.pthr, prop.pthr=prop.pthr, perc.pthr=perc.pthr))
