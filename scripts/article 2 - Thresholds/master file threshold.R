@@ -10,7 +10,7 @@ library(raster)
 library(sp)
 library(maps)
 library(raster)
-
+library(data.table)
 
 
 # load functions   #############
@@ -33,7 +33,7 @@ source('scripts/article 2 - Thresholds/div partitioning.R')
 
 
 # restore saved results:  ####
-# load("saved Rdata/article 2 - threshold/article threshold 1.3.5.Rdata") 
+# load("saved Rdata/article 2 - threshold/article threshold 1.3.7.Rdata") 
 
 #### Import and modify data from scratch:  ############
 # source('scripts/data/import BP species and environment data.R', encoding = "native.enc")
@@ -80,8 +80,8 @@ min.class <- 2
 
 # load(file = "saved Rdata/article 2 - threshold/boot.output.2.0.Rdata") # robin's landcover grasslands
 # load(file = "saved Rdata/article 2 - threshold/boot.output.2.1.Rdata") # all lucas grasslands
-# load(file = "saved Rdata/article 2 - threshold/boot.output.2.2.Rdata") # unimproved grasslands only
- load(file = "saved Rdata/article 2 - threshold/boot.output.2.3.Rdata") # unimproved grasslands only - RUN 2
+ load(file = "saved Rdata/article 2 - threshold/boot.output.2.2.Rdata") # unimproved grasslands only
+# load(file = "saved Rdata/article 2 - threshold/boot.output.2.3.Rdata") # unimproved grasslands only - RUN 2
    
 # ________calculate glms on bootstraps _____________________________________________________________________
  
@@ -127,22 +127,41 @@ rm (glmSRnat.overall)
 # save( glmSRnat, glmSRali,
 #       file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.9_all covariables except bldg.Rdata")
 load( file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.9_all covariables except bldg.Rdata")
-  
+ glmSRnat.covar <- glmSRnat
+ glmSRali.covar <- glmSRali
+ 
+## Major Revisions for JoE April 2018 
+## ALL Covariables included in GLMS (without distance to building)  *************TO BE RUN ************:
+ # system.time(glmSRnat<- glm.overallboot(db = db,boot.ind =boot.indices, variable = 'SRnat',
+ #                                                covar = c("year","DEM_10","SLOPE", "Northern","SRali"),
+ #                                                 min.occur= min.occur, min.class = min.class, nreps=nreps))
+# 
+#  system.time(glmSRali<- glm.overallboot(db = db,boot.ind =boot.indices, variable = 'SRali',
+#                                                 covar = c("year","DEM_10","SLOPE", "Northern","SRali"),
+#                                                  min.occur= min.occur, min.class = min.class, nreps=nreps))
+# 
+#  
+ # save( glmSRnat, glmSRali,
+ #       file = "saved Rdata/article 2 - threshold/overall.boot.glms.3_all covariables include year.Rdata")
 
-### Calculate impact.spread calculations (Choosing: Covariables + Bldg) ________________________________________
+ load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.3_all covariables include year.Rdata")
+
+
+### Calculate impact.spread and critical abundances (= "threshold type")  ####
+
 glmSRnat.overall.withbldg <- correct.impact.spread(M = glmSRnat.bldg, db=db, variable= "SRnat",threshold.type= "custom")
 glmSRnat.overall.nocovar <- correct.impact.spread(M = glmSRnat.overall.nocovar, db=db, variable= "SRnat",threshold.type= "custom") 
+glmSRnat.covar <- correct.impact.spread(M = glmSRnat.covar, db=db, variable= "SRnat",threshold.type= "custom") 
+
 
 glmSRnat.overall<- correct.impact.spread(M = glmSRnat, db=db, variable= "SRnat",threshold.type= "custom") 
 glmSRali.overall<- correct.impact.spread(M = glmSRali, db=db, variable= "SRali",threshold.type= "custom") 
-
-
-# glmSRali.overall <- correct.impact.spread(M = glmSRali.overall,db=db, variable= "SRali")
 
 ### SUMMARY of frequencies of significantly negative effects and thresholds
 glmSRnat.sum <- summary.glmtest(M=glmSRnat.overall,   group="ALIEN", type="overall.boot")
 glmSRali.sum <- summary.glmtest(M=glmSRali.overall, group="ALIEN", type="overall.boot")
 
+glmSRnat.covar.sum <- summary.glmtest(M=glmSRnat.covar,   group="ALIEN", type="overall.boot")
 glmSRnat.nocovar.sum <- summary.glmtest(M=glmSRnat.overall.nocovar,   group="ALIEN", type="overall.boot")
 glmSRnat.bldg.sum <- summary.glmtest(M=glmSRnat.overall.withbldg,   group="ALIEN", type="overall.boot")
 
@@ -169,6 +188,9 @@ impsp.ali <- rownames(glmSRali.overall$impact.spread[which(!is.na(glmSRali.overa
 # important positives
 
 impsp.pos <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$pth.CI) & (rownames(glmSRnat.overall$impact.spread) %in% aliens)),])
+
+
+impsp.pos.nocovar <- rownames(glmSRnat.overall.nocovar$impact.spread[which(!is.na(glmSRnat.overall.nocovar$impact.spread$pth.CI) & (rownames(glmSRnat.overall.nocovar$impact.spread) %in% aliens)),])
 
 ####  alpha and beta trends
 #  alpha.trend.nat <- alpha.trend(spnames = rownames(glmSRnat.overall$mean), null.model="permute.rare", nreps = 999)
@@ -208,25 +230,30 @@ load(file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.2.1.Rdata
 #### Gamma above/below #######
 
 # # Alpha differences above vs. below
-# system.time(alpha.above.trend <- div.part.alpha.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "permute", nreps =999))
+#  system.time(alpha.above.trend <- div.part.alpha.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "permute", nreps =999))
 # 
-# # Gamma differences with permute all : keeps beta diversities
-#  system.time(gamma.above.nat.permute.all <- div.part.gamma.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "permute.all", nreps =999))
+#  # Gamma differences with permute all : keeps beta diversities
+#   system.time(gamma.above.nat.permute.all <- div.part.gamma.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "permute.all", nreps =999))
 # 
 # # Gamma differences with resample all : resamples beta diversity
 #  system.time(gamma.above.nat.beta <- div.part.gamma.nm(spnames = rownames(glmSRnat.overall$mean), group=natives, null.model = "resample.beta", nreps =999))
 # 
 # save(alpha.above.trend,
 #      gamma.above.nat.permute.all,gamma.above.nat.beta,
-#      file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.with cofactors+bldg.Rdata")
+#      file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.covariable+year.Rdata")
 
+# Used version:
+ load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.withcofactors.Rdata") ##unimproved grasslands only
 
-# load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.with cofactors+bldg.Rdata") # unimproved grasslands + cofactors including building distance
+# Latest version: strangely, non significant corr btwn Nb.Acrit and Deltagamma.c
+## Look into why it is different, probably a question of random null model => RERUN with more repetitions
+# load(file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.covariable+year.Rdata") ## covariables including year of sampling
+
 # Previous versions:
 # load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.Rdata") # all lucas grasslands
 # load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.Rdata") # Unimproved without cofactors
- load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.withcofactors.Rdata") ##unimproved grasslands only
 
+# load (file= "saved Rdata/article 2 - threshold/diversity.partitioning.unimproved.with cofactors+bldg.Rdata") # unimproved grasslands + cofactors including building distance
 
 #### gamma trends ALIEN richness ###############
 
@@ -255,26 +282,25 @@ load(file = "saved Rdata/article 2 - threshold/gamma.trends.unimproved.2.1.Rdata
 
 
 #### Beta diversity = turnover + nestedness   => USED   ###########
-#  library(vegan)
-# betasor.nat = betasor.multi(spnames = impsp, group = natives, null.comm = T, bootstrap = F, nreps = 999)
-# betasor.boot.nat = betasor.multi(spnames = impsp, group = natives, null.comm = F, bootstrap = T, nreps = 999)
+ #  library(vegan)
+ # betasor.nat = betasor.multi(spnames = impsp, group = natives, null.comm = T, bootstrap = F, nreps = 999)
+ # betasor.boot.nat = betasor.multi(spnames = impsp, group = natives, null.comm = F, bootstrap = T, nreps = 999)
+ 
+ 
+#save(betasor.nat,betasor.boot.nat, file = "saved Rdata/beta diversity output.3.Rdata") 
+ load(file = "saved Rdata/beta diversity output.3.Rdata") #with covariables + year
 
-# save(betasor.ali, betasor.nat, betasor.ali.all,betasor.nat.all,file="saved Rdata/article 2 - threshold/betasor results.Rdata")
+# Old versions:
 # load(file="saved Rdata/article 2 - threshold/betasor results.Rdata")
-# save(betasor.nat,betasor.boot.nat, file = "saved Rdata/beta diversity output.2.1.Rdata") #with cofactors and RUN2
-load(file = "saved Rdata/beta diversity output.2.1.Rdata")
-  
+# load(file = "saved Rdata/beta diversity output.2.1.Rdata") ##with cofactors and RUN2
+
 table.sorensen <-  as.data.frame(t(data.frame(lapply(betasor.nat, FUN = function(x) x[3,c("obs.below", "obs.above", "obs.diff", "z.diff", "p.diff")]))))
-table.sorensen.boot <-  as.data.frame(t(data.frame(lapply(betasor.boot.nat, FUN = function(x) x[3,c("obs.below", "mean.below","sd.below", "p.below",
-                                                                                                    "obs.above","mean.above","sd.above", "p.above",
-                                                                                                    "obs.diff", "mean.diff","sd.diff", "p.diff")]))))
+table.sorensen.boot <-  as.data.frame(t(data.frame(lapply(betasor.boot.nat, FUN = function(x) x[3,c("obs.below", "mean.below","sd.below", "p.below", "obs.above","mean.above","sd.above", "p.above","obs.diff", "mean.diff","sd.diff", "p.diff")]))))
 
 
 table.turnover <- t(data.frame(lapply(betasor.nat, FUN = function(x) x[1,c("obs.below", "obs.above", "obs.diff", "z.diff", "p.diff")])))
 table.nestedness <- as.data.frame(t(data.frame(lapply(betasor.nat, FUN = function(x) x[2,c("obs.below", "obs.above", "obs.diff", "z.diff", "p.diff")]))))
-table.nestedness.boot <-  as.data.frame(t(data.frame(lapply(betasor.boot.nat, FUN = function(x) x[2,c("obs.below", "mean.below","sd.below", "p.below",
-                                                                                                      "obs.above","mean.above","sd.above", "p.above",
-                                                                                                      "obs.diff", "mean.diff","sd.diff", "p.diff")]))))
+table.nestedness.boot <-  as.data.frame(t(data.frame(lapply(betasor.boot.nat, FUN = function(x) x[2,c("obs.below", "mean.below","sd.below", "p.below","obs.above","mean.above","sd.above", "p.above","obs.diff", "mean.diff","sd.diff", "p.diff")]))))
 
 
 ## beta dissimilarities across grasslands
@@ -482,6 +508,9 @@ sel <- c(impsp, impsp.nocovar[!impsp.nocovar %in% impsp])
 table1 <- data.frame( nocovar = glmSRnat.overall.nocovar$glms[sel,],
                       abun.meanc.nocovar = round(rowMeans(exp(glmSRnat.overall.nocovar$est[sel,])*100-100, na.rm = T), 1),
                       glmSRnat.overall$glms[sel,], 
+                      Year.c = round(exp(glmSRnat.overall$covar.tab$year[sel,]$coef.glm)*100-100, 1),
+                      Year.P = round(glmSRnat.overall$covar.tab$year[sel,]$P.coef, 4),
+                      
                       DEM10.c = round(exp(glmSRnat.overall$covar.tab$DEM_10[sel,]$coef.glm)*100 -100 , 1),
                       DEM10.P = round(glmSRnat.overall$covar.tab$DEM_10[sel,]$P.coef,4),
                       
@@ -490,6 +519,7 @@ table1 <- data.frame( nocovar = glmSRnat.overall.nocovar$glms[sel,],
                       
                       Northern.c = round(exp(glmSRnat.overall$covar.tab$Northern[sel,]$coef.glm)*100-100, 1),
                       Northern.P = round(glmSRnat.overall$covar.tab$Northern[sel,]$P.coef, 4),
+                      
                       
                       SRali.c = round(exp(glmSRnat.overall$covar.tab$SRali[sel,]$coef.glm)*100-100, 1),
                       SRali.P = round(glmSRnat.overall$covar.tab$SRali[sel,]$P.coef, 4),
@@ -500,6 +530,7 @@ table1 <- data.frame( nocovar = glmSRnat.overall.nocovar$glms[sel,],
 table1$pdev.DEM_10 <- round((table1$dev.DEM_10 / table1$null.dev), 4)
 table1$pdev.SLOPE <- round((table1$dev.SLOPE / table1$null.dev), 4)
 table1$pdev.Northern <- round((table1$dev.Northern / table1$null.dev), 4)
+table1$pdev.Year <- round((table1$dev.year / table1$null.dev), 4)
 table1$pdev.SRali <- round((table1$dev.SRali / table1$null.dev), 4)
 table1$pdev.abun <- round((table1$dev.abun / table1$null.dev), 4)
 
@@ -510,39 +541,148 @@ table1$dAICabun <- round(table1$aic.SRali - table1$aic.abun, 1)
 
 table1 <- table1[, c("nocovar.df", "nocovar.dev.ratio", "abun.meanc.nocovar",
         "df",  "dev.ratio", "dAICfull","dAICabun",
-        "DEM10.c",  "pdev.DEM_10", "SLOPE.c",  "pdev.SLOPE","Northern.c",  "pdev.Northern", "SRali.c",  "pdev.SRali","abun.meanc",  "pdev.abun")]
+        "Year.c",  "pdev.Year", "DEM10.c",  "pdev.DEM_10", "SLOPE.c",  "pdev.SLOPE","Northern.c",  "pdev.Northern", "SRali.c",  "pdev.SRali","abun.meanc",  "pdev.abun")]
 
 table1 <- table1[c(order(table.div.part$th.CI), 9,10,11),]
 write.csv(table1, file= "table1.csv", row.names = row.names(table1))
 
-#### TABLE S2 GLMS (ALL focal species): ####
 
-tableS2init <- data.frame( nobs = glmSRnat.overall.nocovar$impact.spread$prevalence,
-                       glmSRnat.overall.nocovar$glms,
-                       abun.meanc = rowMeans(glmSRnat.overall.nocovar$est, na.rm = T),
-                       abun.minP = apply(glmSRnat.overall.nocovar$P,1, min, na.rm = T)
+
+# Table S1 : environmental drivers of SR
+
+# Native Richness
+f0<- glm( SRnat ~ 1, data = tmp, family = poisson)
+f1<- glm( SRnat ~ DEM_10, data = tmp, family = poisson)
+f2<- glm( SRnat ~ DEM_10 + SLOPE, data = tmp, family = poisson)
+f3<- glm( SRnat ~ DEM_10 + SLOPE + Northern, data = tmp, family = poisson)
+f4<- glm( SRnat ~ DEM_10 + SLOPE + Northern + SRali  , data = tmp, family = poisson)
+f5<- glm( SRnat ~ DEM_10 + SLOPE + Northern +SRali + year, data = tmp, family = poisson)
+
+AIC(f0,f1,f2,f3,f4, f5)
+anova(f5)
+summary(f5)
+
+# Alien richness
+f0<- glm( SRali ~ 1, data = tmp, family = poisson)
+f1<- glm( SRali ~ DEM_10, data = tmp, family = poisson)
+f2<- glm( SRali ~ DEM_10 + SLOPE, data = tmp, family = poisson)
+f3<- glm( SRali ~ DEM_10 + SLOPE + Northern, data = tmp, family = poisson)
+f4<- glm( SRali ~ DEM_10 + SLOPE + Northern + year, data = tmp, family = poisson)
+f5<- glm( SRali ~ DEM_10 + SLOPE + Northern + year + SRnat, data = tmp, family = poisson)
+
+
+AIC(f0,f1,f2,f3, f4, f5) 
+anova(f4)
+summary(f4) # best model has no interactions
+
+
+
+
+
+#### TABLE S3 GLMS (ALL ALIEN focal species): ####
+focal.aliens <- rownames(glmSRnat.overall$glms)
+focal.aliens <- focal.aliens[focal.aliens %in% aliens]
+
+
+tableS3init <- data.frame( nobs = glmSRnat.overall.nocovar$impact.spread[focal.aliens,]$prevalence ,
+                       glmSRnat.overall.nocovar$glms[focal.aliens,],
+                       abun.meanc = rowMeans(glmSRnat.overall.nocovar$est[focal.aliens,], na.rm = T),
+                       abun.minP = apply(glmSRnat.overall.nocovar$P[focal.aliens,],1, min, na.rm = T)
 )
 
 
 
-tableS2 <- data.frame( nobs = glmSRnat.overall$impact.spread$prevalence,
-                      glmSRnat.overall$glms,
-                      DEM10.c = glmSRnat.overall$covar.tab$DEM_10$coef.glm,
-                      DEM10.P = glmSRnat.overall$covar.tab$DEM_10$P.coef,
+tableS3 <- data.frame( nobs = glmSRnat.overall$impact.spread[focal.aliens,]$prevalence,
+                      glmSRnat.overall$glms[focal.aliens,],
+                      DEM10.c = glmSRnat.overall$covar.tab$DEM_10[focal.aliens,]$coef.glm,
+                      DEM10.P = glmSRnat.overall$covar.tab$DEM_10[focal.aliens,]$P.coef,
                       
-                      SLOPE.c = glmSRnat.overall$covar.tab$SLOPE$coef.glm,
-                      SLOPE.P = glmSRnat.overall$covar.tab$SLOPE$P.coef,
+                      SLOPE.c = glmSRnat.overall$covar.tab$SLOPE[focal.aliens,]$coef.glm,
+                      SLOPE.P = glmSRnat.overall$covar.tab$SLOPE[focal.aliens,]$P.coef,
                       
-                      Northness.c = glmSRnat.overall$covar.tab$Northern$coef.glm,
-                      Northness.P = glmSRnat.overall$covar.tab$Northern$P.coef,
+                      Northness.c = glmSRnat.overall$covar.tab$Northern[focal.aliens,]$coef.glm,
+                      Northness.P = glmSRnat.overall$covar.tab$Northern[focal.aliens,]$P.coef,
                       
-                      SRali.c = glmSRnat.overall$covar.tab$SRali$coef.glm,
-                      SRali.P = glmSRnat.overall$covar.tab$SRali$P.coef,
+                      SRali.c = glmSRnat.overall$covar.tab$SRali[focal.aliens,]$coef.glm,
+                      SRali.P = glmSRnat.overall$covar.tab$SRali[focal.aliens,]$P.coef,
                       
-                      abun.meanc = exp(rowMeans(glmSRnat.overall$est, na.rm = T))
+                      SRali.c = glmSRnat.overall$covar.tab$year[focal.aliens,]$coef.glm,
+                      SRali.P = glmSRnat.overall$covar.tab$year[focal.aliens,]$P.coef,
+                      
+                      abun.meanc = exp(rowMeans(glmSRnat.overall$est[focal.aliens,], na.rm = T))
 )
 
-write.csv(cbind(tableS2init, tableS2), file= "tableS2.csv", row.names = row.names(tableS2))
+write.csv(cbind(tableS3init, tableS3), file= "tableS3.csv", row.names = row.names(tableS3))
+
+### TABLES2 WITH LOGIT Function for focal species abundance correlation with covariables #####
+
+library(MASS)
+tableS2.focalsp <- data.frame(matrix(NA, length(focal.aliens), 16),row.names = focal.aliens)
+colnames(tableS2.focalsp) <- c("species", "resid.df","%dev.best","DeltaAIC.best", "P.best", "best",
+                               "elev.coef","slope.coef","north.coef","SRali.coef", "Year.coef",
+                               "elev.P","slope.P","north.P","SRali.P","Year.P")
+
+options(contrasts = c("contr.treatment", "contr.poly"))
+
+for (i in 1:length(focal.aliens)) {
+  sp <- focal.aliens[i] 
+  abun <- tmp.comm[, sp]
+  abun[abun == 0] <- NA
+  elev <- tmp.envplot$DEM_10[!is.na(abun)]
+  slope <- tmp.envplot$SLOPE[!is.na(abun)]
+  SRali <- tmp.envplot$SRali[!is.na(abun)]
+  SRnat <- tmp.envplot$SRnat[!is.na(abun)]
+  north <- tmp.envplot$Northern[!is.na(abun)]
+  Year <- tmp.envplot$year[!is.na(abun)]
+  abun <- na.omit(abun)
+  
+  fit0 <- polr(as.factor(abun) ~ 1,  Hess=TRUE)
+  fit5 <- polr(as.factor(abun) ~elev  + slope +  north + SRali + Year ,  Hess=TRUE)
+  fit5.2 <- stepAIC(fit5, ~.^2, scope = list(upper = ~ elev  + slope +  north + SRali + Year, lower = ~1))
+  AOV <- anova(fit0,fit5.2, fit5)
+  n.var = length(fit5.2$coefficients)
+  
+
+  # Old version based on coeffs and Pvalues of the full model:
+  # if (n.var == 5) AOV = anova(fit0, fit5)
+  #coeffs
+  # (ctable <- coef(summary(fit5)))
+  #Odds ratio = exp(coef) for a logit function
+  # OR <- exp(ctable[1:5, 1])
+  # coef <- ctable[1:5, 1]
+  ## calculate and store p values
+  # p <- (pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2)[1:5]
+  
+  
+  # Coeff and P values from the BEST model 5.2
+
+  p <- as.vector(rep(1,5))
+  names(p) = c("elev","slope","north","SRali","Year")
+  if (n.var >0) { p [names(fit5.2$coefficients)] <- round(Anova(fit5.2)[,3],4) }
+  
+  coef <- as.vector(rep(0,5))
+  names(coef) = c("elev","slope","north","SRali","Year")
+  if (n.var >0) {  coef [names(fit5.2$coefficients)] <- round(fit5.2$coefficients,4) }
+  
+  # Illustrate effect of Year!
+  par(mfrow = c(1,2))
+  plot(sort(unique(Year)), tapply(abun, Year, mean))
+  plot(slope, abun)
+  
+  #output
+  tableS2.focalsp[i, ] <- c(species[sp, "SpeciesName"],
+                            fit5.2$df.residual,(AOV[1,3] - AOV[2,3])/AOV[1,3] ,AIC(fit0) - AIC(fit5.2),
+                            AOV[2,7],paste(unlist(fit5.2$terms), collapse = " "),
+                            coef, p
+                            )
+  
+  rm(fit0, fit5, fit5.2)
+}
+
+
+write.csv(tableS2.focalsp, file= "table S2 for focal species.csv")
+
+
 
 
 #### TABLE 2 in the main text : ####
@@ -569,20 +709,19 @@ table2 <- table2 [order(table.div.part$th.CI),]
 
 write.csv(table2, file = "table2.csv")
 
-cor.test(table2$Acrit, table2$delta.alpha, method = "pearson")
-plot(table2$Acrit, table2$delta.alpha)
-
-
 
 
 # save results   ############
 # save.image("saved Rdata/article 2 - threshold/article threshold 1.3.5.Rdata") # March 2018
 # save.image("saved Rdata/article 2 - threshold/article threshold 1.3.6.Rdata") # April 9th 2018
+# save.image("saved Rdata/article 2 - threshold/article threshold 1.3.7.Rdata") # July 2018
+# save.image("saved Rdata/article 2 - threshold/article threshold 1.3.8.Rdata") # August 2018
+
 
 
 
 ### save bundle for publication:
-nreps <- 9999
+nreps <- 999
 db<- databp[databp$PlotName %in% unimprovedgrasslands,]
 min.occur <- 5
 min.class <- 2
@@ -607,4 +746,4 @@ save( dataset = dataset,
       boot.indices = boot.indices,
       file = "Bernard-Verdier&Hulme_JEcol2018_data.Rdata"
 )
-      
+

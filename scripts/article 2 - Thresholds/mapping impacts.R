@@ -8,7 +8,7 @@ cp <- colorRampPalette(c("white" ,"tan","sienna4"))(20)
 plot(study_area, border = "grey", col="grey")
 plot(envplot, add = T, pch=22, col = cp[as.numeric(x)], bg = cp[as.numeric(x)])
 
-## dominant species
+## dominant species 
 envplot$first.rank <-NA
 firstranksp <- databp[databp$DominanceRank == 1 , c("SpeciesCode", "PlotName")]
 firstranksp$ALIEN <- 0

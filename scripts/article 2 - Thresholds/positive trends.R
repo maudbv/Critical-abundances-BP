@@ -1,11 +1,11 @@
 # Results for positive trends
 
 # 2 alien species with positive trends:
-# impsp.pos <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$pth.CI) & (rownames(glmSRnat.overall$impact.spread) %in% aliens)),])
+ impsp.pos <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$pth.CI) & (rownames(glmSRnat.overall$impact.spread) %in% aliens)),])
 # 
 
 ## With native focal species included:
-impsp.pos <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$pth.CI)),])
+# impsp.pos <- rownames(glmSRnat.overall$impact.spread[which(!is.na(glmSRnat.overall$impact.spread$pth.CI)),])
 
 #### Extract result table for loss in native diversity above thresholds:   ######
 sp.names = impsp.pos
@@ -168,7 +168,7 @@ mtext(text=c("b) Native focal species"), side=3, outer=F, line=5)
 ## 
 #### Figure 2: trends in alpha richness effect size ####
 
-par(mfrow = c(2,2), mar=c(0,0,2,1), oma=c(7,7,1,1))
+par(mfrow = c(1,1), mar=c(0,0,2,1), oma=c(7,7,1,1))
 sel = impsp.pos
 M <- glmSRnat.overall
 ylim=c(-50,200)
@@ -226,12 +226,12 @@ for (i in 1:length(sel))  {
   # arrows(x0 =th-1, y0 = 2 ,x1 =th-1, y1 =1, length = 0.07, col = "grey60", lwd = 2, code = 2)
   
   # Add species name
-  mtext(3, text=paste(letters[i],") ", species[sp, "Genus"]," ", species[sp, "Species"], sep="") ,
+  mtext(3, text=paste( species[sp, "Genus"]," ", species[sp, "Species"], sep="") ,
         font = 3, outer= F,adj=0.1, cex=0.7, line=0.2, las = 1)
   
   # X axis labels
   axis(1,at = 1:5, labels = F, tcl= 0.1,mgp=c(1,0.5,0),las=1, lwd = 0, lwd.ticks = 1)
-  if ( i %in% c(3,4)) text(y=-75, x = 1:5, labels= abclasses[2:6],  cex=1, srt=45, adj=1, xpd = NA)
+  if ( i %in% c(1,2)) text(y=-75, x = 1:5, labels= abclasses[2:6],  cex=1, srt=45, adj=1, xpd = NA)
   
   # Y axis
   axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1, labels = F, lwd = 0, lwd.ticks = 1)
@@ -252,7 +252,7 @@ mtext(2, text=expression(paste("Effect size on native ", alpha,"-richness")), ad
 
 #### Figure 3: trends in gamma richness effect size ####
 
-par(mfrow = c(2,2), mar=c(0,0,2,1), oma=c(7,6,1,1))
+ par(mfrow = c(1,1), mar=c(0,0,2,1), oma=c(6,5,1,1))
 ylim = c(-45,35)
 xlim = c(0.5, 5.5)
 
@@ -300,7 +300,7 @@ for (i in 1 : length(sel)){
   # X axis labels
   axis(1,at = 1:5, labels = F, tcl= 0.1,mgp=c(1,0.5,0),las=1, lwd = 0, lwd.ticks = 1)
   # if (i %in% c(8:11)) text(y=-53.2, x = 1:5, labels= abclasses[2:6],  cex=1, srt=45, adj=1, xpd = NA)
-  if (i %in% c(3,4)) text(y=-53.2, x = 1:5, labels= abclasses[2:6],  cex=1, srt=45, adj=1, xpd = NA)
+  if (i %in% c(1,2)) text(y=-53.2, x = 1:5, labels= abclasses[2:6],  cex=1, srt=45, adj=1, xpd = NA)
   
   # Y axis
   axis(2, tcl= 0.1,  mgp=c(1,0.5,0), las=1, labels = F, lwd = 0, lwd.ticks = 1)
@@ -332,7 +332,7 @@ for (i in 1 : length(sel)){
   # }
   
   # Add species name
-  mtext(3, text=paste(letters[i],") ", species[sp, "Genus"]," ", species[sp, "Species"], sep="") ,
+  mtext(3, text=paste( species[sp, "Genus"]," ", species[sp, "Species"], sep="") ,
         font = 3, outer= F,adj=0.1, cex=0.7, line=0.2, las = 1)
 }
 

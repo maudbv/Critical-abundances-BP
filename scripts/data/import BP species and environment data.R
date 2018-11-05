@@ -270,6 +270,33 @@ realgrasslands <- as.character(tmp[which( (as.character(tmp$Growth.forms) %in% c
 tmp <- colSums(comm[which(rownames(comm) %in% as.character(realgrasslands)),]>0, na.rm=T)
 species$grassland.occur <- tmp[match(rownames(species), names(tmp))]
 
+## Add dates of survey
+
+
+library(data.table)
+surveydata <- fread(file="data/survey metadata.csv")
+surveydata$date <- as.Date(paste(surveydata$Day, surveydata$Month, surveydata$Year, sep = "-"), format = "%d-%m-%Y")
+
+databp$date <- surveydata$date[match(databp$PlotFK, surveydata$PlotPK)]
+databp$year <- as.numeric(format(databp$date, format = "%Y"))
+databp$month <- as.numeric(format(databp$date, format = "%m"))
+databp$month.t <- databp$month - 7 
+databp$month.t[databp$month.t < (1)] <- databp$month [databp$month.t < (1)] + 5
+databp$DOY <- as.numeric(format(databp$date, format = "%j"))
+databp$DOY.t <- cos((databp$DOY * pi)/180)
+
+
+
+envplot$date <- databp$date[match(as.character(envplot$PLOTID), as.character(databp$PlotName))]
+envplot$year <- as.numeric(format(envplot$date, format = "%Y"))
+envplot$month <- as.numeric(format(envplot$date, format = "%m"))
+envplot$month.t <- envplot$month - 7 
+envplot$month.t[envplot$month.t < (1)] <- envplot$month [envplot$month.t < (1)] + 5
+envplot$DOY <- as.numeric(format(envplot$date, format = "%j"))
+envplot$DOY.t <- cos((envplot$DOY * pi)/180)
+
+
+
 # list of objects to return
 return(list(databp, comm, envplot, species, grasslands, woodlands,lowlands, highlands, occur=occur2, aliens=aliens, natives=natives, realgrasslands= realgrasslands ) )
 }

@@ -13,7 +13,7 @@ tmp.envplot <- envplot[unimprovedgrasslands,]
 tmp=envplot@data[,c(  "PANN0080","PSUM0080", "PWIN0080",  "AVTEMP0080","MINTEM0080", "MAXTEM0080","GDD","SOLRADR","MOISTR","UR1991_DNS","BLDG_DIST","DIST_HWSLD","DIST_METAL","DIST_PRIV","DIST_SRIV", "DEM_10","ASPECT","SLOPE","PH_MID")]
 tmp$dist_built = apply(tmp[, c("BLDG_DIST","DIST_HWSLD")], 1, min)
 # tmp=tmp-colMeans(tmp)/ apply(tmp, 2, sd, na.rm=T)    
-tmp=cbind(tmp,envplot@data[,c("Northern", "Eastern", "NWestern","SR","SRnat","SRali", "vegtype")])
+tmp=cbind(tmp,envplot@data[,c("Northern", "Eastern", "NWestern","SR","SRnat","SRali","year", "vegtype")])
 tmp$logSRnat <- log(tmp$SRnat)
 tmp$logSRnat[which(is.infinite(tmp$logSRnat))] <- NA
 
@@ -24,13 +24,13 @@ library(FactoMineR)
 
                           
 ## PCA on envir variables
-bb=PCA(tmp[,c( "vegtype","SRnat","SRali",
+bb=PCA(tmp[,c( "vegtype","SRnat","SRali", "year",
                "PANN0080", "AVTEMP0080","SOLRADR","MOISTR","DEM_10",
                "PH_MID","BLDG_DIST","DIST_HWSLD","Northern", "Eastern", "SLOPE")],
        quanti.sup=c(2,3), quali.sup=1)
 
 b=PCA(tmp[,c( "SRnat" ,"SRali", "PANN0080", "AVTEMP0080","DEM_10",
-              "Northern","BLDG_DIST","DIST_HWSLD", "SLOPE")],quanti.sup=c(1:4))
+              "Northern","BLDG_DIST","DIST_HWSLD", "SLOPE", "year")],quanti.sup=c(1:4))
 quartz()
 par(mfrow=c(1,2))
 plot(b, axes = c(1,2), choix= "var")
@@ -61,7 +61,7 @@ plot( logSRnat ~ dist_built, tmp)   ### Very correlated
 ## Variable selection 
 library(leaps)
 
-leaps<-regsubsets( logSRnat ~ DEM_10 + SLOPE + Northern + dist_built + SRali, data = tmp, nbest=10)
+leaps<-regsubsets( logSRnat ~ DEM_10 + SLOPE + Northern + dist_built + SRali + year, data = tmp, nbest=10)
 # view results
 summary(leaps)
 # plot a table of models showing variables in each model.
@@ -86,9 +86,11 @@ subsets(leaps, statistic="rsq")
  f4ni<- glm( SRnat ~ DEM_10 +  SLOPE   + Northern+ SRali, data = tmp, family = poisson)
  f4_simp<- glm( SRnat ~  DEM_10 + SLOPE + SRali + DEM_10:Northern + DEM_10:SLOPE + DEM_10:SRali, data = tmp, family = poisson)
  f4_supersimp<- glm( SRnat ~  DEM_10 + SLOPE + SRali + Northern + DEM_10:SRali, data = tmp, family = poisson)
-  
+ f5<- glm( SRnat ~ DEM_10 * SLOPE * Northern * SRali*year, data = tmp, family = poisson)
+ f5simp<- glm( SRnat ~ DEM_10 + SLOPE + Northern + SRali + year, data = tmp, family = poisson)
  
-AIC(f0,f1,f2,f3,f3ni,f3_ExN, f4,f4ni, f4_simp, f4_supersimp)
+ 
+AIC(f0,f1,f2,f3,f3ni,f3_ExN, f4,f4ni, f4_simp, f4_supersimp, f5, f5simp)
  summary(f3) 
  summary(f3ni) 
  summary(f3_ExN) # best model has interactions between elevation and the two others.
@@ -99,23 +101,22 @@ AIC(f0,f1,f2,f3,f3ni,f3_ExN, f4,f4ni, f4_simp, f4_supersimp)
  summary(f4_supersimp)
  anova(f4_supersimp)
  
+ summary(f5)
+ summary(f5simp)
+ 
  # no interactions
  f0<- glm( SRnat ~ 1, data = tmp, family = poisson)
  f1<- glm( SRnat ~ DEM_10, data = tmp, family = poisson)
  f2<- glm( SRnat ~ DEM_10 + SLOPE, data = tmp, family = poisson)
  f3<- glm( SRnat ~ DEM_10 + SLOPE + Northern, data = tmp, family = poisson)
-f4<- glm( SRnat ~ DEM_10 + SLOPE + Northern + DIST_HWSLD , data = tmp, family = poisson)
-f5<- glm( SRnat ~ DEM_10 + SLOPE + Northern + DIST_HWSLD +  BLDG_DIST, data = tmp, family = poisson)
-f6<- glm( SRnat ~ DEM_10 + SLOPE + Northern + DIST_HWSLD +  BLDG_DIST + SRali, data = tmp, family = poisson)
-
-f4simp<- glm( SRnat ~ DEM_10 + SLOPE + Northern + SRali , data = tmp, family = poisson)
-anova(f4simp)
+f4<- glm( SRnat ~ DEM_10 + SLOPE + Northern + SRali  , data = tmp, family = poisson)
+f5<- glm( SRnat ~ DEM_10 + SLOPE + Northern +SRali + year, data = tmp, family = poisson)
 
 
-AIC(f0,f1,f2,f3,f4,f4simp, f5,f6)
-anova(f3,f4,f5,f6)
+AIC(f0,f1,f2,f3,f4, f5)
+anova(f0,f1,f2,f3,f4,f5)
 
-
+anova(f5)
 
  #For SRali
  f0<- glm( SRali ~ 1, data = tmp, family = poisson)
@@ -134,16 +135,16 @@ anova(f3,f4,f5,f6)
  f1<- glm( SRali ~ DEM_10, data = tmp, family = poisson)
  f2<- glm( SRali ~ DEM_10 + SLOPE, data = tmp, family = poisson)
  f3<- glm( SRali ~ DEM_10 + SLOPE + Northern, data = tmp, family = poisson)
- f3<- glm( SRali ~ DEM_10 + SLOPE + Northern + SRnat, data = tmp, family = poisson)
+ f4<- glm( SRali ~ DEM_10 + SLOPE + Northern + year, data = tmp, family = poisson)
+ f5<- glm( SRali ~ DEM_10 + SLOPE + Northern + year + SRnat, data = tmp, family = poisson)
  
-AIC(f0,f1,f2,f3, f4) 
-anova(f3)
-summary(f3) # best model has no interactions
+ 
+AIC(f0,f1,f2,f3, f4, f5) 
+anova(f5)
+summary(f5) # best model has no interactions
 
 
-
-
-###  Creating a table ENVIR.COVAR summarizing all linear correlations between factors: ####
+###  OBSOLETE Creating a table ENVIR.COVAR summarizing all linear correlations between factors: ####
 
 envir.covar <- data.frame(matrix(NA, 3 + length(focal.aliens), 20))
 rownames(envir.covar) <- c("SR", "SRnat","SRali", focal.aliens)
@@ -351,12 +352,12 @@ envir.covar [which(envir.covar$inter.P < 0.05 & envir.covar$total.R2 >0.01),]
 
 
 
-### TABLES1 for focal species abundance correlation with covariables #####
-tableS1.focalsp <- data.frame(matrix(NA, length(focal.aliens), 17),row.names = focal.aliens)
-colnames(tableS1.focalsp) <- c("df","SS","RSS","P", "R2",
-                               "elev.est","slope.est","north.est","SRali.est",
-                               "elev.R2","slope.R2","north.R2","SRali.R2",
-                               "elev.P","slope.P","north.P","SRali.P")
+### OBSOLETE TABLES2 for focal species abundance correlation with covariables #####
+tableS2.focalsp <- data.frame(matrix(NA, length(focal.aliens), 20),row.names = focal.aliens)
+colnames(tableS2.focalsp) <- c("df","SS","RSS","P", "R2",
+                               "elev.est","slope.est","north.est","SRali.est", "Year.est",
+                               "elev.R2","slope.R2","north.R2","SRali.R2", "Year.R2",
+                               "elev.P","slope.P","north.P","SRali.P","Year.P")
 
 
 for (i in 1:length(focal.aliens)) {
@@ -368,28 +369,29 @@ for (i in 1:length(focal.aliens)) {
   SRali <- tmp.envplot$SRali[!is.na(abun)]
   SRnat <- tmp.envplot$SRnat[!is.na(abun)]
   north <- tmp.envplot$Northern[!is.na(abun)]
+  Year <- tmp.envplot$year[!is.na(abun)]
   abun <- na.omit(abun)
-
-  fit0 <- lm( abun ~ 1) 
-  fit4 <- lm( as.numeric(abun) ~   north  + slope + SRali + elev) 
   
-
-  tableS1.focalsp[i, ] <- c(summary(fit4)$df[2],as.numeric(anova(fit0, fit4)[2,c(2,4,6)]),summary(fit4)$adj,
-                            summary(fit4)$coef[2:5,1],
-                            anova(fit4)[1:4,2]/sum(anova(fit4)[,2]), 
-                            anova(fit4)[1:4,5])
+  fit0 <- lm( as.numeric(abun) ~ 1) 
+  fit4 <- lm( as.numeric(abun) ~  elev + north  + slope + SRali + Year ) 
+  
+  
+  tableS2.focalsp[i, ] <- c(summary(fit4)$df[2],as.numeric(anova(fit0, fit4)[2,c(2,4,6)]),summary(fit4)$adj,
+                            summary(fit4)$coef[2:6,1],
+                            anova(fit4)[1:5,2]/sum(anova(fit4)[,2]), 
+                            anova(fit4)[1:5,5])
 }
- 
 
-write.csv(tableS1.focalsp, file= "table S1 for focal species.csv")
+
+write.csv(tableS2.focalsp, file= "table S2 for focal species.csv")
 
 ### TABLES1 WITH LOGIT Function for focal species abundance correlation with covariables #####
 
 library(MASS)
-tableS1.focalsp <- data.frame(matrix(NA, length(focal.aliens), 14),row.names = focal.aliens)
+tableS1.focalsp <- data.frame(matrix(NA, length(focal.aliens), 16),row.names = focal.aliens)
 colnames(tableS1.focalsp) <- c("species", "resid.df","%dev.best","DeltaAIC.best", "P.best", "best",
-                               "elev.OR","slope.OR","north.OR","SRali.OR",
-                               "elev.P","slope.P","north.P","SRali.P")
+                               "elev.OR","slope.OR","north.OR","SRali.OR", "Year.OR",
+                               "elev.P","slope.P","north.P","SRali.P","Year.P")
 
 options(contrasts = c("contr.treatment", "contr.poly"))
 
@@ -402,33 +404,37 @@ for (i in 1:length(focal.aliens)) {
   SRali <- tmp.envplot$SRali[!is.na(abun)]
   SRnat <- tmp.envplot$SRnat[!is.na(abun)]
   north <- tmp.envplot$Northern[!is.na(abun)]
+  Year <- tmp.envplot$year[!is.na(abun)]
   abun <- na.omit(abun)
 
   fit0 <- polr(as.factor(abun) ~ 1,  Hess=TRUE)
-  fit4 <- polr(as.factor(abun) ~elev  + slope +  north + SRali ,  Hess=TRUE)
-  fit4.2 <- stepAIC(fit4, ~.^2, scope = list(upper = ~ elev  + slope +  north + SRali, lower = ~1))
-  AOV <- anova(fit0,fit4.2, fit4)
- n.var = length(summary(fit4.2)$term)
- if (n.var = 4) AOV = anova(fit0, fit4)
+  fit5 <- polr(as.factor(abun) ~elev  + slope +  north + SRali + Year ,  Hess=TRUE)
+  fit5.2 <- stepAIC(fit5, ~.^2, scope = list(upper = ~ elev  + slope +  north + SRali + Year, lower = ~1))
+  AOV <- anova(fit0,fit5.2, fit5)
+ n.var = length(summary(fit5.2)$term)
+ if (n.var == 5) AOV = anova(fit0, fit5)
  #coeffs
- (ctable <- coef(summary(fit4)))
+ (ctable <- coef(summary(fit5)))
  #Odds ratio = exp(coef) for a logit function
- OR <- exp(ctable)[1:4, 1]
+ OR <- exp(ctable)[1:5, 1]
  ## calculate and store p values
- p <- (pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2)[1:4]
+ p <- (pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2)[1:5]
 
  #output
  tableS1.focalsp[i, ] <- c(species[sp, "SpeciesName"],
-                           fit4.2$df.residual,(AOV[1,3] - AOV[2,3])/AOV[1,3] ,AIC(fit0) - AIC(fit4.2),
-                           AOV[2,7],paste(unlist(fit4.2$terms), collapse = " "),
-                            OR,p)
+                           fit5.2$df.residual,(AOV[1,3] - AOV[2,3])/AOV[1,3] ,AIC(fit0) - AIC(fit5.2),
+                           AOV[2,7],paste(unlist(fit5.2$terms), collapse = " "),
+                            OR, p)
+ 
+ rm(fit0, fit5, fit5.2)
 }
 
 
-write.csv(tableS1.focalsp, file= "table S1 for focal species.csv")
+write.csv(tableS2.focalsp, file= "table S2 for focal species.csv")
 
 
-###### TABLES2 Testing ABUN s a factor + elevation+ SLOPE + aspect + SRALI  as a covariable for the glm #####
+
+###### OBSOLETE TABLES2 Testing ABUN s a factor + elevation+ SLOPE + aspect + SRALI +YEar as a covariable for the glm #####
 glms.covar <- data.frame(matrix(NA, length(focal.aliens), 18),row.names = focal.aliens)
 colnames(glms.covar) <- c("df.alone", "percdev.abun.alone","deltaAIC.alone",
                           "df",
@@ -436,6 +442,7 @@ colnames(glms.covar) <- c("df.alone", "percdev.abun.alone","deltaAIC.alone",
                           "est.slope","P.slope","percdev.slope",
                           "est.north","P.north","percdev.north",
                           "est.SRali","P.SRali","percdev.SRali",
+                          "est.year","P.year","percdev.year",
                           "percdev.abun",
                           "total.deltaAIC")
 
@@ -450,6 +457,7 @@ for (i in 1:length(focal.aliens)) {
   SRali <- tmp.envplot$SRali[!is.na(abun)]
   SRnat <- tmp.envplot$SRnat[!is.na(abun)]
   north <- tmp.envplot$Northern[!is.na(abun)]
+  Year <- tmp.envplot$year[!is.na(abun)]
   abun <- na.omit(abun)
   # plot(elev, abun, ann = F)
   # mtext(3, text = sp)
@@ -458,8 +466,8 @@ for (i in 1:length(focal.aliens)) {
   # fit1 <- glm( SRnat ~ elev , family = poisson)
   # fit2 <- glm( SRnat ~ elev + slope, family = poisson) 
   # fit3 <- glm( SRnat ~ elev + slope + north, family = poisson)
-   fit4 <- glm( SRnat ~ elev + slope + north + SRali, family = poisson) 
-  fit5 <- glm( SRnat ~ elev + slope + north + SRali + as.factor(abun), family = poisson) 
+   fit4 <- glm( SRnat ~ elev + slope + north + SRali + Year, family = poisson) 
+  fit5 <- glm( SRnat ~ elev + slope + north + SRali + Year + as.factor(abun), family = poisson) 
   fit.alone <- glm( SRnat ~ as.factor(abun), family = poisson)
   
   aic.scores <- AIC(fit0,fit.alone,fit4,fit5)
@@ -497,6 +505,7 @@ total.tableS2 <- cbind(glms.covar, coef = glmSRnat.overall$est[focal.aliens,],
 
 
 write.csv(total.tableS2, "tableS2.withdeviance.csv")
+
 
 
 

@@ -425,6 +425,8 @@ dg.lab [ rownames(table.div.part) == "ANTODO"] <- -23
 dg.lab [ rownames(table.div.part) == "DACGLO"] <- -26
 # 
 par( mar=c(2,1,3,1),  las = 1)
+
+
 ### Prevalence
 print(f <- cor.test(log(prevalence),dg, method = "spearman"))
 # print(f <- cor.test(prevalence[-c(1,8)],dg[-c(1,8)]))
@@ -665,7 +667,7 @@ mtext(2, text=expression(paste("Effect size on native ", alpha,"-richness")), ad
 #### Figure 6 alternative: Maps of presence and impact of two selected species ####
 
 db = databp[databp$PlotName %in% unimprovedgrasslands, ]
-targets <- c('ACHMIL', 'ANTODO')
+targets <- c('ACHMIL', 'CYNCRI')
 
 par(
   mfrow = c(1, 3),
@@ -733,6 +735,67 @@ legend(
   border = c("tan", "sienna2", "sienna4")
 ) 
 
+
+
+## Three species
+db = databp[databp$PlotName %in% unimprovedgrasslands, ]
+targets <- c('ACHMIL', 'CYNCRI', "ANTODO")
+
+par(
+  mfrow = c(1, 3),
+  mar = c(0, 0, 0, 0),
+  oma = c(2, 0, 0, 0)
+)
+
+for (i in targets) {
+  plot.alien = as.character(db[which(db$abun %in% c(1, 2, 3, 4, 5, 6) &
+                                       db$vegtype == "G" & db$SpeciesCode == i), "PlotName"])
+  th = glmSRnat.overall$impact.spread[i, "th.CI"]
+  es <- as.numeric(glmSRnat.overall$est[i, ])
+  n <- as.numeric(glmSRnat.overall$n.obs[i, ])[2:6]
+  es[which(n < 5)] <- NA
+  es = which(!is.na(es)) + 1
+  m <- max(es, na.rm = T)
+  max.impact = as.character(db[which(db$abun >= 6 &
+                                       db$vegtype == "G" & db$SpeciesCode == i), "PlotName"])
+  th.impact = as.character(db[which(db$abun >= th &
+                                      db$vegtype == "G" & db$SpeciesCode == i), "PlotName"])
+  
+  plot(study_area, col = "white", border = "grey60")
+  plot(
+    envplot[plot.alien,],
+    pch = 22,
+    cex = 0.5,
+    col = "tan",
+    bg = "tan",
+    add = T
+  )
+  plot(
+    envplot[th.impact,],
+    pch = 22,
+    cex = 0.5,
+    col = "sienna2",
+    bg = "sienna2",
+    add = T
+  )
+  plot(
+    envplot[max.impact,],
+    pch = 22,
+    cex = 0.5,
+    col = "sienna4",
+    bg = "sienna4",
+    add = T
+  )
+  
+  mtext(
+    3,
+    text = sub("_", " ", species[i, "tip"]),
+    adj = 0.1,
+    line = -1.5,
+    font = 3,
+    cex = 0.7
+  )
+} 
 
 # #### OLD Figure 6: Maps of presence and impact ####
 # 
@@ -1052,9 +1115,11 @@ plot(hclust(dist(focal.com)))
 heatmap(focal.com)
 
 nb.focal <- table(db[db$SpeciesCode %in% sel,'PlotName'])
-
-
 focal.com <- comm[unimprovedgrasslands, sel]
+
+hist(rowSums(focal.com>1))
+
+
 focal.frequency <- as.data.frame(rowSums(ceiling(focal.com/10)))
 colnames(focal.frequency) <- "presence"
 focal.frequency$above.critical <- colSums(apply(focal.com, 1, function(x) {
@@ -1078,13 +1143,13 @@ f <- cor.test(focal.frequency$SRnat ,as.numeric(focal.frequency$above.critical),
 mtext(side= 3, text =substitute(rho*" = "*r*p, list(r=round(f$estimate,2), p = p2star(f$p.value))), adj = 1, cex = 0.8)
 
 plot(SRali ~ jitter(presence,1), focal.frequency, col = "#7F7F7F80", xlab = "",  ylab =expression(paste("Alien ", alpha,"-richness")))
-mtext(1, text = "Number of significant alien species\npresent", line= 3.5, cex = 0.8)
+mtext(1, text = "Number of co-occurring significant alien species", line= 3.5, cex = 0.8)
 
 f <- cor.test(focal.frequency$SRali ,as.numeric(focal.frequency$presence), method = "spearman")
 mtext(side= 3, text =substitute(rho*" = "*r*p, list(r=round(f$estimate,2), p = p2star(f$p.value))), adj = 1, cex = 0.8)
 
 plot(SRali  ~ jitter(above.critical, 1), focal.frequency, col = "#7F7F7F80",  ann = F)
-mtext(1, text = "Number of significant alien species\nabove critical abundance", line= 3.5, cex = 0.8)
+mtext(1, text = "Number of significant alien species\n co-occurring above critical abundance", line= 3.5, cex = 0.8)
 
 f <- cor.test(focal.frequency$SRali ,as.numeric(focal.frequency$above.critical), method = "spearman")
 mtext(side= 3, text =substitute(rho*" = "*r*p, list(r=round(f$estimate,2), p = p2star(f$p.value))), adj = 1, cex = 0.8)

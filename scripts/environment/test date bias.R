@@ -113,7 +113,7 @@ OR <- round(exp(coef(f)[2])*100 - 100, 2)
 mtext(3, text = paste( OR ,"% per month.t"))
 
 
-## Test correlation with environment : no significant temporal pattern
+## Test correlation with environment : no significant temporal pattern except SLOPE
 
 envplot$SR <- as.numeric(envplot$SR)
 
@@ -132,7 +132,7 @@ summary(f <- lm(Northern ~ as.numeric(DOY.t), envplot))
 
 
 par(mfrow = c(1,2))
-plot(SLOPE ~ date, envplot, col = "grey")
+plot(SLOPE ~ date, envplot, col = "grey")  ### SIGNIF DECREASE IN SLOPE
 summary(f <- lm(SLOPE~ as.numeric(year), envplot))
 abline(lm(SLOPE ~ date, envplot))
 plot(SLOPE ~ DOY.t, envplot, col = "grey")
@@ -142,7 +142,7 @@ summary(f <- lm(SLOPE ~ as.numeric(DOY.t), envplot))
 ## Test correlation with abundance of target species
 source('~/Dropbox/Work/doc boulot/postdoc Berlin/R projects/utility functions/FUNCTION add stats.R', echo=TRUE)
 
-par(mfrow = c(8,3), xpd = T, mar = c(3,3,2,1))
+par(mfrow = c(2,4), xpd = T, mar = c(3,1,1,1))
 for (sp in impsp){
   dat <- databp[ databp$SpeciesCode == sp,]
   # barplot(table(dat$year,dat$abun) , beside = T )
@@ -153,19 +153,19 @@ for (sp in impsp){
   msr <- tapply(dat$SRnat,as.numeric(dat$year), mean, na.rm = T)
   ssr <-  tapply(dat$SRnat,as.numeric(dat$year), sd, na.rm = T)
   
-  plot(as.numeric(names(msr)), msr, ylim = c(-5,20), xlab = "months", ylab = "SRnat")
-  segments(as.numeric(names(msr)), msr+ssr,as.numeric(names(msr)), msr -ssr)
-  add.stats(f <- lm(SRnat ~ as.numeric(year), dat))
+  # plot(as.numeric(names(msr)), msr, ylim = c(-5,20), xlab = "months", ylab = "SRnat")
+  # segments(as.numeric(names(msr)), msr+ssr,as.numeric(names(msr)), msr -ssr)
+  # add.stats(f <- lm(SRnat ~ as.numeric(year), dat))
+  # 
+  # m <- tapply(dat$abun,as.numeric(dat$year), mean, na.rm = T)
+  # s <-  tapply(dat$abun,as.numeric(dat$year), sd, na.rm = T)
+  # n <- table(as.numeric(dat$year))
   
-  m <- tapply(dat$abun,as.numeric(dat$year), mean, na.rm = T)
-  s <-  tapply(dat$abun,as.numeric(dat$year), sd, na.rm = T)
-  n <- table(as.numeric(dat$year))
-  
-
-  plot(msr ~m, type = "n")
-  text(m, msr, labels = names(m))
-  add.stats(f <- lm(msr ~ m))
-  
+# 
+#   plot(msr ~m, type = "n")
+#   text(m, msr, labels = names(m))
+#   add.stats(f <- lm(msr ~ m))
+#   
 }
 
 
@@ -178,24 +178,42 @@ y.envplot$year<- as.numeric(y.envplot$year)
 
 par(mfrow = c(2,2), xpd = F, mar = c(4,4,2,2))
 
- plot( SR.mean ~ as.numeric(year), y.envplot, ylim = c(0,40)) 
+ plot( SR.mean ~ as.numeric(year), y.envplot, ylim = c(0,60), xlab = "year", ylab = "Species richness") 
  segments(as.numeric(y.envplot$year), y.envplot$SR.mean +  y.envplot$SR.sd, y.envplot$year, y.envplot$SR.mean -  y.envplot$SR.sd)
- points( SRnat.mean ~ as.numeric(year), y.envplot, ylim = c(0,40), col = "forestgreen") 
+ points( SRnat.mean ~ as.numeric(year), y.envplot, col = "forestgreen") 
  segments(as.numeric(y.envplot$year), y.envplot$SRnat.mean +  y.envplot$SRnat.sd, y.envplot$year, y.envplot$SRnat.mean -  y.envplot$SRnat.sd,col = "forestgreen")
- points( SRali.mean ~ as.numeric(year), y.envplot, ylim = c(0,40), col ="firebrick") 
+ points( SRali.mean ~ as.numeric(year), y.envplot,  col ="firebrick") 
  segments(as.numeric(y.envplot$year), y.envplot$SRali.mean +  y.envplot$SRali.sd, y.envplot$year, y.envplot$SRali.mean -  y.envplot$SRali.sd,col ="firebrick")
- plot( SLOPE.mean ~ as.numeric(year), y.envplot,  ylim = c(0,40) )
+ add.stats(lm(SRnat.mean ~ as.numeric(year), y.envplot))
+ legend("topright", legend = c("All species", "Alien", "Native"), col = c("black", "firebrick", "forestgreen"), pch = 1 )
+
+ plot( SLOPE.mean ~ as.numeric(year), y.envplot,  ylim = c(0,40), xlab = "year", ylab = "Slope (degrees)") 
  segments(as.numeric(y.envplot$year), y.envplot$SLOPE.mean +  y.envplot$SLOPE.sd, y.envplot$year, y.envplot$SLOPE.mean -  y.envplot$SLOPE.sd)
  add.stats(lm(SLOPE.mean ~ as.numeric(year), y.envplot))
  
- plot( DEM_10.mean ~ as.numeric(year), y.envplot,  ylim = c(0,700)) 
+ plot( DEM_10.mean ~ as.numeric(year), y.envplot,  ylim = c(0,700), xlab = "year", ylab = "Elevation (m)") 
  segments(as.numeric(y.envplot$year), y.envplot$DEM_10.mean +  y.envplot$DEM_10.sd, y.envplot$year, y.envplot$DEM_10.mean -  y.envplot$DEM_10.sd)
  add.stats(lm(DEM_10.mean ~ as.numeric(year), y.envplot))
  
- plot( Northern.mean ~ as.numeric(year), y.envplot,  ylim = c(-1,1)) 
+ plot( Northern.mean ~ as.numeric(year), y.envplot,  ylim = c(-1,1), xlab = "year", ylab = "Northness (cos(rad))") 
  segments(as.numeric(y.envplot$year), y.envplot$Northern.mean +  y.envplot$Northern.sd, y.envplot$year, y.envplot$Northern.mean -  y.envplot$Northern.sd)
  add.stats(lm(Northern.mean ~ as.numeric(year), y.envplot))
 
+ ## Correlation between envir and SRnat over years
+ par(mfrow = c(1,3), xpd = F, mar = c(4,4,2,2))
+ 
+ plot( SRnat.mean ~ SLOPE.mean, y.envplot, ylim = c(0,20), xlab = "Mean Slope per year", ylab = "Mean Native Richness per year") 
+ segments(as.numeric(y.envplot$SLOPE.mean), y.envplot$SRnat.mean +  y.envplot$SRnat.sd, y.envplot$SLOPE.mean, y.envplot$SRnat.mean -  y.envplot$SRnat.sd)
+ add.stats(lm(SRnat.mean ~ SLOPE.mean, y.envplot))
+ 
+ plot( SRnat.mean ~ DEM_10.mean, y.envplot, ylim = c(0,20), xlab = "Mean Elevation per year", ylab = "Mean Native Richness per year") 
+ segments(as.numeric(y.envplot$DEM_10.mean), y.envplot$SRnat.mean +  y.envplot$SRnat.sd, y.envplot$DEM_10.mean, y.envplot$SRnat.mean -  y.envplot$SRnat.sd)
+ add.stats(lm(SRnat.mean ~ DEM_10.mean, y.envplot))
+ 
+ plot( SRnat.mean ~ Northern.mean, y.envplot, ylim = c(0,20), xlab = "Mean Northness per year", ylab = "Mean Native Richness per year") 
+ segments(as.numeric(y.envplot$Northern.mean), y.envplot$SRnat.mean +  y.envplot$SRnat.sd, y.envplot$Northern.mean, y.envplot$SRnat.mean -  y.envplot$SRnat.sd)
+ add.stats(lm(SRnat.mean ~ Northern.mean, y.envplot))
+ 
  
 # Find best model : year is signifciant, but not very
 
