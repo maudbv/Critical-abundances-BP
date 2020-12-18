@@ -1,7 +1,11 @@
-# CHecking that the null model for gamma richness is not too biased by small sample sizes.
+# Checking that the null model for gamma richness is not too biased by small sample sizes.
 
-## number of potential null expectations for p plots sampled from at least n other plots
-# n!/(n! * (n-p)!) = Combinaison de p élements distincts parmis n
+
+# Enumerate number of possibilities ####
+
+# number of possibilities for p plots sampled from n plots:
+# n!/(n! * (n-p)!) 
+# == Combination of p distinct elements within n
 
 # number of unique combinations of 5 plots from a pool of ten plots:
 factorial(10)/(factorial(5) * factorial(5)) # only 252
@@ -9,14 +13,14 @@ factorial(10)/(factorial(5) * factorial(5)) # only 252
 # number of unique combinations of 5 plots from a pool of ten plots: (minimal scenario)
 factorial(10)/(factorial(5) * factorial(5)) # only 252
 
-# number of unique combinations of 6 plots from a pool of 52 plots:(Achillea millefolium)
+# number of unique combinations of 6 plots from a pool of 52 plots:(e.g. Achillea millefolium)
 factorial(52)/(factorial(6) * factorial(52-6)) # 2598960
 
 # number of unique combinations of 9 plots from a pool of 91 plots:(Anthoxanthum odoratum)
 factorial(91)/(factorial(9) * factorial(91-9)) # 783768050065
 
 
-# Present histograms of null expectations
+# Represent histograms of null expectations:
 spnames = impsp
 group = natives
 bootstrapped = TRUE
@@ -24,7 +28,7 @@ null.model = "permute.rare"
 breps= 99
 nreps = 999
 
-  # looping on each of the target species
+# looping on each of the target species
 sp <-  spnames[1]
 sp <- "ANTODO"
     community <-comm[which((rownames(comm) %in% unimprovedgrasslands) & (comm[,sp] > 0)),]

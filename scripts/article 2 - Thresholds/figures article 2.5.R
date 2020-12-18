@@ -1,7 +1,7 @@
 ### Graphs and statistics for the paper on critical abundances
 
 
-#### __________________________________________DEFINE ELEMENTS__________________________________________ ####
+#### ______DEFINE ELEMENTS_________ ####
 abclasses= c("Rare" ,"Occasional",  "Frequent", "Common", "Abundant","Dominant")
 threshold ="th.CI"
 sel <- impsp
@@ -91,7 +91,7 @@ barplot(cbind(  Year = table(!glmSRnat.overall$covar.tab$year$P.coef<0.05),
 
 
 
-####### Calculate correlations within table 1   #########
+#### Calculate correlations within table 1   #########
 library(corrplot)
 mat <- table2[, c(1:4, 9, 13, 15)] 
 # # log option:
