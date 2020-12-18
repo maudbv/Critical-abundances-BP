@@ -19,7 +19,9 @@ plots <-  spTransform(plots, CRS("+proj=longlat +datum=WGS84"))
 LUCAS <- readOGR(dsn = "data/GIS", layer ="lucas-bp")
 LUCAS <-  spTransform(LUCAS, CRS("+proj=longlat +datum=WGS84"))
 LUCAS <- crop(LUCAS, extent(study_area) +  c(-0.02, +0.02, -.02, +.02))
-# region <- unionSpatialPolygons(LUCAS, IDs = rep(1,length(LUCAS)), threshold=1)
+
+# Crops the landuse dataset for the study area:
+region <- unionSpatialPolygons(LUCAS, IDs = rep(1,length(LUCAS)), threshold=1)
 
 
 ## Map of study area
@@ -62,4 +64,4 @@ LUCAS <- crop(LUCAS, extent(study_area) +  c(-0.02, +0.02, -.02, +.02))
 # text(  tmp$x,tmp$y+3250,label= "N")
 
 
-save(LUCAS,  plots,  study_area, original.CRS, file = "saved Rdata/GIS data.Rdata")
+save(LUCAS,  plots,  study_area, region, original.CRS, file = "saved Rdata/GIS data.Rdata")

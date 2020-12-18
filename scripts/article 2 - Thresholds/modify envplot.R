@@ -1,4 +1,6 @@
 # modify envplot for GIS analysis:
+# Re-assign categories of "real grasslands" and "unimproved_grasslands"
+# based on the LUCAS database
 
 coordinates(envplot) <- c("POINTX", "POINTY")
 proj4string(envplot) <- original.CRS
@@ -11,8 +13,10 @@ o = over(envplot,LUCAS)
 envplot@data = cbind(envplot@data,o)
 envplot$landuse <- envplot$PREV_LUC_N
 
-## realgrasslands with landuse = lucasgrasslands  ( different from previous landcover data)
-## dominant species
+# realgrasslands with landuse = lucasgrasslands  
+# ( different from previous landcover data provided by R. Pouteau)
+
+# dominant species
 envplot$first.rank <-NA
 firstranksp <- databp[databp$DominanceRank == 1 , c("SpeciesCode", "PlotName")]
 firstranksp$ALIEN <- 0
@@ -40,7 +44,6 @@ tmp <- colSums(comm[which(rownames(comm) %in% as.character(unimprovedgrasslands)
 species$unimproved_grassland.occur <- tmp[match(rownames(species), names(tmp))]
 
 ## Transform ASPECT into northern orientation (cosinus) and Eatern (sinus):
-
 envplot@data$Northern <- cospi(envplot@data$ASPECT/180)
 envplot@data$NWestern <- cospi(envplot@data$ASPECT/180 - (1/4))
 envplot@data$Eastern <- sinpi(envplot@data$ASPECT/180)
@@ -48,3 +51,4 @@ envplot@data$Eastern <- sinpi(envplot@data$ASPECT/180)
 databp$Northern <-  cospi(databp$ASPECT/180)
 databp$NWestern <- cospi(databp$ASPECT/180 - (1/4))
 databp$Eastern <- sinpi(databp$ASPECT/180)
+

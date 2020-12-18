@@ -18,8 +18,8 @@ source('scripts/functions/p2star.R')
 source('scripts/article 2 - Thresholds/glm test.R')
 source('scripts/article 2 - Thresholds/plotting functions.R')
 source('scripts/article 2 - Thresholds/bootstrapping dataset.R')
-# source('scripts/article 2 - Thresholds/overall bootstrapped GLM.R')
-# source('scripts/article 2 - Thresholds/overall bootstrapped GLM_with elevation.R')
+# source('scripts/article 2 - Thresholds/overall bootstrapped GLM.R') # Deprecated
+# source('scripts/article 2 - Thresholds/overall bootstrapped GLM_with elevation.R') # Deprecated
 source('scripts/article 2 - Thresholds/overall bootstrapped GLM_with covariables.R')
 source('scripts/article 2 - Thresholds/impact.size.R')
 source('scripts/article 2 - Thresholds/summary.glm.R')
@@ -35,14 +35,15 @@ source('scripts/article 2 - Thresholds/div partitioning.R')
 # restore saved results:  ####
 # load("saved Rdata/article 2 - threshold/article threshold 1.3.7.Rdata") 
 
-#### Import and modify data from scratch:  ############
-# source('scripts/data/import BP species and environment data.R', encoding = "native.enc")
+#### Import data :  ############
+# source('scripts/full data import/import BP species and environment data.R',
+# encoding = "native.enc")
 load('saved Rdata/Banks_Peninsula_data.Rdata')
 
-# source('script/data/import trait data.R', encoding = "native.enc")
+# source('script/full data import/import trait data.R', encoding = "native.enc")
 
 # import GIS data
-# source('scripts/data/import GIS data.R', echo=FALSE)
+# source('scripts/full data import/import GIS data.R', echo=FALSE)
 load('saved Rdata/GIS data.Rdata')
 
 # update envplot
@@ -50,24 +51,15 @@ source('scripts/article 2 - Thresholds/modify envplot.R')
 
 #save.image(file = "saved Rdata/Critical_abundance_base_data.Rdata")
 
-#### Threshold analysis using GLMs  ########
+#### Threshold analysis using bootstrapped GLMs  ########
 
 # set bootstrap sample size
 nreps <- 999
-  # db<- databp[databp$PlotName %in% realgrasslands,]
 db<- databp[databp$PlotName %in% unimprovedgrasslands,]
 min.occur <- 5
 min.class <- 2
 
-#####  Bootstrpping within each class (OLD) :________________________________________________________________
-
-#  glmSRnat <- glm.test(db = db,var="SRnat",bootstrap = T, nreps=nreps, CI=0.95, drastic =F, min.occur =min.occur,  min.class = min.occur)
-  # glmSRali <- glm.test(db = db,var="SRali",bootstrap = T, nreps=nreps, CI=0.95, drastic =F,min.occur =min.occur,  min.class = min.occur)
-
-# save(glmSR,glmSRnat,glmSRali, file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
-# load(file = "saved Rdata/article 2 - threshold/booststrapped.glms.Rdata")
-
-#####  Overall bootstrapping :_____________________________________________________________________________
+#  Overall bootstrapping : 
 
 # # create bootstrapped samples
 # system.time(boot.output <- bootstrap.dataset(db=db, min.occur =min.occur,  min.class = min.class, nreps = nreps))
@@ -78,32 +70,42 @@ min.class <- 2
 ## version 2.1 with 827 "lucasgrasslands" including the grasslands with woody biomass but still first ranked is herbaceous
 ## version 2.2 with 595 "unimprovedgrasslands" including the grasslands with woody biomass but still first ranked is herbaceous
 
-# load(file = "saved Rdata/article 2 - threshold/boot.output.2.0.Rdata") # robin's landcover grasslands
-# load(file = "saved Rdata/article 2 - threshold/boot.output.2.1.Rdata") # all lucas grasslands
  load(file = "saved Rdata/article 2 - threshold/boot.output.2.2.Rdata") # unimproved grasslands only
-# load(file = "saved Rdata/article 2 - threshold/boot.output.2.3.Rdata") # unimproved grasslands only - RUN 2
+# load(file = "saved Rdata/article 2 - threshold/boot.output.2.3.Rdata") # unimproved grasslands only - alternative RUN 2
    
-# ________calculate glms on bootstraps _____________________________________________________________________
- 
-# NO covariables:
-# system.time(glmSRnat.overall <- glm.overallboot(db = db,boot.ind =boot.indices, variable = 'SRnat',
-#                                                 covar = c("DEM_10","SLOPE", "Northern", "SRali"),
-#                                                 min.occur= min.occur, min.class = min.class, nreps=nreps))
-# 
-# system.time(glmSRali.overall <- glm.overallboot(db = db,boot.indices=boot.indices, variable = 'SRali',
-#                                                 covar = c("DEM_10","SLOPE", "Northern", "SRali"),
-#                                                 min.occur= min.occur, min.class = min.class, nreps=nreps))
-# load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.1.Rdata") # robin's landcover grasslands
-# load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.1.Rdata") # all lucas grasslands
-# load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.2.Rdata") # unimproved grasslands only
-load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.2.Rdata") ## Old version without cofctors
-glmSRnat.overall.nocovar <- glmSRnat.overall  # Store a version with no covariables
-rm (glmSRnat.overall)
+# calculate glms on bootstraps 
 
-# Covariables for the JoAE resubmission (OLD):
-# load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.5.with elevation+northern+srali.Rdata") 
- # unimproved grasslands only + elevation as cofactor + bootindices RUN 2
-      
+## For Native Richness:
+# system.time(
+ # glmSRnat.overall <- glm.overallboot(db = db, boot.ind=boot.indices,
+ #                                     variable = 'SRnat',
+ #                                     covar = c("DEM_10","SLOPE", "Northern", "SRali"),
+ #                                     min.occur= min.occur, 
+ #                                     min.class = min.class,
+ #                                     nreps=nreps)
+ #)
+
+## For Alien Richness:
+# system.time(
+ # glmSRali.overall <- glm.overallboot(db = db, boot.indices=boot.indices,
+ #                                     variable = 'SRali',
+ #                                     covar = c("DEM_10","SLOPE", "Northern", "SRali"),
+ #                                     min.occur= min.occur, min.class = min.class, nreps=nreps)
+ # )
+ 
+### SAVED OUTPUTS: 
+## output with Robin's landcover grasslands:
+# load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.1.Rdata") 
+ 
+# output with all lucas grasslands:
+# load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.1.Rdata") 
+
+# Output with unimproved grasslands only, but without cofactors: 
+load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.2.Rdata") 
+glmSRnat.overall.nocovar <- glmSRnat.overall  # Store the version with no co-factors
+rm (glmSRnat.overall) 
+
+# OUTPUT with covariables for JoAE resubmission (OLD):
 # # Covariables + distance to bldg *************TO BE RE-RUN ************:
 # system.time(glmSRnat.bldg <- glm.overallboot(db = db,boot.ind =boot.indices, variable = 'SRnat',
 #                                                 covar = c("DEM_10","SLOPE", "Northern","BLDG_DIST", "SRali"),
@@ -117,7 +119,7 @@ rm (glmSRnat.overall)
 
   
 ## RESUBMISSION to JoE April 2018
-## ALL Covariables included in GLMS (without distance to building)  *************TO BE RUN ************:
+## ALL Covariables included in GLMS (without distance to building)  ***TO BE RUN ****:
 # system.time(glmSRnat<- glm.overallboot(db = db,boot.ind =boot.indices, variable = 'SRnat',
 #                                                 covar = c("DEM_10","SLOPE", "Northern","SRali"),
 #                                                 min.occur= min.occur, min.class = min.class, nreps=nreps))
@@ -141,19 +143,21 @@ load( file = "saved Rdata/article 2 - threshold/overall.boot.glms.2.9_all covari
 #                                                  min.occur= min.occur, min.class = min.class, nreps=nreps))
 # 
 #  
- # save( glmSRnat, glmSRali,
- #       file = "saved Rdata/article 2 - threshold/overall.boot.glms.3_all covariables include year.Rdata")
+# save( glmSRnat, glmSRali,
+#       file = "saved Rdata/article 2 - threshold/overall.boot.glms.3_all covariables include year.Rdata")
 
- load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.3_all covariables include year.Rdata")
+# Final version :
+load(file = "saved Rdata/article 2 - threshold/overall.boot.glms.3_all covariables include year.Rdata")
 
 
 ### Calculate impact.spread and critical abundances (= "threshold type")  ####
 
+# For comparison: 
 glmSRnat.overall.withbldg <- correct.impact.spread(M = glmSRnat.bldg, db=db, variable= "SRnat",threshold.type= "custom")
 glmSRnat.overall.nocovar <- correct.impact.spread(M = glmSRnat.overall.nocovar, db=db, variable= "SRnat",threshold.type= "custom") 
 glmSRnat.covar <- correct.impact.spread(M = glmSRnat.covar, db=db, variable= "SRnat",threshold.type= "custom") 
 
-
+# Chosen version:
 glmSRnat.overall<- correct.impact.spread(M = glmSRnat, db=db, variable= "SRnat",threshold.type= "custom") 
 glmSRali.overall<- correct.impact.spread(M = glmSRali, db=db, variable= "SRali",threshold.type= "custom") 
 
@@ -173,8 +177,8 @@ impact.SRali <- impact.size (glmSRali.overall)
 impact.SRnat.nocovar <- impact.size (glmSRnat.overall.nocovar)
 
 
- write.csv(impact.SRnat, "impact.SRnat.csv" )
- write.csv(impact.SRali, "impact.SRali.csv" )
+ write.csv(impact.SRnat, "results/impact.SRnat.csv" )
+ write.csv(impact.SRali, "results/impact.SRali.csv" )
 
  
  

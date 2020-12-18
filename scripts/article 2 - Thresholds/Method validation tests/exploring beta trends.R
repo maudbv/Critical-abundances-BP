@@ -1,4 +1,5 @@
-### Variations in BETA diversity at each abundance for all species (or at least impsp to start with)
+### Variations in BETA diversity at each abundance for all species 
+# (or at least the "important species" from impsp to start with)
 
 ## calculate beta (Simpson) for each abundance of a species:
 beta.prop <-  function(sp = "ACHMIL",  com = community, group = natives)  {
@@ -34,23 +35,23 @@ plot(1:6, rep(0:1, 3), type = "n", ann = F)
 apply(comm.betas.aliens , 2 , function(y) points(1:6, y))
 apply(comm.betas.aliens[, impsp] , 2 , function(y) points(1:6, y, col = "red", type = "b"))
 
-# ## bootstrapping for a species
-# boot.betas <- sapply(1:99, function(rep) {
-#   b <- beta.prop(sp = "ACHMIL", com = community[sample(nrow(community), replace = T),])
-#   return(b)
-# })
-# 
+### bootstrapping for a species
+boot.betas <- sapply(1:99, function(rep) {
+  b <- beta.prop(sp = "ACHMIL", com = community[sample(nrow(community), replace = T),])
+  return(b)
+})
 
-plot(
+
+
 # build random expectatinos
 
 r.betas <- matrix(NA, nrow = nreps, ncol = 6)
 
 for (j in 1:nreps) {
-  # null model A : simple permutation of all plots
-  if (null.model == "permute.all")
-    rvar <- sample(var)
   
+  # null model A : simple permutation of all plots
+  if (null.model == "permute.all") {
+    
   rbetas <- t(sapply(spnames, function(sp)  {
     community <- comm[which((rownames(comm) %in% realgrasslands)), ]
     community <- community[, colSums(community) > 0]
@@ -61,6 +62,10 @@ for (j in 1:nreps) {
     freq <- colSums(community) / dim(community)[1]
     rare.freq <- colSums(community[var == 0, ]) / sum(var == 0)
     
+    # random samples of plots
+    rvar <- sample(var)
+    
+    # calculate beta metrics
     betas <- sapply(1:6, function(k) {
       if (sum(var == k) > 1) {
         n <- sum(rowSums(community[var == k, ]) > 0)
@@ -75,16 +80,10 @@ for (j in 1:nreps) {
     })
     return(betas)
   }, simplify = T))
-  
+
 }
-if (sum(rvar == k) <= 1)
-  b <- 0
-return(b)
-}
-    )
 
 print(paste(sp, ":" , j))
-}
 
 r.betas <-  rbind(divpart.obs$beta.prop,  r.betas)
 
@@ -105,10 +104,6 @@ beta.list$q025[sp, ] <-
   apply(r.betas, 2, function(x)
     quantile(x, probs = 0.025, na.rm = T))
 }
-
-return(beta.list)
-}
-
 
 
 

@@ -8,13 +8,17 @@ envplot <- read.csv(file="data/Banks_Peninsula_1227_plots_variables.csv",as.is=T
 
 rownames(envplot) <- envplot$PLOTID
 rownames(species) <- species$Sp.code
-match(rownames(ranks), rownames(envplot))
+stopifnot(all(rownames(ranks) == rownames(envplot)))
 
 ######  creating homogeneously formatted species nomenclature
-species$SpeciesName =species$Species
-species$Genus=sapply(as.character(species$SpeciesName), FUN=function(x) {
+species$SpeciesName <- species$Species
+species$Genus=sapply(as.character(species$SpeciesName), 
+                     FUN=function(x) {
+                       print(x)
   g=strsplit(x, split=" ")[[1]][1]
- return(g)})
+ return(g)
+  }
+ )
 
 species$Species=sapply(as.character(species$SpeciesName), FUN=function(x) {
   g=strsplit(x, split=" ")[[1]][2]
@@ -46,18 +50,14 @@ species$subspecies='NA'
 species[match(duplic$Sp.code,species$Sp.code),"subspecies"]=duplic$subspecies
 species[match(duplic$Sp.code,species$Sp.code),"tip"]= paste(duplic$Genus,duplic$Species, sep="_")
 
-# add juncus and rytido as native specie
+# add juncus and rytido as native species 
+# comment from dec/2020:  or rather NON-natives ??
 species[c("JUNCUS", "RYTIDO"), "ALIEN"] <- 1
 
 #####  Subset of species : alien vs. native
-tmp=species[species$ALIEN==1,]
-aliens=as.character(tmp$Sp.code)
-
-tmp=species[species$NATIVE==1,]
-natives=as.character(tmp$Sp.code)
-
-tmp=species[species$WEEDOC==1,]
-weedocs=as.character(tmp$Sp.code)
+aliens=as.character(species$Sp.code[which(species$ALIEN==1)])
+natives=as.character(species$Sp.code[which(species$NATIVE==1)])
+weedocs=as.character(species$Sp.code[which(species$WEEDOC==1)])
 
 #####  Species in the surveys for which no data is provided:
 which(!names(ranks)%in%rownames(species))
@@ -75,7 +75,7 @@ species$lifestyle[species$lifestyle%in% c('B.P','P')]='P'
 species$woody=0
 species$woody[species$Growth.forms %in% c("SH", "TR")]=1
 
-########### Wilson's abundance surveys
+########### Import Wilson's original abundance surveys
 
 survey <- read.csv(file="data/Banks Peninsula Botanical Survey 1983-88_Ranks data.csv")
 
@@ -92,7 +92,7 @@ tmp=tmp[order(tmp[,1]),]
 # 675              D                  Dominant 1              6
 # 224            N/A        No Dominance Class 8              NA
 tmp$level=c(3,4,2,5,6,7,1,8)
-survey$domlevels=survey$DominanceClass
+survey$domlevels <- as.factor(survey$DominanceClass)
 levels(survey$domlevels) <- c(2,3,1,4,5,6,1,7)  # effectively merges levels 1 and 2
 survey$domlevels=as.numeric(as.character(survey$domlevels))
 survey$domlevels[survey$domlevels==7]=NaN
@@ -119,7 +119,7 @@ survey$abun=7-as.numeric(as.character(survey$domlevels))
 
   # UPDATED nomenclature, with additional changes by maud:
   nomen.add <- read.csv(file="data/nomen.additional.csv", as.is=T, stringsAsFactor=F)
-  nomen.add[which(!nomen.add$wilson.code%in% survey$SpeciesCode),] # 5 unmatched species...
+  nomen.add[which(!nomen.add$wilson.code%in% survey$SpeciesCode),] # 5 unmatched species
   nomen.add$status = NA
   nomen.add$status[nomen.add$wilson.code %in% survey$SpeciesCode]=1
 
@@ -129,26 +129,47 @@ survey$abun=7-as.numeric(as.character(survey$domlevels))
 
 
 # Comparing federico's ranks dataset with Hugh Wilson's
-# 62 species have been added in federico's data (58 vascular, 4 non-vascular)
-add.sp=species[which(!as.character(species$Sp.code)%in%as.character(survey$SpeciesCode)),]  # 62 species have been added in federico's data (58 vascular, 4 non-vascular)
-write.csv(add.sp, file="add.sp.csv")
+# 1 species has been added in federico's data
+add.sp=species[which(!names(ranks) %in% as.character(survey$SpeciesCode)),] 
+write.csv(add.sp, file="results/add.sp.csv")
 
-rm.sp=survey[which(!survey$SpeciesCode%in%names(ranks)),]
+rm.sp=survey[which(!survey$SpeciesCode %in% names(ranks)),]
 rm.sp=rm.sp[-which(duplicated(rm.sp$SpeciesName)),]
-write.csv(rm.sp, file="rm.sp.csv")
+write.csv(rm.sp, file="results/rm.sp.csv")
 
-table(rm.sp$SpeciesType) # 437 species have been removed; of which 291 non vasculars and 145 vascualrs
-table(survey[-which(duplicated(survey$SpeciesName)),] $SpeciesType) # there was 295 non-vasulcars in the entire dataset !
+table(rm.sp$SpeciesType) 
+# 437 species have been removed; of which 289 non vasculars 
+# and 78 vascular
+table(survey[-which(duplicated(survey$SpeciesName)),] $SpeciesType) # there was 295 non-vasculars in the entire dataset !
 nv.kept=survey[which(survey$SpeciesType=="Non-Vascular" & !survey$SpeciesName%in%rm.sp$SpeciesName),]
 
 
-# Merge abundance with environmental data
+# FIRST MERGE: temporary, only to identify grasslands vs. woodlands ####
+# Merge abundance survey with environmental data 
 m=merge(survey, envplot, by.x=c('PlotName'), by.y=c('PLOTID'))
 databp=m
+
+# Merge with species data ####
 databp=merge(databp, species, by.x='SpeciesCode', by.y='Sp.code')
 
-## REMOVE DUPLICATED lines corresponding to a combination of species x plot => where do these duplicate originate from ??
-databp[which(duplicated(databp[, c('PlotName','SpeciesCode')])),]
+## REMOVE DUPLICATED lines corresponding to a combination of species x plot 
+# => where do these duplicate originate from ? 
+# answer: Double records in raw data, with different dominance classes...
+
+duplic_entries <- databp[which(duplicated(databp[, c('PlotName','SpeciesCode')])),
+       c('PlotName','SpeciesCode')]
+
+# Check what the doubles look like: 
+databp[which(
+  apply(databp[, c('PlotName','SpeciesCode')], 1, paste, collapse = "_") %in%
+    apply(duplic_entries, 1, paste, collapse = "_")),
+  c('PlotName','SpeciesCode', 'DominanceClass')]
+# it appears that some species abundances were entered twice per plot in the dataset. 
+# usually one full class difference (e.g. A vs B, sometimes half a class B vs. A)
+# BUT: it concerns only 15 entries out of 29543...
+
+# => we randomly selected the first entry of each duplicate,
+# in the order they appearing in the dataset:
 databp=databp[which(!duplicated(databp[, c('PlotName','SpeciesCode')])),]
 
 
@@ -156,11 +177,12 @@ databp=databp[which(!duplicated(databp[, c('PlotName','SpeciesCode')])),]
 envplot=orderBy(~PLOTID,envplot)
 rownames(envplot)=envplot$PLOTID
 
-# removing plots which have no data in survey (but they do in "ranks", thats strange no?)
+# removing 3 plots which have no abundance data in our survey 
+# (but strangely they do in older dataset "ranks")
 old_envplot=envplot
 envplot=envplot[sort(unique(as.character(databp$PlotName))),]
 
-# Add species richness info to plot
+# Add species richness info to envplot data
 envplot$SR=table(as.character(databp$PlotName))[as.character(envplot$PLOTID)]
 envplot$SRali=tapply(databp$ALIEN,as.character(databp$PlotName), FUN=sum, na.rm=T)[as.character(envplot$PLOTID)]
 envplot$SRnat=tapply(!databp$ALIEN,as.character(databp$PlotName), FUN=sum, na.rm=T)[as.character(envplot$PLOTID)]
@@ -208,36 +230,30 @@ envplot$vegtype=NA
 envplot$vegtype[as.character(envplot$PLOTID) %in% woodlands]='W'
 envplot$vegtype[as.character(envplot$PLOTID) %in% grasslands]='G'
 
+# modified coordinates for statistical use: 
 envplot$newX=ceiling(envplot$POINTX/1000)
 envplot$newY=ceiling(envplot$POINTY/1000)
 
 
 ## import land-use classification by Robin :
 
-# "La couche utilis?e est celle du Minist?re de l'Environnement bas?e sur une interpr?tation
-# d'images a?riennes datant de 1996-1997 (huit ans apr?s la fin de l'inventaire de H. Wilson)."
-
+# Based on aerial photographs from 1996-1997, data from Ministry for Environment
+# personal communication from Robin Pouteau
+# Pouteau, R., Hulme, P. E., & Duncan, R. P. (2015). Widespread native and alien plant species occupy different habitats. Ecography, 38, 462– 471. https://doi.org/10.1111/ecog.00963
 landcover <- read.csv(file="data/landcover.csv",na.str=c("","NA"), as.is=T, stringsAsFactor=F)
 envplot$landcover=landcover$LANDCOVER[match(envplot$PLOTID, landcover$PLOTID)]
 
-
-
-
-## REAL FINAL MERGIING
+## FINAL MERGING
 # Final merging
 m=merge(survey, envplot, by.x=c('PlotName'), by.y=c('PLOTID'))
 databp=m
 databp=merge(databp, species, by.x='SpeciesCode', by.y='Sp.code')
 
 
-## REMOVE DUPLICATED lines corresponding to a combination of species x plot => where do these duplicate originate from ??
+## AGAIN REMOVE DUPLICATED lines corresponding to a combination of species x plot 
+# (same as before) 
 databp[which(duplicated(databp[, c('PlotName','SpeciesCode')])),]
 databp=databp[which(!duplicated(databp[, c('PlotName','SpeciesCode')])),]
-
-databp$domlevels=as.numeric(as.character(databp$domlevels))
-databp$abun=7-as.numeric(as.character(databp$domlevels))
-
-
 
 
 ## Community data matrix
@@ -252,17 +268,22 @@ s=merge(db, tmp[, c("PlotName", 'SpeciesCode', "abun")], by.x=c("PlotName", 'Spe
 comm=t(unstack(s, form= abun ~ PlotName))
 rownames(comm)=sort(unique(na.omit(as.character(tmp$PlotName))))
 colnames(comm)=unique(as.character(tmp$SpeciesCode))
-comm[is.na(comm) & !is.nan(comm)]=0  ### we keep the NAN information when species appear in the survey but have no abundance class (only 16 observations)
+
+### we keep the NAN information when species appear in the survey but have no abundance class (only 16 observations)
+comm[is.na(comm) & !is.nan(comm)]=0 
 comm=as.data.frame(comm)
 
 # presence-absence community data
+
+# First version based on Federico's data
 # occur1=ranks
 # occur1=ceiling(occur1/1000)
 
+# Second version recalculated from the raw dominance class survey
 occur2=comm
 occur2=ceiling(occur2/1000)
 
-## realgrasslands
+## detect  "realgrasslands"
 tmp  <- databp[databp$DominanceRank==1,]
 realgrasslands <- as.character(tmp[which( (as.character(tmp$Growth.forms) %in% c('GR','HR')) & (as.character(tmp$landcover) %in% c('High Producing Exotic Grassland','Low Producing Grassland'))),
                                    "PlotName"])
