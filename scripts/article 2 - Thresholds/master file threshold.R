@@ -729,21 +729,41 @@ min.class <- 2
 glms_NR_output <- glmSRnat.overall
 
 # data set to publish:
-dataset = db[, c( "SurveyName",  "SurveyStartYear","SurveyEndYear",
-                  "SpeciesCode","SpeciesName.x","NATIVE","ALIEN",
-                  "PlotName","DominanceClassDescription", "abun",
-                  "POINTX","POINTY","DEM_10","ASPECT","SLOPE", "Northern", "Eastern",
-                  "SRnat", "SRali", "SR")]
+dataset = db[, c( "SurveyName","PlotName", "date",
+                  "SpeciesCode", "SpeciesName.x","SpeciesName.y","NATIVE","ALIEN", "DominanceRank",
+                 "DominanceClassDescription", "abun")]
+
 a <- names(which( (rowSums(table(dataset$SpeciesCode, dataset$abun)[,2:6]>=min.occur)>=min.class)
                   &  table(dataset$SpeciesCode, dataset$abun)[,1]>=min.occur))
 ## Selecting sites where at least one of the focal species is present:
 dataset <- dataset[which(dataset$SpeciesCode %in% a),]
+dataset <- orderBy(~ PlotName + DominanceRank, dataset)
+
+names(dataset) <- c( "SurveyName","PlotName", "SurveyDate",
+                     "SpeciesCode", "SpeciesName.original","SpeciesName.corrected","NATIVE","ALIEN", "DominanceRank",
+                     "DominanceClassDescription", "AbudnanceCode")
+
+envir.dataset <- envplot [ as.character(unique(dataset$PlotName)) , c("PLOTID","DEM_10","ASPECT","SLOPE", "Northern", "Eastern", "landuse")]
+
 
 
 save( dataset = dataset,
+      envir.dataset = envir.dataset,
       glms_NR_output = glmSRnat.overall,
       boot.output = boot.output,
       boot.indices = boot.indices,
       file = "Bernard-Verdier&Hulme_JEcol2018_data.Rdata"
 )
+
+write.csv(dataset , "dataset.csv")
+write.csv(envir.dataset , "envir.dataset.csv")
+proj4string(envplot)
+
+
+## Sub-data set for data-archiving
+
+# reduce dataset to abundance of focal alien species, NR, AR,
+
+dataset.redux <- dataset[dataset$SpeciesCode %in% focal.aliens,]
+
 
